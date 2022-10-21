@@ -1,6 +1,27 @@
-def main():
-    print("Hellö")
+import javalang
+from javalang.tree import CompilationUnit
 
+source_code = """
+class HelloWorldApp {
+    public static void main(String[] args) {
+        hashmap map = new hashmap();
+        var testing = 0;
+        int testing2 = 0;
+        testing = testing2;
+        System.out.println("Hello World!"); // Display the string.
+    }
+}
+"""
 
-if __name__ == '__main__':
-    main()
+tree: CompilationUnit = javalang.parse.parse(source_code)
+
+print(tree)
+
+# for path, node in tree:
+#     print(path)
+#     print()
+#     print(node)
+#     print("\n\n\n")
+#
+# for path, node in tree.filter(javalang.tree.ClassDeclaration):
+#     print(path, node)
