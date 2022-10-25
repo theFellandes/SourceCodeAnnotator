@@ -1,9 +1,11 @@
+from functools import wraps
 from time import perf_counter
 
 
 def get_time(func):
     """ Finds total execution time of a function """
 
+    @wraps(func)
     def wrapper(*args, **kwargs):
         start_time = perf_counter()
 
