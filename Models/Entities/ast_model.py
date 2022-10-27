@@ -1,3 +1,19 @@
+from compilation_unit import CompilationUnit
+from class_declaration import ClassDeclaration
+from method_declaration import MethodDeclaration
+from local_variable_declaration import LocalVariableDeclaration
+from variable_declarator import VariableDeclarator
+from reference_type import ReferenceType
+from basic_type import BasicType
+from statement_expression import StatementExpression
+from assignment import Assignment
+from formal_parameter import FormalParameter
+from class_creator import ClassCreator
+from literal import Literal
+from member_reference import MemberReference
+from method_invocation import MethodInvocation
+
+
 CompilationUnit(
         imports=[],
         package=None,
@@ -24,18 +40,18 @@ CompilationUnit(
                                             type=ReferenceType(
                                                 arguments=None,
                                                 dimensions=None,
-                                                name=hashmap,
+                                                name='hashmap',
                                                 sub_type=None
                                             )
                                         ),
-                                        name=map
+                                        name='map'
                                     )
                                 ],
                                 modifiers=set(),
                                 type=ReferenceType(
                                     arguments=None,
                                     dimensions=[],
-                                    name=hashmap,
+                                    name='hashmap',
                                     sub_type=None
                                 )
                             ),
@@ -51,14 +67,14 @@ CompilationUnit(
                                             selectors=[],
                                             value=0
                                         ),
-                                        name=testing
+                                        name='testing'
                                     )
                                 ],
                                 modifiers=set(),
                                 type=ReferenceType(
                                     arguments=None,
                                     dimensions=[],
-                                    name=var,
+                                    name='var',
                                     sub_type=None
                                 )
                             ),
@@ -74,7 +90,7 @@ CompilationUnit(
                                             selectors=[],
                                             value=0
                                         ),
-                                        name=testing2
+                                        name='testing2'
                                     )
                                 ],
                                 modifiers=set(),
@@ -86,7 +102,7 @@ CompilationUnit(
                             StatementExpression(
                                 expression=Assignment(
                                     expressionl=MemberReference(
-                                        member=testing,
+                                        member='testing',
                                         postfix_operators=[],
                                         prefix_operators=[],
                                         qualifier=,
@@ -94,7 +110,7 @@ CompilationUnit(
                                     ),
                                     type ==,
                                     value=MemberReference(
-                                        member=testing2,
+                                        member='testing2',
                                         postfix_operators=[],
                                         prefix_operators=[],
                                         qualifier=,
@@ -126,7 +142,7 @@ CompilationUnit(
                         ],
                         documentation=None,
                         modifiers={'static', 'public'},
-                        name=main,
+                        name='main',
                         parameters=[
                             FormalParameter(
                                 annotations=[],
@@ -150,7 +166,7 @@ CompilationUnit(
                 extends=None,
                 implements=None,
                 modifiers=set(),
-                name=HelloWorldApp,
+                name='HelloWorldApp',
                 type_parameters=None
             )
         ]
