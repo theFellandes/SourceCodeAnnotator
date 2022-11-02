@@ -1,17 +1,13 @@
-import javalang
-from javalang.tree import CompilationUnit
+from Controller.source_code_controller import SourceCodeParserController
 from Utils.time_util import get_time
-from Utils.reader import Reader
-from conf import settings
 
 
 @get_time
 def main():
-    source_code_path = settings.get_path('Main.java')
-    reader = Reader(source_code_path)
-    source_code_string = reader.read_in_string()
-    tree: CompilationUnit = javalang.parse.parse(source_code_string)
-    print(tree)
+    java_source_code = 'Main.java'
+    python_source_code = 'source_code.py'
+    java_source_code_parser = SourceCodeParserController(java_source_code)
+    java_source_code_parser.generate_ast()
 
 
 if __name__ == '__main__':

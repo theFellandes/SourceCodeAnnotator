@@ -9,10 +9,12 @@ def get_time(func):
     def wrapper(*args, **kwargs):
         start_time = perf_counter()
 
-        func(*args, **kwargs)
+        return_value = func(*args, **kwargs)
 
         end_time = perf_counter()
         total_time = round(end_time - start_time, 4)
 
         print(f'Time: {total_time} seconds')
+
+        return return_value
     return wrapper

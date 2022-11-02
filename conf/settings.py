@@ -10,7 +10,7 @@ PATH_DICTIONARY = {
 }
 
 
-def __get_file_extension(source_code_name_with_extension: str) -> str:
+def get_file_extension(source_code_name_with_extension: str) -> str:
     """
     Returns the file extension from source code
 
@@ -30,7 +30,7 @@ def get_path(source_code_name_with_extension: str) -> str:
 
     :exception TypeError: Entered extension is not supported.
     """
-    coding_language = __get_file_extension(source_code_name_with_extension)
+    coding_language = get_file_extension(source_code_name_with_extension)
     coding_language_path = PATH_DICTIONARY.get(coding_language)
 
     try:

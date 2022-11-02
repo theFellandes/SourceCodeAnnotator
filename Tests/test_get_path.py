@@ -14,9 +14,19 @@ def bad_java_path():
     return os.path.join(settings.JAVA_PATH, 'Main.txt.java')
 
 
+@pytest.fixture
+def python_path():
+    return os.path.join(settings.PYTHON_PATH, 'source_code.py')
+
+
 def test_java_path(java_path):
     actual = settings.get_path('Main.java')
     assert java_path == actual
+
+
+def test_python_path(python_path):
+    actual = settings.get_path('source_code.py')
+    assert python_path == actual
 
 
 def test_exception_java_path():
