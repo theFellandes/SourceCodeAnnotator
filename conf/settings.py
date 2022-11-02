@@ -4,9 +4,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 SOURCE_CODE_DIR = os.path.join(BASE_DIR, 'SourceCodes')
 JAVA_PATH = os.path.join(SOURCE_CODE_DIR, 'Java')
 PYTHON_PATH = os.path.join(SOURCE_CODE_DIR, 'Python')
+GO_PATH = os.path.join(SOURCE_CODE_DIR, 'Go')
+C_PATH = os.path.join(SOURCE_CODE_DIR, 'C')
 PATH_DICTIONARY = {
     'py': PYTHON_PATH,
     'java': JAVA_PATH,
+    'go': GO_PATH,
+    'c': C_PATH,
 }
 
 
