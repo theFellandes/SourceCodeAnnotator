@@ -1,5 +1,6 @@
 import javalang
 import ast
+import astpretty
 from dataclasses import dataclass
 from javalang.tree import CompilationUnit
 from Utils.time_util import get_time
@@ -43,4 +44,4 @@ class SourceCodeParserController:
     def __generate_python_ast(self):
         """ Prints python_ast to the console """
         python_ast = ast.parse(self.source_code_string)
-        print(python_ast.body)
+        astpretty.pprint(python_ast.body[5])
