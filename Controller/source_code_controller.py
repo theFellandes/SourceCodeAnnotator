@@ -1,8 +1,11 @@
-import javalang
 import ast
 import astpretty
+import javalang
+import pprintpp
 from dataclasses import dataclass
 from javalang.tree import CompilationUnit
+
+from Utils.pretty_object import pretty_object, python_ast_prettier
 from Utils.time_util import get_time
 from Utils.reader import Reader
 from conf import settings
@@ -35,13 +38,17 @@ class SourceCodeParserController:
         operation.get(self.source_code_extension)()
 
     @get_time
+    @pretty_object
     def __generate_java_ast(self):
         """ Prints java_ast to the console """
         tree: CompilationUnit = javalang.parse.parse(self.source_code_string)
-        print(tree)
+        return tree.types[0].body[1]
+        # print(pformat(vars(tree.types[0]), indent=4))
+        # pprintpp.pprint(vars(tree.types[0]), indent=4)
 
     @get_time
+    @python_ast_prettier
     def __generate_python_ast(self):
         """ Prints python_ast to the console """
         python_ast = ast.parse(self.source_code_string)
-        astpretty.pprint(python_ast.body[5])
+        return python_ast.body[5]
