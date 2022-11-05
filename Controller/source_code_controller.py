@@ -1,17 +1,18 @@
 import ast
 import javalang
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from javalang.tree import CompilationUnit
 
+from conf import settings
 from Utils.pretty_object import pretty_object, python_ast_prettier
 from Utils.time_util import get_time
 from Utils.reader import Reader
-from conf import settings
 
 
 @dataclass
 class SourceCodeParserController:
     source_code_file_name: str
+    source_code_string: str = field(init=False, default='')
 
     def __post_init__(self):
         """
@@ -27,6 +28,7 @@ class SourceCodeParserController:
         self.reader = Reader(self.source_code_path)
         self.source_code_string = self.reader.read_in_string()
 
+
     def generate_ast(self):
         """ Executes the behavior selected by the file extension """
         operation = {
@@ -35,14 +37,26 @@ class SourceCodeParserController:
         }
         operation.get(self.source_code_extension)()
 
+    def remove_escape_characters(self):
+        """
+        Removes first 32 characters of the ASCII table from source code string
+
+        escapes: The first 32 characters of ASCII table
+        translator: A translation table for the escape characters
+        """
+        escapes = ''.join([chr(char) for char in range(1, 32)])
+        translator = str.maketrans('', '', escapes)
+        self.source_code_string = self.source_code_string.translate(translator)
+
     @get_time
     @pretty_object
     def __generate_java_ast(self):
         """ Prints java_ast to the console """
+        # Clear the escape characters for Java.
+        self.remove_escape_characters()
+
         tree: CompilationUnit = javalang.parse.parse(self.source_code_string)
         return tree.types[0].body[1]
-        # print(pformat(vars(tree.types[0]), indent=4))
-        # pprintpp.pprint(vars(tree.types[0]), indent=4)
 
     @get_time
     @python_ast_prettier
