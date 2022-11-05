@@ -1,7 +1,5 @@
 import ast
-import astpretty
 import javalang
-import pprintpp
 from dataclasses import dataclass
 from javalang.tree import CompilationUnit
 
