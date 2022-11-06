@@ -3,7 +3,7 @@ from time import perf_counter
 
 
 def get_time(func):
-    """ Finds total execution time of a function """
+    """Finds total execution time of a function"""
 
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -14,7 +14,8 @@ def get_time(func):
         end_time = perf_counter()
         total_time = round(end_time - start_time, 4)
 
-        print(f'Time: {total_time} seconds')
+        print(f"Time: {total_time} seconds")
 
         return return_value
+
     return wrapper

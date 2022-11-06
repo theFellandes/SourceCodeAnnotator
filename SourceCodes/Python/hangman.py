@@ -18,8 +18,9 @@ class Hangman:
     __game_word: holds the game_word for the player
     __remaining_lives: holds the remaining lives for the player
     """
+
     __stages = [
-        '''
+        """
   +---+
   |   |
       |
@@ -27,26 +28,26 @@ class Hangman:
       |
       |
 =========
-''',
-        '''
-  +---+
-  |   |
-  O   |
-      |
-      |
-      |
-=========
-''',
-        '''
+""",
+        """
   +---+
   |   |
   O   |
+      |
+      |
+      |
+=========
+""",
+        """
+  +---+
+  |   |
+  O   |
   |   |
       |
       |
 =========
-''',
-        '''
+""",
+        """
   +---+
   |   |
   O   |
@@ -54,8 +55,8 @@ class Hangman:
       |
       |
 =========
-''',
-        '''
+""",
+        """
   +---+
   |   |
   O   |
@@ -63,8 +64,8 @@ class Hangman:
       |
       |
 =========
-''',
-        '''
+""",
+        """
   +---+
   |   |
   O   |
@@ -72,8 +73,8 @@ class Hangman:
  /    |
       |
 =========
-''',
-        '''
+""",
+        """
   +---+
   |   |
   O   |
@@ -81,20 +82,21 @@ class Hangman:
  / \  |
       |
 =========
-''']
+""",
+    ]
     __wordlist = []
     __guessed_word_list = []
     __game_word = []
     remaining_lives = len(__stages)
 
-    def __init__(self, total_lives=len(__stages), wordlist_path=r'wordlist'):
+    def __init__(self, total_lives=len(__stages), wordlist_path=r"wordlist"):
         """
         Constructor is used to read from the wordlist and create the wordlist for the game.
         :argument total_lives: the total lives for the hangman game. Default: 6
         :argument wordlist_path: the path for the wordlist
         """
         # Reading and generating the wordlist
-        with open(wordlist_path, 'r') as wordlist:
+        with open(wordlist_path, "r") as wordlist:
             for word in wordlist:
                 word = word[:-1]
                 self.__wordlist.append(word)
@@ -129,7 +131,7 @@ class Hangman:
         :return: void
         """
         print(
-            '''
+            """
          _                                       
         | |__   __ _ _ __   __ _ _ __ ___   __ _ _ __  
         | '_ \ / _` | '_ \ / _` | '_ ` _ \ / _` | '_ \ 
@@ -137,7 +139,8 @@ class Hangman:
         |_| |_|\__,_|_| |_|\__, |_| |_| |_|\__,_|_| |_|
                             __/ |                      
                            |___/
-        ''')
+        """
+        )
         print("Welcome to the hangman game.")
 
         # Easter egg value
@@ -166,8 +169,12 @@ class Hangman:
             self.life_loss(life_loss=is_life_lost)
 
         if same_guessed_number_count > 10:
-            print("What did you expect by guessing the same letter over and over again.")
-            print(f"Congrats you guessed same letter {same_guessed_number_count} times.")
+            print(
+                "What did you expect by guessing the same letter over and over again."
+            )
+            print(
+                f"Congrats you guessed same letter {same_guessed_number_count} times."
+            )
         print("Game Over!")
         print("The word was: ")
         answer = ""
@@ -207,5 +214,5 @@ def main():
     hangman.game_loop()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

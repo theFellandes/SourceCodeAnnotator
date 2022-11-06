@@ -9,7 +9,7 @@ class Main:
     """Main class for testing source code run."""
 
     def main(self):
-        """ The main function of the main class """
+        """The main function of the main class"""
         customers = self.generate_customers()
         self.iterate_customers(customers)
 
@@ -25,11 +25,7 @@ class Main:
 
         :returns Dictionary of customers dict[str:int]
         """
-        return {
-            'Ali': 1,
-            'Veli': 2,
-            'Mahmut': 3
-        }
+        return {"Ali": 1, "Veli": 2, "Mahmut": 3}
 
     @staticmethod
     def iterate_customers(customers: dict[str:int]):
@@ -49,11 +45,11 @@ class Main:
 
         :returns project_info: The sampleproject json info
         """
-        with urlopen('https://pypi.org/pypi/sampleproject/json') as resp:
-            project_info = json.load(resp)['info']
+        with urlopen("https://pypi.org/pypi/sampleproject/json") as resp:
+            project_info = json.load(resp)["info"]
         return project_info
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main = Main()
     main.main()

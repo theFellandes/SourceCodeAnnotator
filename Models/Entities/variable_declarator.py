@@ -15,6 +15,7 @@ class VariableDeclarator:
     name
     type_parameters
     """
+
     dimensions: list[str] = field(default_factory=list)
     initializer: ClassCreator | Literal = ClassCreator() | Literal()
-    name: str = ''
+    name: str = ""

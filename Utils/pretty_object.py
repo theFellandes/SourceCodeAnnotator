@@ -1,10 +1,10 @@
+from functools import wraps
 import astpretty
 import pprintpp
-from functools import wraps
 
 
 def pretty_object(func):
-    """ Pretty prints the returned object from the function """
+    """Pretty prints the returned object from the function"""
 
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -14,7 +14,7 @@ def pretty_object(func):
 
 
 def python_ast_prettier(func):
-    """ Pretty prints Python AST returned from function """
+    """Pretty prints Python AST returned from function"""
 
     @wraps(func)
     def wrapper(*args, **kwargs):

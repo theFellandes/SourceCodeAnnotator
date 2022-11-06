@@ -14,11 +14,12 @@ class ClassCreator:
     name
     type_parameters
     """
-    arguments =  list[str] = field(default_factory=list),
-    body = None,
-    constructor_type_arguments = None,
-    postfix_operators: list[str] = field(default_factory=list),
-    prefix_operators: list[str] = field(default_factory=list),
-    qualifier = None,
-    selectors: list[str] = field(default_factory=list),
+
+    arguments = list[str] = (field(default_factory=list),)
+    body = (None,)
+    constructor_type_arguments = (None,)
+    postfix_operators: list[str] = (field(default_factory=list),)
+    prefix_operators: list[str] = (field(default_factory=list),)
+    qualifier = (None,)
+    selectors: list[str] = (field(default_factory=list),)
     type: ReferenceType = ReferenceType()

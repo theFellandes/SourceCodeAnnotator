@@ -16,11 +16,12 @@ class MethodDeclaration:
     throws
     type_parameters
     """
-    documentation = None,
+
+    documentation = (None,)
     modifiers: dict[str]
-    name = str,
-    return_type = None,
-    throws = None,
+    name = (str,)
+    return_type = (None,)
+    throws = (None,)
     type_parameters = None
     annotations: list[str] = field(default_factory=list)
     body: list[LocalVariableDeclaration] = field(default_factory=list)

@@ -3,7 +3,7 @@
 import copy
 
 
-class Singleton():
+class Singleton:
     "The Singleton Class"
     value = []
 
@@ -16,7 +16,7 @@ class Singleton():
     @staticmethod
     def static_method():
         "Use @staticmethod if no inner variables required"
-        
+
     @classmethod
     def class_method(cls):
         "Use @classmethod to access class level variables"

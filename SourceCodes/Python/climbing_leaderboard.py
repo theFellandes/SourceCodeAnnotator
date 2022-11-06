@@ -8,7 +8,10 @@ def main():
 
 
 def climbing_leaderboard(ranked: list[int], player: list[int]) -> list[int]:
-    return [int_binary_search(return_sorted_ranked(ranked, rank), rank) + 1 for rank in player]
+    return [
+        int_binary_search(return_sorted_ranked(ranked, rank), rank) + 1
+        for rank in player
+    ]
 
 
 def return_sorted_ranked(ranked: list[int], rank: int) -> list[int]:
@@ -49,5 +52,5 @@ def int_binary_search(search_array: list[int], value: int) -> int:
     return -1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

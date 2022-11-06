@@ -10,11 +10,17 @@ import string
 
 
 def __main():
-    """ The private main function for the password_generator """
-    print(password_generator(password_length=12, include_numbers=True, include_symbols=False))
+    """The private main function for the password_generator"""
+    print(
+        password_generator(
+            password_length=12, include_numbers=True, include_symbols=False
+        )
+    )
 
 
-def password_generator(password_length: int, include_numbers: bool, include_symbols: bool):
+def password_generator(
+    password_length: int, include_numbers: bool, include_symbols: bool
+):
     """
     The password generator function to randomly generate a string
     :param password_length: the length of the password.
@@ -36,15 +42,40 @@ def password_generator(password_length: int, include_numbers: bool, include_symb
     # List of symbols
     if include_symbols:
         symbols = [
-            ',', '\'', '\\', '!',
-            '.', ';', '(', ')',
-            '[', ']', '{', '}',
-            '=', '%', '£', '#',
-            '^', '+', '/', '*',
-            '-', '"', '<', '>',
-            '&', '?', '|', '_',
-            '~', '¨', '´', ':'
-            ';', '@']
+            ",",
+            "'",
+            "\\",
+            "!",
+            ".",
+            ";",
+            "(",
+            ")",
+            "[",
+            "]",
+            "{",
+            "}",
+            "=",
+            "%",
+            "£",
+            "#",
+            "^",
+            "+",
+            "/",
+            "*",
+            "-",
+            '"',
+            "<",
+            ">",
+            "&",
+            "?",
+            "|",
+            "_",
+            "~",
+            "¨",
+            "´",
+            ":" ";",
+            "@",
+        ]
     # If user doesn't want symbols, include letters
     else:
         symbols = letters
@@ -97,5 +128,5 @@ def random_uppercase_letter(letter: str):
     return letter
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     __main()

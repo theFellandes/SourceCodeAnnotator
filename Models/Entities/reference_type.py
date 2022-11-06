@@ -9,7 +9,8 @@ class ReferenceType:
     name: str
     sub_type
     """
-    arguments = None,
-    dimensions: list = field(default_factory=list),
-    name: str = '',
+
+    arguments = (None,)
+    dimensions: list = (field(default_factory=list),)
+    name: str = ("",)
     sub_type = None

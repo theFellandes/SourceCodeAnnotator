@@ -48,16 +48,16 @@ class Creator:
     @staticmethod
     def create_object(some_property):
         "A static method to get a concrete product"
-        if some_property == 'a':
+        if some_property == "a":
             return ConcreteProductA()
-        if some_property == 'b':
+        if some_property == "b":
             return ConcreteProductB()
-        if some_property == 'c':
+        if some_property == "c":
             return ConcreteProductC()
         return None
 
 
 # The Client
-#PRODUCT = Creator().create_object('c')
-PRODUCT = Creator().create_object('a')
+# PRODUCT = Creator().create_object('c')
+PRODUCT = Creator().create_object("a")
 print(PRODUCT.name)

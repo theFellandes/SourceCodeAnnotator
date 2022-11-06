@@ -3,12 +3,15 @@
 
 from abc import ABCMeta, abstractmethod
 
+
 class ISubject(metaclass=ABCMeta):
     """An interface implemented by both the Proxy and Real Subject"""
+
     @staticmethod
     @abstractmethod
     def request():
         """A method to implement"""
+
 
 class RealSubject(ISubject):
     """The actual real object that the proxy is representing"""
@@ -19,6 +22,7 @@ class RealSubject(ISubject):
 
     def request(self):
         return self.enormous_data
+
 
 class Proxy(ISubject):
     """
@@ -42,6 +46,7 @@ class Proxy(ISubject):
             return self.enormous_data
         print("pulling data from Proxy cache")
         return self.enormous_data
+
 
 # The Client
 SUBJECT = Proxy()

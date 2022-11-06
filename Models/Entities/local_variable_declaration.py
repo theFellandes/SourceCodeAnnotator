@@ -15,7 +15,8 @@ class LocalVariableDeclaration:
     name
     type_parameters
     """
+
     annotations: list[str] = field(default_factory=list)
     declarators: list[VariableDeclarator] = field(default_factory=list)
-    modifiers: set = field(default_factory=set),
+    modifiers: set = (field(default_factory=set),)
     type: ReferenceType = ReferenceType()

@@ -8,8 +8,9 @@ def main():
     consecutive_elements = random.randint(1, 9)
 
     # Testing function
-    hypothesis = sliding_window_max_sum(numbers_list=numbers_list,
-                                        consecutive_elements=consecutive_elements)
+    hypothesis = sliding_window_max_sum(
+        numbers_list=numbers_list, consecutive_elements=consecutive_elements
+    )
     print(numbers_list, consecutive_elements)
     print(hypothesis)
 
@@ -41,12 +42,13 @@ def sliding_window_max_sum(numbers_list: list, consecutive_elements: int) -> int
     max_sum = window_sum
 
     for i in range(numbers_list_size - consecutive_elements):
-        window_sum = window_sum - numbers_list[i] \
-                     + numbers_list[i + consecutive_elements]
+        window_sum = (
+            window_sum - numbers_list[i] + numbers_list[i + consecutive_elements]
+        )
         max_sum = max(window_sum, max_sum)
 
     return max_sum
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
