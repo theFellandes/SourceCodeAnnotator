@@ -16,7 +16,7 @@ class SourceCodeParserController:
     source_code_file_name: str
     source_code_string: str = field(init=False, default="")
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """
         Initializes the Source Code Parser rest of the attributes
 
@@ -36,12 +36,12 @@ class SourceCodeParserController:
         """Returns dict of the class"""
         return dataclasses.asdict(self)
 
-    def generate_ast(self):
+    def generate_ast(self) -> None:
         """Executes the behavior selected by the file extension"""
         operation = {"java": self.__generate_java_ast, "py": self.__generate_python_ast}
         operation.get(self.source_code_extension)()
 
-    def remove_escape_characters(self):
+    def remove_escape_characters(self) -> None:
         """
         Removes first 32 characters of the ASCII table from source code string
 
@@ -54,7 +54,7 @@ class SourceCodeParserController:
 
     @get_time
     @pretty_object
-    def __generate_java_ast(self):
+    def __generate_java_ast(self) -> CompilationUnit:
         """Prints java_ast to the console"""
         # Clear the escape characters for Java.
         self.remove_escape_characters()
@@ -64,7 +64,7 @@ class SourceCodeParserController:
 
     @get_time
     @python_ast_prettier
-    def __generate_python_ast(self):
+    def __generate_python_ast(self) -> ast:
         """Prints python_ast to the console"""
         python_ast = ast.parse(self.source_code_string)
         return python_ast.body[5]
