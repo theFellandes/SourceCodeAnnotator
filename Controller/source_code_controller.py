@@ -1,4 +1,6 @@
 import ast
+import dataclasses
+
 import javalang
 from dataclasses import dataclass, field
 from javalang.tree import CompilationUnit
@@ -29,6 +31,10 @@ class SourceCodeParserController:
         )
         self.reader = Reader(self.source_code_path)
         self.source_code_string = self.reader.read_in_string()
+
+    def as_dict(self) -> dict:
+        """Returns dict of the class"""
+        return dataclasses.asdict(self)
 
     def generate_ast(self):
         """Executes the behavior selected by the file extension"""
