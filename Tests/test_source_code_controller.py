@@ -33,3 +33,13 @@ def test_python_source_code_print(python_source_code_parser):
 
 def test_as_dict(java_source_code_parser):
     assert type(java_source_code_parser.as_dict()) is type({})
+
+def test_as_dict_print(java_source_code_parser):
+    java_source_code_parser.generate_ast()
+    java_source_code_parser.capture_multi_line_comments()
+    print(java_source_code_parser.as_dict())
+
+def test_as_dict_print2(python_source_code_parser):
+    python_source_code_parser.generate_ast()
+    python_source_code_parser.capture_single_line_comments()
+    print(python_source_code_parser.as_dict())
