@@ -14,7 +14,7 @@ def get_time(func):
         end_time = perf_counter()
         total_time = round(end_time - start_time, 4)
 
-        print(f"Time: {total_time} seconds")
+        print(f"{func.__name__} took Time: {total_time} seconds")
 
         return return_value
 
