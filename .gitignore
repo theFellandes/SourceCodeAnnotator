@@ -10,3 +10,5 @@
 build/
 eggs/
 !.gitkeep
+/Output/ast_report.txt
+/Output/report.txt
