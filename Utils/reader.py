@@ -24,6 +24,15 @@ class Reader:
         with open(self.path, "r", encoding="utf-8") as reader:
             yield from self.read_in_chunks(reader)
 
+    def read_in_lines(self) -> tuple[list, int]:
+        """
+        Returns the list version of the file contents and its length
+        :return: list_of_file_contents: list version of the file contents
+        """
+        with open(self.path, "r", encoding="utf-8") as reader:
+            list_of_file_contents = reader.readlines()
+        return list_of_file_contents, len(list_of_file_contents)
+
     def read_in_string(self) -> str:
         """
         Returns string version of the file contents
