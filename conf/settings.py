@@ -22,13 +22,13 @@ GOOD_CODE_STATISTICS = {
         "multi_line": 250,
         "java_doc": 150,
         "total_line": 300,
-        "comment_per_line": 45
+        "comment_per_line": 45,
     },
     "py": {
         "single_line": 300,
         "multi_line": 250,
         "total_line": 150,
-        "comment_per_line": 40
+        "comment_per_line": 40,
     },
 }
 

@@ -8,7 +8,7 @@ def ast_to_file(func):
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        with open(settings.AST_REPORT_PATH, 'w') as sys.stdout:
+        with open(settings.AST_REPORT_PATH, "w") as sys.stdout:
             func(*args, **kwargs)
 
         sys.stdout = sys.__stdout__

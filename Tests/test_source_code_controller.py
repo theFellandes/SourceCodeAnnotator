@@ -14,7 +14,9 @@ def python_source_code_parser():
 
 
 def test_java_source_code_string(java_source_code_parser):
-    java_source_code_parser.remove_escape_characters(java_source_code_parser.source_code_string)
+    java_source_code_parser.remove_escape_characters(
+        java_source_code_parser.source_code_string
+    )
     actual = java_source_code_parser.source_code_string
     assert "\n" not in actual
 
@@ -41,8 +43,8 @@ def test_as_dict_for_java(java_source_code_parser):
     java_source_code_parser.generate_ast()
     java_source_code_parser.capture_multi_line_comments()
     # java_source_code_parser.capture_single_line_comments()
-    print(java_source_code_parser.as_dict().get('multi_line_comments_list'))
-    print(len(java_source_code_parser.as_dict().get('multi_line_comments_list')))
+    print(java_source_code_parser.as_dict().get("multi_line_comments_list"))
+    print(len(java_source_code_parser.as_dict().get("multi_line_comments_list")))
 
 
 def test_as_dict_for_python(python_source_code_parser):
@@ -51,8 +53,8 @@ def test_as_dict_for_python(python_source_code_parser):
     python_source_code_parser.capture_multi_line_comments()
     # python_source_code_parser.capture_single_line_comments()
     print(python_source_code_parser.as_dict())
-    print(python_source_code_parser.as_dict().get('multi_line_comments_list'))
-    print(len(python_source_code_parser.as_dict().get('multi_line_comments_list')))
+    print(python_source_code_parser.as_dict().get("multi_line_comments_list"))
+    print(len(python_source_code_parser.as_dict().get("multi_line_comments_list")))
 
 
 def test_report_generate_python(python_source_code_parser):

@@ -36,7 +36,7 @@ class SourceCodeParserController:
         )
         self.reader = Reader(self.source_code_path)
         self.writer = Writer(settings.REPORT_PATH)
-        self.writer.append_buffer(f'{self.source_code_file_name} Report\n')
+        self.writer.append_buffer(f"{self.source_code_file_name} Report\n")
         self.source_code_string = self.reader.read_in_string()
 
     def as_dict(self) -> dict:
@@ -63,29 +63,40 @@ class SourceCodeParserController:
         return raw_string.translate(translator)
 
     def capture_multi_line_comments(self) -> None:
-        """ Finds multi-line comments """
+        """Finds multi-line comments"""
         # Python multiline
-        self.multi_line_comments_list = re.findall('([^:]"""[^(]*)"""', self.source_code_string)
+        self.multi_line_comments_list = re.findall(
+            '([^:]"""[^(]*)"""', self.source_code_string
+        )
 
         # Bütün comment'leri buluyor javada
-        if self.source_code_extension == 'java':
+        if self.source_code_extension == "java":
             # TODO: limit this regex
             self.multi_line_comments_list.extend(
-                re.findall('(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)|(//.*)', self.source_code_string)
+                re.findall(
+                    "(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)|(//.*)",
+                    self.source_code_string,
+                )
             )
             # TODO: javadoc finder regex
             number_of_java_docs = len(self.multi_line_comments_list)
-            self.writer.append_buffer(f'* {number_of_java_docs} Javadoc Comments\n')
+            self.writer.append_buffer(f"* {number_of_java_docs} Javadoc Comments\n")
         number_of_multi_lines = len(self.multi_line_comments_list)
-        self.writer.append_buffer(f'* {number_of_multi_lines} Multi Line Comments\n')
+        self.writer.append_buffer(f"* {number_of_multi_lines} Multi Line Comments\n")
 
     def capture_single_line_comments(self) -> None:
-        """ Finds single-line comments """
-        self.single_line_comments_list = re.findall('(?:#[^\n]*|/\*(?:(?!\*/).)*\*/)', self.source_code_string)
+        """Finds single-line comments"""
+        self.single_line_comments_list = re.findall(
+            "(?:#[^\n]*|/\*(?:(?!\*/).)*\*/)", self.source_code_string
+        )
 
-        if self.source_code_extension == 'java':
-            self.single_line_comments_list = re.findall('(?://[^\n]*|/\*(?:(?!\*/).)*\*/)', self.source_code_string)
-        self.writer.append_buffer(f'* {len(self.single_line_comments_list)} Single Line Comments\n')
+        if self.source_code_extension == "java":
+            self.single_line_comments_list = re.findall(
+                "(?://[^\n]*|/\*(?:(?!\*/).)*\*/)", self.source_code_string
+            )
+        self.writer.append_buffer(
+            f"* {len(self.single_line_comments_list)} Single Line Comments\n"
+        )
 
     @ast_to_file
     @pretty_object
@@ -108,7 +119,7 @@ class SourceCodeParserController:
         return python_ast
 
     def generate_report(self) -> None:
-        """ Generates the report.txt for source code """
+        """Generates the report.txt for source code"""
         self.writer.append_buffer("There are:\n\n")
         self.capture_single_line_comments()
         self.capture_multi_line_comments()
@@ -116,49 +127,54 @@ class SourceCodeParserController:
         number_of_single_lines = len(self.single_line_comments_list)
         number_of_multi_lines = len(self.multi_line_comments_list)
         total_lines_of_comment = number_of_single_lines + number_of_multi_lines
-        self.writer.append_buffer(f"* {total_lines_of_comment} Total Lines of Comments\n")
+        self.writer.append_buffer(
+            f"* {total_lines_of_comment} Total Lines of Comments\n"
+        )
         _, total_lines = self.reader.read_in_lines()
         self.writer.append_buffer(f"* {total_lines} Total Lines of Code\n\n")
         self.compare_statistics_with_clean_code(
             number_of_single_lines,
             number_of_multi_lines,
             total_lines_of_comment,
-            total_lines
+            total_lines,
         )
 
-    def compare_statistics_with_clean_code(self,
-                                           number_of_single_lines: int,
-                                           number_of_multi_lines: int,
-                                           total_lines_of_comment: int,
-                                           total_lines: int
-                                           ):
+    def compare_statistics_with_clean_code(
+        self,
+        number_of_single_lines: int,
+        number_of_multi_lines: int,
+        total_lines_of_comment: int,
+        total_lines: int,
+    ):
         """TODO: This class doesn't fit the SOLID Rules, fix it"""
-        clean_code_statistics = settings.GOOD_CODE_STATISTICS.get(self.source_code_extension)
+        clean_code_statistics = settings.GOOD_CODE_STATISTICS.get(
+            self.source_code_extension
+        )
         comment_per_lines = round(total_lines_of_comment / total_lines * 100, 4)
 
         single_line_result = self.get_statistic_idiom(
-            number_of_single_lines,
-            clean_code_statistics.get('single_line'),
-            0
+            number_of_single_lines, clean_code_statistics.get("single_line"), 0
         )
         # TODO: Missing Suggestion
-        self.writer.append_buffer(f"** Average Single Line Comment Usage is {single_line_result} project. **\n")
+        self.writer.append_buffer(
+            f"** Average Single Line Comment Usage is {single_line_result} project. **\n"
+        )
 
         multi_line_result = self.get_statistic_idiom(
-            number_of_multi_lines,
-            clean_code_statistics.get('multi_line'),
-            0
+            number_of_multi_lines, clean_code_statistics.get("multi_line"), 0
         )
         # TODO: Missing Suggestion
-        self.writer.append_buffer(f"** Average Multi Line Comment Usage is {multi_line_result} project. **\n")
+        self.writer.append_buffer(
+            f"** Average Multi Line Comment Usage is {multi_line_result} project. **\n"
+        )
 
         total_lines_result = self.get_statistic_idiom(
-            total_lines,
-            clean_code_statistics.get('total_line'),
-            0
+            total_lines, clean_code_statistics.get("total_line"), 0
         )
         # TODO: Missing Suggestion
-        self.writer.append_buffer(f"** Average Total Lines is {total_lines_result} project. **\n")
+        self.writer.append_buffer(
+            f"** Average Total Lines is {total_lines_result} project. **\n"
+        )
         self.writer.append_buffer(f"* Comment Per Lines: {comment_per_lines} *")
         self.writer.buffered_writer()
 
@@ -180,4 +196,3 @@ class SourceCodeParserController:
 
         else:
             return "higher than"
-
