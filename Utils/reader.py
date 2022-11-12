@@ -8,7 +8,11 @@ class Reader:
     chunk_size: int = 1024
 
     def read_in_chunks(self, file_object) -> Iterable:
-        """Yields data line by line"""
+        """
+        Yields data line by line
+
+        :concern: 1024 might not cover a function fully.
+        """
         while True:
             data = file_object.readline(self.chunk_size)
             if not data:
