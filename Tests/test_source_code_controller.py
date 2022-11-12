@@ -14,7 +14,7 @@ def python_source_code_parser():
 
 
 def test_java_source_code_string(java_source_code_parser):
-    java_source_code_parser.remove_escape_characters()
+    java_source_code_parser.remove_escape_characters(java_source_code_parser.source_code_string)
     actual = java_source_code_parser.source_code_string
     assert "\n" not in actual
 
