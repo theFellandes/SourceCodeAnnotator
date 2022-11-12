@@ -105,7 +105,7 @@ class SourceCodeParserController:
         # requires the escape character deletion.
 
         python_ast = ast.parse(self.source_code_string)
-        return python_ast.body[5]
+        return python_ast
 
     def generate_report(self) -> None:
         """ Generates the report.txt for source code """
