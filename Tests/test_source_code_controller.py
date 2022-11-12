@@ -31,15 +31,33 @@ def test_java_source_code_print(java_source_code_parser):
 def test_python_source_code_print(python_source_code_parser):
     python_source_code_parser.generate_ast()
 
+
 def test_as_dict(java_source_code_parser):
     assert type(java_source_code_parser.as_dict()) is type({})
 
-def test_as_dict_print(java_source_code_parser):
+
+def test_as_dict_for_java(java_source_code_parser):
+    # TODO: Remove some unnecessary tests and fix the tests
     java_source_code_parser.generate_ast()
     java_source_code_parser.capture_multi_line_comments()
-    print(java_source_code_parser.as_dict())
+    # java_source_code_parser.capture_single_line_comments()
+    print(java_source_code_parser.as_dict().get('multi_line_comments_list'))
+    print(len(java_source_code_parser.as_dict().get('multi_line_comments_list')))
 
-def test_as_dict_print2(python_source_code_parser):
+
+def test_as_dict_for_python(python_source_code_parser):
+    # TODO: Remove some unnecessary tests and fix the tests
     python_source_code_parser.generate_ast()
-    python_source_code_parser.capture_single_line_comments()
+    python_source_code_parser.capture_multi_line_comments()
+    # python_source_code_parser.capture_single_line_comments()
     print(python_source_code_parser.as_dict())
+    print(python_source_code_parser.as_dict().get('multi_line_comments_list'))
+    print(len(python_source_code_parser.as_dict().get('multi_line_comments_list')))
+
+
+def test_report_generate_python(python_source_code_parser):
+    python_source_code_parser.generate_report()
+
+
+def test_report_generate_java(java_source_code_parser):
+    java_source_code_parser.generate_report()
