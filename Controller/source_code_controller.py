@@ -54,7 +54,6 @@ class SourceCodeParserController:
         escapes: The first 32 characters of ASCII table
         translator: A translation table for the escape characters
         """
-        # TODO: Discuss this function as to make it static or not.
         escapes = "".join([chr(char) for char in range(1, 32)])
         translator = str.maketrans("", "", escapes)
         return raw_string.translate(translator)
@@ -74,7 +73,7 @@ class SourceCodeParserController:
         \'\'\'[^']*\'\'\'
         """
         # TODO: Discussion, This function can be static
-        self.multi_line_comments_list = re.findall('\/\* +\*(\s+([a-zA-Z]+\s+)+)\*\/', self.source_code_string)
+        self.multi_line_comments_list = re.findall('(/\*(.)*\*/)|//.*', self.source_code_string)
 
 
     def capture_single_line_comments(self) -> None:
@@ -89,7 +88,7 @@ class SourceCodeParserController:
         """
         # TODO: Discussion, This function can be static
         if self.source_code_extension == 'java':
-            self.single_line_comments_list = re.findall('^(\/\/)[a-zA-Z]+ [a-zA-Z]+', self.source_code_string)
+            self.single_line_comments_list = re.findall('^(//)[a-zA-Z]+ [a-zA-Z]+', self.source_code_string)
 
         else:
             self.single_line_comments_list = re.findall('(^#)[a-zA-Z]+ [a-zA-Z]+', self.source_code_string)
@@ -99,10 +98,8 @@ class SourceCodeParserController:
     def __generate_java_ast(self) -> CompilationUnit:
         """Prints java_ast to the console"""
         # Clear the escape characters for Java.
-        self.source_code_string = self.remove_escape_characters(self.source_code_string)
-
         tree: CompilationUnit = javalang.parse.parse(self.source_code_string)
-        return tree.types[0].body[1]
+        return tree
 
     @get_time
     @python_ast_prettier
