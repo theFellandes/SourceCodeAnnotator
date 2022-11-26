@@ -1,5 +1,6 @@
 import pytest
 
+from Controller.java_controller import JavaController
 from Controller.source_code_controller import SourceCodeParserController
 
 
@@ -9,8 +10,13 @@ def java_source_code_parser():
 
 
 @pytest.fixture
+def java_parser():
+    return JavaController("Main.java")
+
+
+@pytest.fixture
 def python_source_code_parser():
-    return SourceCodeParserController("source_code.py")
+    return SourceCodeParserController("factory_concept.py")
 
 
 def test_java_source_code_string(java_source_code_parser):
@@ -63,3 +69,7 @@ def test_report_generate_python(python_source_code_parser):
 
 def test_report_generate_java(java_source_code_parser):
     java_source_code_parser.generate_report()
+
+
+def test_java(java_parser):
+    java_parser.generate_java_ast()
