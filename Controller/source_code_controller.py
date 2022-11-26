@@ -175,7 +175,7 @@ class SourceCodeParserController:
         self.writer.append_buffer(
             f"** Average Total Lines is {total_lines_result} project. **\n"
         )
-        self.writer.append_buffer(f"* Comment Per Lines: {comment_per_lines} *")
+        self.writer.append_buffer(f"* Ratio of Comments: {comment_per_lines}% *")
         self.writer.buffered_writer()
 
     @staticmethod
