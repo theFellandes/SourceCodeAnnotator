@@ -33,3 +33,6 @@ class ASTBase:
 
     def generate_ast(self):
         """ Implement generate ast for source code base """
+
+    def write_ast_to_file(self):
+        """ Implement write_ast_to_file for source code base for debugging """
