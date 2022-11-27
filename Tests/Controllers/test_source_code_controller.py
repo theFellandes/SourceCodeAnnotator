@@ -11,7 +11,7 @@ def java_source_code_parser():
 
 @pytest.fixture
 def java_parser():
-    return JavaController("Main.java")
+    return SourceCodeParserController("Main.java")
 
 
 @pytest.fixture
