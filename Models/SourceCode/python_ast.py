@@ -9,7 +9,6 @@ from Models.SourceCode.ast_base import ASTBase
 
 @dataclass
 class PythonAST(ASTBase):
-
     def generate_ast(self) -> ast:
         """Prints python_ast to the console"""
         # Since Python uses tabs and newlines, only comments extracted
