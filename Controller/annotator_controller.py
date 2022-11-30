@@ -1,8 +1,6 @@
 from dataclasses import dataclass, field
 
 from Controller.base_controller import BaseController
-from Controller.java_controller import JavaController
-from Models.SourceCode.java_ast import JavaAST
 
 
 @dataclass
@@ -13,9 +11,14 @@ class AnnotatorController:
     def generate_comment(self, ast):
         self.base_controller.generate_comment(ast)
 
+    def get_single_line_comments(self):
+        return self.base_controller.get_single_line_comments()
 
-if __name__ == '__main__':
-    java_ast = JavaAST('Main.java')
-    java_controller = JavaController()
-    annotator_controller = AnnotatorController(java_controller)
-    annotator_controller.generate_comment(java_ast)
+    def get_multi_line_comments(self):
+        return self.base_controller.get_multi_line_comments()
+
+    def get_doc_comments(self):
+        return self.base_controller.get_doc_comments()
+
+    def generate_report(self):
+        self.base_controller.generate_report()
