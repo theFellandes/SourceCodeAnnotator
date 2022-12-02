@@ -18,3 +18,7 @@ def test_get_multi_line_comments(java_controller):
 
 def test_get_doc_comments(java_controller):
     assert java_controller.get_doc_comments() is not None
+
+
+def test_generate_java_ast(java_controller):
+    assert java_controller.generate_comment() is not None

@@ -5,7 +5,7 @@ from Models.SourceCode.python_ast import PythonAST
 
 @pytest.fixture
 def python_ast():
-    return PythonAST("source_code.py")
+    return PythonAST("basic_addition.py")
 
 
 def test_python_ast(python_ast):
