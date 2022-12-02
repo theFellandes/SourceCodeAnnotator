@@ -28,5 +28,5 @@ class BaseController:
     def generate_report(self):
         """ Generates report for comments """
 
-    def generate_comment(self, ast):
+    def generate_comment(self):
         """ Generate comment using ast """

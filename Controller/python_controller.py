@@ -41,5 +41,5 @@ class PythonController(BaseController):
         report_controller = ReportController(self.writer, self)
         report_controller.generate_report()
 
-    def generate_comment(self, python_ast: PythonAST):
-        pass
+    def generate_comment(self):
+        return self.python_ast.generate_ast()

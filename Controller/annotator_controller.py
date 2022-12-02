@@ -22,3 +22,6 @@ class AnnotatorController:
 
     def generate_report(self):
         self.base_controller.generate_report()
+
+    def generate_comment(self):
+        self.base_controller.generate_comment()

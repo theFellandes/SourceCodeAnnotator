@@ -44,4 +44,4 @@ class JavaController(BaseController):
         report_controller.generate_report()
 
     def generate_comment(self):
-        pass
+        return self.java_ast.generate_ast()
