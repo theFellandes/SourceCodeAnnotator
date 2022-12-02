@@ -28,5 +28,8 @@ class BaseController:
     def generate_report(self):
         """ Generates report for comments """
 
+    def write_ast_to_file(self):
+        """ Generates file for ast """
+
     def generate_comment(self):
         """ Generate comment using ast """
