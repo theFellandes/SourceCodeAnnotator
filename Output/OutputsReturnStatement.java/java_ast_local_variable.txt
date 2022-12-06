@@ -1,0 +1,40 @@
+// int randomNumber = getRandomNumber(0, 10); //
+
+LocalVariableDeclaration(
+    annotations=[],
+    declarators=[
+        VariableDeclarator(
+            dimensions=[],
+            initializer=MethodInvocation(
+                arguments=[
+                    Literal(
+                        postfix_operators=[],
+                        prefix_operators=[],
+                        qualifier=None,
+                        selectors=[],
+                        value=0
+                    ),
+                    Literal(
+                        postfix_operators=[],
+                        prefix_operators=[],
+                        qualifier=None,
+                        selectors=[],
+                        value=10
+                    )
+                ],
+                member=getRandomNumber,
+                postfix_operators=[],
+                prefix_operators=[],
+                qualifier=,
+                selectors=[],
+                type_arguments=None
+            ),
+            name=randomNumber
+        )
+    ],
+    modifiers=set(),
+    type=BasicType(
+        dimensions=[],
+        name=int
+    )
+),

@@ -1,0 +1,40 @@
+// int randomNumbersAdded = addition(randomNumber, randomNumber2); //
+
+LocalVariableDeclaration(
+    annotations=[],
+    declarators=[
+        VariableDeclarator(
+            dimensions=[],
+            initializer=MethodInvocation(
+                arguments=[
+                    MemberReference(
+                        member=randomNumber,
+                        postfix_operators=[],
+                        prefix_operators=[],
+                        qualifier=,
+                        selectors=[]
+                    ),
+                    MemberReference(
+                        member=randomNumber2,
+                        postfix_operators=[],
+                        prefix_operators=[],
+                        qualifier=,
+                        selectors=[]
+                    )
+                ],
+                member=addition,
+                postfix_operators=[],
+                prefix_operators=[],
+                qualifier=,
+                selectors=[],
+                type_arguments=None
+            ),
+            name=randomNumbersAdded
+        )
+    ],
+    modifiers=set(),
+    type=BasicType(
+        dimensions=[],
+        name=int
+    )
+),
