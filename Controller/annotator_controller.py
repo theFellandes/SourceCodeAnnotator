@@ -8,9 +8,6 @@ class AnnotatorController:
 
     base_controller: BaseController = field(default_factory=BaseController)
 
-    def generate_comment(self, ast):
-        self.base_controller.generate_comment(ast)
-
     def get_single_line_comments(self):
         return self.base_controller.get_single_line_comments()
 
@@ -27,4 +24,4 @@ class AnnotatorController:
         self.base_controller.write_ast_to_file()
 
     def generate_comment(self):
-        self.base_controller.generate_comment()
+        return self.base_controller.generate_comment()
