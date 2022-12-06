@@ -9,6 +9,8 @@ JAVA_PATH = os.path.join(SOURCE_CODE_DIR, "Java")
 PYTHON_PATH = os.path.join(SOURCE_CODE_DIR, "Python")
 GO_PATH = os.path.join(SOURCE_CODE_DIR, "Go")
 C_PATH = os.path.join(SOURCE_CODE_DIR, "C")
+STANZA_PATH = os.path.join(BASE_DIR, "Utils/NLP/Stanza")
+STANZA_RESOURCES_PATH = os.path.join(STANZA_PATH, "Stanza")
 PATH_DICTIONARY = {
     "py": PYTHON_PATH,
     "java": JAVA_PATH,
@@ -65,3 +67,7 @@ def get_path(source_code_name_with_extension: str) -> str:
         raise TypeError("Entered extension is not supported.")
 
     return source_code_path
+
+def is_path_empty(path: str):
+    """ Returns path is empty or not """
+    return not os.listdir(path)
