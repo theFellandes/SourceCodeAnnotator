@@ -1,5 +1,5 @@
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from Controller.base_controller import BaseController
 from Controller.report_controller import ReportController

@@ -12,6 +12,9 @@ public class Main {
         if(inputString.equals("World")){
             return inputString;
         }
+        else if(inputString.equals("Boi")){
+            return "Boi";
+        }
         else{
             return "Not World";
         }

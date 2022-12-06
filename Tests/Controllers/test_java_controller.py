@@ -5,7 +5,7 @@ from Controller.java_controller import JavaController
 
 @pytest.fixture
 def java_controller():
-    return JavaController('Main.java')
+    return JavaController('SimpleStatement.java')
 
 
 def test_get_single_line_comments(java_controller):
@@ -25,7 +25,7 @@ def test_generate_java_ast(java_controller):
 
 
 def test_java_ast(java_controller):
-    java_controller.generate_ast()
+    java_controller.java_ast.get_return_value()
 
 
 def test_write_java_ast(java_controller):

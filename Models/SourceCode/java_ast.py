@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import javalang
 from javalang.tree import CompilationUnit
@@ -12,15 +12,41 @@ from Models.SourceCode.ast_base import ASTBase
 @dataclass
 class JavaAST(ASTBase):
 
+    __tree: CompilationUnit = field(init=False, default=None)
+
+    def __post_init__(self):
+        self.generate_ast()
+
     def generate_ast(self) -> CompilationUnit:
         """Prints java_ast to the console"""
-        tree: CompilationUnit = javalang.parse.parse(self.source_code_string)
-        return tree
+        self.__tree: CompilationUnit = javalang.parse.parse(self.source_code_string)
+        return self.__tree
+
+    def get_function(self) -> CompilationUnit:
+        for method in self.__tree.types[0].body:
+            if method.name == 'main':
+                # Found main function
+                continue
+            else:
+                pass
+
+    def get_return_value(self):
+        if_stack = []
+        method = self.__tree.types[0].body[1]
+        print(f'\n{method.body[0]}')
+        condition = method.body[0].condition
+        comparison = f'Compares {condition.qualifier} to {condition.arguments[0].value}'
+        print(f'\n\n\n{comparison}')
+        if_return = method.body[0].then_statement.statements[0].expression.member
+        return_statement = f'Returns {if_return}'
+        print(f'{return_statement}')
+
+
 
     @ast_to_file
     @pretty_object
     @get_time
     def write_ast_to_file(self):
         """Prints java_ast to the console"""
-        tree: CompilationUnit = javalang.parse.parse(self.source_code_string)
-        return tree
+        self.__tree: CompilationUnit = javalang.parse.parse(self.source_code_string)
+        return self.__tree
