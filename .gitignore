@@ -12,4 +12,4 @@ eggs/
 !.gitkeep
 /Output/ast_report.txt
 /Output/report.txt
-/Utils/NLP/Stanza/Stanza
+/Stanza
