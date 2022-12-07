@@ -22,13 +22,15 @@ class JavaAST(ASTBase):
         self.__tree: CompilationUnit = javalang.parse.parse(self.source_code_string)
         return self.__tree
 
-    def get_function(self) -> CompilationUnit:
-        for method in self.__tree.types[0].body:
-            if method.name == 'main':
-                # Found main function
-                continue
-            else:
-                pass
+    def get_list_of_function_names(self) -> CompilationUnit:
+        """
+        Returns the list of function names found in java ast tree
+
+        # method.children => method.children[1] => {public, static}
+        # method.children => method.children[5] => getRandomNumber (Function name)
+        """
+        return [method.children[5] for method in self.__tree.types[0].body]
+
 
     def get_return_value(self):
         if_stack = []

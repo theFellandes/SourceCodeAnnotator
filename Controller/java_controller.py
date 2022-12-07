@@ -46,5 +46,11 @@ class JavaController(BaseController):
     def write_ast_to_file(self):
         self.java_ast.write_ast_to_file()
 
-    def generate_comment(self):
+    def get_ast(self):
         return self.java_ast.generate_ast()
+
+    def generate_comment_from_function_name(self):
+        list_of_function_names = self.java_ast.get_list_of_function_names()
+        list_of_generated_comments = [self.name_analyzer.get_generated_comment(function_name)
+                                      for function_name in list_of_function_names]
+        return list_of_generated_comments

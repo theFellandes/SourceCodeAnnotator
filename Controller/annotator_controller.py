@@ -23,5 +23,8 @@ class AnnotatorController:
     def write_ast_to_file(self):
         self.base_controller.write_ast_to_file()
 
-    def generate_comment(self):
-        return self.base_controller.generate_comment()
+    def get_ast(self):
+        self.base_controller.get_ast()
+
+    def generate_comment_from_function_name(self):
+        return self.base_controller.generate_comment_from_function_name()

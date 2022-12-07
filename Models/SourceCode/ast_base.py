@@ -10,8 +10,11 @@ class ASTBase:
         """Returns dict of the class"""
         return dataclasses.asdict(self)
 
-    def generate_ast(self):
+    def get_ast(self):
         """ Implement generate ast for source code base """
+
+    def get_list_of_function_names(self):
+        """ Returns list of function names """
 
     def write_ast_to_file(self):
         """ Implement write_ast_to_file for source code base for debugging """
