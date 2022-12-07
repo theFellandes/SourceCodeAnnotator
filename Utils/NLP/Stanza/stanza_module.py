@@ -5,11 +5,11 @@ from re import finditer
 from conf import settings
 
 
-
 class NameAnalyzer:
     def __init__(self):
-        if settings.is_path_empty(settings.STANZA_RESOURCES_PATH):
-            stanza.download()
+        if not settings.does_path_exists(settings.STANZA_RESOURCES_PATH) or settings.is_path_empty(
+                settings.STANZA_RESOURCES_PATH):
+            stanza.download(model_dir='.\\Stanza')
         self.nlp = stanza.Pipeline('en',
                                    verbose=False,
                                    download_method=DownloadMethod.REUSE_RESOURCES,
@@ -19,7 +19,6 @@ class NameAnalyzer:
         splunk_name = self.split_function_name(name)
         doc = self.nlp(splunk_name)
         return self.generate_comment(doc.sentences)
-
 
     def split_function_name(self, function_name: str) -> str:
         if '_' in function_name:
@@ -45,7 +44,6 @@ class NameAnalyzer:
         return string_builder
 
 
-
 if __name__ == '__main__':
     na = NameAnalyzer()
     # na.parse_function_name('getUserId')
@@ -59,7 +57,6 @@ if __name__ == '__main__':
     # print(na.get_generated_comment('userIdSet'))
     # print(na.get_generated_comment('generateUserId'))
     print(na.get_generated_comment('increment_number_by_one'))
-
 
     # Boss fight #
     # print(na.get_generated_comment('nameAnalyser')) # Analyses the name?

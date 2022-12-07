@@ -67,6 +67,12 @@ def get_path(source_code_name_with_extension: str) -> str:
 
     return source_code_path
 
+
 def is_path_empty(path: str):
     """ Returns path is empty or not """
     return not os.listdir(path)
+
+
+def does_path_exists(path: str):
+    """ Returns if the path exists or not"""
+    return os.path.exists(path)
