@@ -9,8 +9,7 @@ JAVA_PATH = os.path.join(SOURCE_CODE_DIR, "Java")
 PYTHON_PATH = os.path.join(SOURCE_CODE_DIR, "Python")
 GO_PATH = os.path.join(SOURCE_CODE_DIR, "Go")
 C_PATH = os.path.join(SOURCE_CODE_DIR, "C")
-STANZA_PATH = os.path.join(BASE_DIR, "Utils/NLP/Stanza")
-STANZA_RESOURCES_PATH = os.path.join(STANZA_PATH, "Stanza")
+STANZA_RESOURCES_PATH = os.path.join(BASE_DIR, "Stanza")
 PATH_DICTIONARY = {
     "py": PYTHON_PATH,
     "java": JAVA_PATH,
