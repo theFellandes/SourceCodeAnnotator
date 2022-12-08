@@ -7,11 +7,20 @@ public class Main {
         printWorld();
     }
 
+    public static int function(int param1) {
+        int bruh = param1 + 5 + 10;
+        int bruh2 = param1;
+        return 10;
+    }
+
     public static String getWorld(int demo, int demo2){
         String world = "Hello" + "World";
         String bruh = world + "bruh";
-        return world;
-        return "World";
-        return world + "World";
+        int myInt = 0;
+        myInt += demo;
+        myInt = demo2;
+//         return world;
+//         return "World";
+//         return world + "World";
     }
 }
