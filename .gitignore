@@ -13,3 +13,4 @@ eggs/
 /Output/ast_report.txt
 /Output/report.txt
 /Stanza
+/Utils/NLP/Stanza/Stanza
