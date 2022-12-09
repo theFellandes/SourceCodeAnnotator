@@ -3,20 +3,25 @@ from dataclasses import dataclass
 from Utils.reader import Reader
 from Utils.writer import Writer
 from Utils.NLP.Stanza import stanza_module
+from Utils.NLP.Stanza.stanza_module import NameAnalyzer
 from conf import settings
+
 
 
 @dataclass
 class BaseController:
 
     source_code_file_name: str = ''
+    source_code_string: str = ''
+    name_analyzer: NameAnalyzer = stanza_module.NameAnalyzer()
+    writer: Writer = Writer(settings.REPORT_PATH)
 
     def __post_init__(self):
-        self.source_code_path = settings.get_path(self.source_code_file_name)
-        self.reader = Reader(self.source_code_path)
-        self.writer = Writer(settings.REPORT_PATH)
-        self.source_code_string = self.reader.read_in_string()
-        self.name_analyzer = stanza_module.NameAnalyzer()
+       if self.source_code_string == '':
+            self.source_code_path = settings.get_path(self.source_code_file_name)
+            self.reader = Reader(self.source_code_path)
+            self.source_code_string = self.reader.read_in_string()
+
 
     def get_single_line_comments(self) -> list:
         """ Returns single line comments for the language """
