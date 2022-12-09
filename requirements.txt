@@ -5,3 +5,4 @@ tqdm~=4.64.1
 astpretty~=3.0.0
 pprintpp~=0.4.0
 stanza~=1.4.2
+Flask~=2.2.2
