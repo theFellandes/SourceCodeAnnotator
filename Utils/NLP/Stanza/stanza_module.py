@@ -55,9 +55,11 @@ class NameAnalyzer:
                     coherent_sentence[word.pos] = f'{word.text.capitalize()}'
                 else:
                     coherent_sentence[word.pos] = coherent_sentence.get(word.pos) + f'{word.text.capitalize()} '
-        return f"{coherent_sentence.get('VERB')}s {coherent_sentence.get('CLASS')} class' " \
-               f"{coherent_sentence.get('NOUN').rstrip()}"
 
+        if coherent_sentence.get('VERB') is not None:
+            return f"{coherent_sentence.get('VERB')}s {coherent_sentence.get('CLASS')} class' " \
+                   f"{coherent_sentence.get('NOUN').rstrip()}"
+        return f"{coherent_sentence.get('CLASS')} class' {coherent_sentence.get('NOUN').rstrip()}"
 
 if __name__ == '__main__':
     na = NameAnalyzer()
@@ -66,7 +68,7 @@ if __name__ == '__main__':
     # print(na.parse_function_name('nameAnalyser'))
     # print(na.get_generated_comment('getUserId'))
     print(na.get_generated_comments_list('Employee', 'getUserId')) # Returns userId of Employee Class
-    # print(na.get_generated_comment('userIdSetter'))
+    print(na.get_generated_comments_list('Employee', 'userId'))
 
     # Beyni yanan kısımlar
     # print(na.get_generated_comment('userIdSet'))
