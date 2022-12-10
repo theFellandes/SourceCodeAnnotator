@@ -47,19 +47,19 @@ class NameAnalyzer:
     def generate_comment(class_name: str, sentences: list) -> str:
         coherent_sentence = {
             'CLASS': class_name,
-            'NOUN': ''
+            'REST': ''
         }
         for sentence in sentences:
             for word in sentence.words:
                 if word.pos == 'VERB':
                     coherent_sentence[word.pos] = f'{word.text.capitalize()}'
                 else:
-                    coherent_sentence[word.pos] = coherent_sentence.get(word.pos) + f'{word.text.capitalize()} '
+                    coherent_sentence['REST'] = coherent_sentence.get('REST') + f'{word.text.capitalize()} '
 
         if coherent_sentence.get('VERB') is not None:
             return f"{coherent_sentence.get('VERB')}s {coherent_sentence.get('CLASS')} class' " \
-                   f"{coherent_sentence.get('NOUN').rstrip()}"
-        return f"{coherent_sentence.get('CLASS')} class' {coherent_sentence.get('NOUN').rstrip()}"
+                   f"{coherent_sentence.get('REST').rstrip()}"
+        return f"{coherent_sentence.get('CLASS')} class' {coherent_sentence.get('REST').rstrip()}"
 
 if __name__ == '__main__':
     na = NameAnalyzer()
@@ -67,8 +67,9 @@ if __name__ == '__main__':
     # print(na.parse_function_name('getAnotherUserId'))
     # print(na.parse_function_name('nameAnalyser'))
     # print(na.get_generated_comment('getUserId'))
-    print(na.get_generated_comments_list('Employee', 'getUserId')) # Returns userId of Employee Class
-    print(na.get_generated_comments_list('Employee', 'userId'))
+    # print(na.get_generated_comments_list('Employee', 'getUserId')) # Returns userId of Employee Class
+    print(na.get_generated_comments_list('Employee', 'getUserSet'))
+    print(na.get_generated_comments_list('Math', 'power'))
 
     # Beyni yanan kısımlar
     # print(na.get_generated_comment('userIdSet'))
