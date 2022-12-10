@@ -17,10 +17,14 @@ class BaseController:
     writer: Writer = Writer(settings.REPORT_PATH)
 
     def __post_init__(self):
-       if self.source_code_string == '':
-            self.source_code_path = settings.get_path(self.source_code_file_name)
-            self.reader = Reader(self.source_code_path)
-            self.source_code_string = self.reader.read_in_string()
+        try:
+            if self.source_code_string == '':
+                self.source_code_path = settings.get_path(self.source_code_file_name)
+                self.reader = Reader(self.source_code_path)
+                self.source_code_string = self.reader.read_in_string()
+        except FileNotFoundError as file_not_found:
+            self.source_code_string = ''
+            print(file_not_found.strerror)
 
 
     def get_single_line_comments(self) -> list:
