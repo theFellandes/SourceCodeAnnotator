@@ -24,13 +24,11 @@ def source_code_annotator():
 
 
 def read_file():
-    print("Read File Input:")
     file = request.files['source_code']
     return file.filename, file.read().decode('utf-8')
 
 
 def read_text():
-    print("Read Text Input:")
     source_code_text = request.form['source_code_text']
     return source_code_text
 
