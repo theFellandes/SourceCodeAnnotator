@@ -9,6 +9,7 @@ from conf import settings
 class ControllerFactory:
 
     source_code_file_name: str
+    source_code_string: str = ''
 
     def get_controller(self):
         match settings.get_file_extension(self.source_code_file_name):
