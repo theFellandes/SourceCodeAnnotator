@@ -9,6 +9,7 @@ from googlesearch import search
 @dataclass
 class WebScraper:
     query: str
+    doc_site: str = ''
     google_link: str = "https://www.google.com/search?q="
 
     @staticmethod
@@ -33,14 +34,13 @@ class WebScraper:
     def get_results(self):
         """ Returns response generated from google """
         query = urllib.parse.quote_plus(self.query)
-        response = self.get_source(self.google_link + query)
+        response = self.get_source(self.google_link + query + self.doc_site)
         return response
 
     @staticmethod
     def parse_results(response):
         """ Returns list of items retrieved from css_identifiers """
         css_identifier_result = ".tF2Cxc"
-        css_identifier_title = "h3"
         css_identifier_link = ".yuRUbf a"
         css_identifier_text = ".VwiC3b"
 
@@ -51,7 +51,6 @@ class WebScraper:
         for result in results:
             try:
                 item = {
-                    'title': result.find(css_identifier_title, first=True).text,
                     'link': result.find(css_identifier_link, first=True).attrs['href'],
                     'text': result.find(css_identifier_text, first=True).text
                 }
@@ -92,9 +91,32 @@ class WebScraper:
 
 
 if __name__ == '__main__':
-    web_scraper = WebScraper('System.out.println()')
-    print(web_scraper.search_google())
-    print("")
-    print("")
-    print("")
-    print(web_scraper.scrape_google())
+    web_scraper = WebScraper('println()', 'site:docs.oracle.com')
+    print(web_scraper.search_google()[0])
+    web_scraper.query = 'indexOf()'
+    print(web_scraper.search_google()[0])
+    web_scraper.query = 'toCharArray()'
+    print(web_scraper.search_google()[0])
+    web_scraper.query = 'replace()'
+    print(web_scraper.search_google()[0])
+    web_scraper.query = 'substring()'
+    print(web_scraper.search_google()[0])
+    web_scraper.query = 'getUserId()'
+    print(web_scraper.search_google()[0])
+    print(" ")
+    print(" ")
+    print(" ")
+    print(" ")
+    print(" ")
+    print("Python")
+    web_scraper_python = WebScraper('print()', 'site:docs.python.org')
+    print(web_scraper_python.search_google()[0])
+    web_scraper_python.query = 'input()'
+    print(web_scraper_python.search_google()[0])
+    web_scraper_python.query = 'len()'
+    print(web_scraper_python.search_google()[0])
+    web_scraper_python.query = 'replace()'
+    print(web_scraper_python.search_google()[0])
+    web_scraper_python.query = 'split()'
+    print(web_scraper_python.search_google()[0])
+
