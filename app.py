@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request
+import os
+import openai
 
 from Controller.annotator_controller import AnnotatorController
-from Controller.java_controller import JavaController
-from Controller.python_controller import PythonController
-from conf import settings
+from Controller.controller_factory import ControllerFactory
 
 app = Flask(__name__)
-
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route('/', methods=['GET', 'POST'])
 def source_code_annotator():
@@ -23,6 +23,23 @@ def source_code_annotator():
     return render_template('index.html')
 
 
+@app.route('/openai', methods=['GET', 'POST'])
+def openai_request():
+    openai.Model.list()
+    if request.method == "POST":
+        animal = request.form["animal"]
+        response = openai.Completion.create(
+                model="text-davinci-003",
+                prompt="Say this is a test",
+                max_tokens=7,
+                temperature=0
+        )
+        return redirect(url_for("index", result=response.choices[0].text))
+
+    result = request.args.get("result")
+    return render_template("animal.html", result=result)
+
+
 def read_file():
     file = request.files['source_code']
     return file.filename, file.read().decode('utf-8')
@@ -34,18 +51,10 @@ def read_text():
 
 
 def annotate_source_code(filename: str, source_code_string: str):
-    annotator_controller = AnnotatorController(get_controller(filename, source_code_string))
+    controller = ControllerFactory(filename, source_code_string).get_controller()
+    annotator_controller = AnnotatorController(controller)
     annotator_controller.generate_report()
 
-
-def get_controller(source_code_file_name: str, source_code_string: str):
-    match settings.get_file_extension(source_code_file_name):
-        case 'java':
-            return JavaController(source_code_file_name, source_code_string)
-        case 'py':
-            return PythonController(source_code_file_name, source_code_string)
-        case _:
-            return NotImplementedError
 
 def get_file_extension():
     # TODO NOT IMPLEMENTED!
