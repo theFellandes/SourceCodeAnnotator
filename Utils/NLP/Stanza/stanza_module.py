@@ -57,27 +57,12 @@ class NameAnalyzer:
                     coherent_sentence['REST'] = coherent_sentence.get('REST') + f'{word.text.capitalize()} '
 
         if coherent_sentence.get('VERB') is not None:
-            return f"{coherent_sentence.get('VERB')}s {coherent_sentence.get('CLASS')} class' " \
-                   f"{coherent_sentence.get('REST').rstrip()}"
-        return f"{coherent_sentence.get('CLASS')} class' {coherent_sentence.get('REST').rstrip()}"
+            return f"{coherent_sentence.get('VERB')}s {coherent_sentence.get('REST')}" \
+                   f"in {coherent_sentence.get('CLASS')} class"
+        return f"{coherent_sentence.get('REST').rstrip()} in {coherent_sentence.get('CLASS')} class"
 
 if __name__ == '__main__':
     na = NameAnalyzer()
-    # na.parse_function_name('getUserId')
-    # print(na.parse_function_name('getAnotherUserId'))
-    # print(na.parse_function_name('nameAnalyser'))
-    # print(na.get_generated_comment('getUserId'))
     # print(na.get_generated_comments_list('Employee', 'getUserId')) # Returns userId of Employee Class
     print(na.get_generated_comments_list('Employee', 'getUserSet'))
-    print(na.get_generated_comments_list('Math', 'power'))
 
-    # Beyni yanan kısımlar
-    # print(na.get_generated_comment('userIdSet'))
-    # print(na.get_generated_comment('generateUserId'))
-    # print(na.get_generated_comment('increment_number_by_one'))
-
-    # Boss fight #
-    # print(na.get_generated_comment('nameAnalyser')) # Analyses the name?
-    # print(na.get_generated_comment('quickSort')) # Performs quick sort algorithm?
-    # We could store generic algorithm names in a list, so that program flow
-    # can be bypassed and adds that comment static.
