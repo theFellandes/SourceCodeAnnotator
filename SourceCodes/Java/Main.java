@@ -1,6 +1,6 @@
 package com.company;
 
-public class Main {
+public class myClass extends baseClass {
 
     public static void main(String[] args) {
         System.out.println("Hello");
@@ -8,6 +8,7 @@ public class Main {
     }
 
     public static int function(int param1) {
+        super.myFunction();
         int bruh = param1 + 5 + 10;
         int bruh2 = param1;
         return 10;
