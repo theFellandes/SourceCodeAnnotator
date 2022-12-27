@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+import re
 import requests
 import urllib
 from requests_html import HTMLSession
@@ -90,33 +91,48 @@ class WebScraper:
         return links
 
 
+    @staticmethod
+    def traverse_result(search_result):
+        for result in search_result:
+            return re.findall('The [a-zA-Z]+\(\)', result.strip())
+
+
 if __name__ == '__main__':
     web_scraper = WebScraper('println()', 'site:docs.oracle.com')
     print(web_scraper.search_google()[0])
     web_scraper.query = 'indexOf()'
     print(web_scraper.search_google()[0])
-    web_scraper.query = 'toCharArray()'
-    print(web_scraper.search_google()[0])
-    web_scraper.query = 'replace()'
-    print(web_scraper.search_google()[0])
-    web_scraper.query = 'substring()'
-    print(web_scraper.search_google()[0])
-    web_scraper.query = 'getUserId()'
-    print(web_scraper.search_google()[0])
-    print(" ")
-    print(" ")
-    print(" ")
-    print(" ")
-    print(" ")
+    # web_scraper.query = 'toCharArray()'
+    # print(web_scraper.search_google()[0])
+    # web_scraper.query = 'replace()'
+    # print(web_scraper.search_google()[0])
+    # web_scraper.query = 'substring()'
+    # print(web_scraper.search_google()[0])
+    # web_scraper.query = 'getUserId()'
+    # print(web_scraper.search_google()[0])
+    # print(" ")
+    # print(" ")
+    # print(" ")
+    # print(" ")
+    # print(" ")
     print("Python")
-    web_scraper_python = WebScraper('print()', 'site:docs.python.org')
-    print(web_scraper_python.search_google()[0])
+    web_scraper_python = WebScraper('print()',
+                                    'site:docs.python.org/3/library/functions.html')
+    print(web_scraper_python.search_google()[0].get('text').partition("."))
     web_scraper_python.query = 'input()'
-    print(web_scraper_python.search_google()[0])
+    a = web_scraper_python.search_google()[0].get('text').partition(".")
+    print(web_scraper_python.search_google()[0].get('text').partition("."))
+    print(web_scraper_python.traverse_result(a))
     web_scraper_python.query = 'len()'
-    print(web_scraper_python.search_google()[0])
+    a = web_scraper_python.search_google()[0].get('text').partition(".")
+    print(web_scraper_python.search_google()[0].get('text').partition("."))
+    print(web_scraper_python.traverse_result(a))
     web_scraper_python.query = 'replace()'
-    print(web_scraper_python.search_google()[0])
+    a = web_scraper_python.search_google()[0].get('text').partition(".")
+    print(web_scraper_python.search_google()[0].get('text').partition("."))
+    print(web_scraper_python.traverse_result(a))
     web_scraper_python.query = 'split()'
-    print(web_scraper_python.search_google()[0])
+    a = web_scraper_python.search_google()[0].get('text').partition(".")
+    print(web_scraper_python.search_google()[0].get('text').partition("."))
+    print(web_scraper_python.traverse_result(a))
 

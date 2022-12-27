@@ -44,6 +44,12 @@ class JavaAST(ASTBase):
         print(f'{return_statement}')
 
 
+    # def get_super_method_invocation(self):
+    #
+    #     try:
+    #         super_method_check = self.__tree
+
+
 
     @ast_to_file
     @pretty_object

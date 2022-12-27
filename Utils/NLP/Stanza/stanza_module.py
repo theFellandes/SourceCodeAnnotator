@@ -46,23 +46,29 @@ class NameAnalyzer:
     @staticmethod
     def generate_comment(class_name: str, sentences: list) -> str:
         coherent_sentence = {
-            'CLASS': class_name,
+            'CLASS_COMMENT': f'in {class_name} class' if class_name != '' else '',
+            'VERB': '',
             'REST': ''
         }
+
         for sentence in sentences:
             for word in sentence.words:
                 if word.pos == 'VERB':
-                    coherent_sentence[word.pos] = f'{word.text.capitalize()}'
+                    if coherent_sentence['VERB'] == '':
+                        coherent_sentence['VERB'] = f'{word.text.capitalize()}s '
+                    else:
+                        coherent_sentence['VERB'] += f'{word.text.capitalize()} '
                 else:
-                    coherent_sentence['REST'] = coherent_sentence.get('REST') + f'{word.text.capitalize()} '
+                    coherent_sentence['REST'] += f'{word.text.capitalize()} '
 
         if coherent_sentence.get('VERB') is not None:
-            return f"{coherent_sentence.get('VERB')}s {coherent_sentence.get('REST')}" \
-                   f"in {coherent_sentence.get('CLASS')} class"
-        return f"{coherent_sentence.get('REST').rstrip()} in {coherent_sentence.get('CLASS')} class"
+            return f"{coherent_sentence.get('VERB')}{coherent_sentence.get('REST')}" \
+                   f"{coherent_sentence.get('CLASS_COMMENT')}".rstrip()
+        return f"{coherent_sentence.get('REST').rstrip()}{coherent_sentence.get('CLASS_COMMENT')}".rstrip()
 
 if __name__ == '__main__':
     na = NameAnalyzer()
     # print(na.get_generated_comments_list('Employee', 'getUserId')) # Returns userId of Employee Class
     print(na.get_generated_comments_list('Employee', 'getUserSet'))
+    print(na.get_generated_comments_list('', 'getUserSet'))
 

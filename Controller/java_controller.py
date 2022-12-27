@@ -51,6 +51,6 @@ class JavaController(BaseController):
 
     def generate_comment_from_function_name(self):
         list_of_function_names = self.java_ast.get_list_of_function_names()
-        list_of_generated_comments = [self.name_analyzer.get_generated_comment(function_name)
+        list_of_generated_comments = [self.name_analyzer.get_generated_comments_list(function_name)
                                       for function_name in list_of_function_names]
         return list_of_generated_comments
