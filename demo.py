@@ -2,7 +2,7 @@ from Controller.java_controller import JavaController
 
 
 def main():
-    controller = JavaController("Main.java")
+    controller = JavaController("FibonacciForLoop.java")
     cu = controller.get_ast()
     print(cu)
     functions = cu.types[0].body
@@ -10,7 +10,8 @@ def main():
         java_function = JavaFunction(function)
         for line in function.body:
             java_function.get_variable_names_where_params_are_used(line)
-            comment_loops(line)
+            comment_loop(line)
+            print("BRUUUUUUUUUUUH= " + comment_if(line))
         print(java_function.params_used)
     # function = JavaFunction(cu.types[0].body[1])
     # method = cu.types[0].body[1]
@@ -104,7 +105,7 @@ def get_variables_used_in_assignment_expression(expression):
     return variables
 
 
-def comment_loops(statement):
+def comment_loop(statement):
     if type(statement).__name__ == "ForStatement":
         iter_condition = stringify_statement(statement.control.condition)
         iter_declaration = stringify_statement(statement.control.init)
@@ -131,6 +132,29 @@ def stringify_statement(statement):
     elif type(statement).__name__ == "Literal":
         return statement.value
     return f"{left_side} {operator} {right_side}"
+
+
+def comment_if(statement):
+    if type(statement).__name__ != "IfStatement":
+        return ""
+    return create_if_comment(statement)
+
+
+def create_if_comment(statement, first_statement=True):
+    conditions = []
+    else_exists = False
+    if type(statement).__name__ == "IfStatement":
+        conditions.append(stringify_statement(statement.condition))
+        if statement.else_statement:
+            condition, else_exists = create_if_comment(statement.else_statement, False)
+            conditions.extend(condition)
+
+    if type(statement).__name__ == "BlockStatement":
+        return conditions, True
+    if not first_statement:
+        return conditions, else_exists
+    or_else = " or else, " if else_exists else ", "
+    return f"Checks if {', '.join(map(str, conditions)) + or_else}"
 
 
 if __name__ == "__main__":
