@@ -34,7 +34,7 @@ class JavaAST(ASTBase):
 
     def get_return_value(self):
         if_stack = []
-        method = self.__tree.types[0].body[1]
+        method = self.__tree.types[0].body[0]
         print(f'\n{method.body[0]}')
         condition = method.body[0].condition
         comparison = f'Compares {condition.qualifier} to {condition.arguments[0].value}'

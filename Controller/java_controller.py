@@ -39,6 +39,9 @@ class JavaController(BaseController):
         )
         return doc_comments_list
 
+    def get_return_value(self):
+        return self.java_ast.get_return_value()
+
     def generate_report(self):
         report_controller = ReportController(self.writer, self)
         report_controller.generate_report()

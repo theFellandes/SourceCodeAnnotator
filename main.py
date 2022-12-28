@@ -13,7 +13,8 @@ def main():
     # print(repr(annotator_controller.base_controller.source_code_string))
     # print(annotator_controller.get_single_line_comments())
     # print(annotator_controller.generate_comment())
-    print(annotator_controller.get_ast())
+    # print(annotator_controller.get_ast())
+    print(annotator_controller.get_return_value())
     # print(annotator_controller.generate_comment_from_function_name())
 
     # annotator_controller.generate_report()

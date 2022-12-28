@@ -36,6 +36,9 @@ class BaseController:
     def get_doc_comments(self) -> list:
         """ Returns multi line comments for the language """
 
+    def get_return_value(self) -> str:
+        """ Returns the return value of the function """
+
     def generate_report(self):
         """ Generates report for comments """
 

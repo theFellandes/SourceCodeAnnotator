@@ -17,6 +17,9 @@ class AnnotatorController:
     def get_doc_comments(self):
         return self.base_controller.get_doc_comments()
 
+    def get_return_value(self):
+        return self.base_controller.get_return_value()
+
     def generate_report(self):
         self.base_controller.generate_report()
 
@@ -24,7 +27,7 @@ class AnnotatorController:
         self.base_controller.write_ast_to_file()
 
     def get_ast(self):
-        self.base_controller.get_ast()
+        return self.base_controller.get_ast()
 
     def generate_comment_from_function_name(self):
         return self.base_controller.generate_comment_from_function_name()
