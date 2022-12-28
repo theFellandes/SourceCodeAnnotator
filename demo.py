@@ -10,6 +10,7 @@ def main():
         java_function = JavaFunction(function)
         for line in function.body:
             java_function.get_variable_names_where_params_are_used(line)
+            comment_loops(line)
         print(java_function.params_used)
     # function = JavaFunction(cu.types[0].body[1])
     # method = cu.types[0].body[1]
@@ -101,6 +102,35 @@ def get_variables_used_in_assignment_expression(expression):
     elif type(value).__name__ == "MemberReference":
         return [value.member]
     return variables
+
+
+def comment_loops(statement):
+    if type(statement).__name__ == "ForStatement":
+        iter_condition = stringify_statement(statement.control.condition)
+        iter_declaration = stringify_statement(statement.control.init)
+        return f"Iterates from {iter_declaration} until {iter_condition} is false, "
+    elif type(statement).__name__ == "WhileStatement":
+        iter_condition = stringify_statement(statement.condition)
+        return f"Loops until {iter_condition} is false, "
+
+
+def stringify_statement(statement):
+    left_side = ""
+    right_side = ""
+    operator = ""
+    if type(statement).__name__ == "VariableDeclaration":
+        left_side = statement.declarators[0].name
+        right_side = stringify_statement(statement.declarators[0].initializer)
+        operator = "="
+    if type(statement).__name__ == "BinaryOperation":
+        left_side = stringify_statement(statement.operandl)
+        right_side = stringify_statement(statement.operandr)
+        operator = statement.operator
+    elif type(statement).__name__ == "MemberReference":
+        return statement.member
+    elif type(statement).__name__ == "Literal":
+        return statement.value
+    return f"{left_side} {operator} {right_side}"
 
 
 if __name__ == "__main__":

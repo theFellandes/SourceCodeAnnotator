@@ -15,11 +15,15 @@ public class myClass extends baseClass {
     }
 
     public static String getWorld(int demo, int demo2){
-        String world = "Hello" + "World";
+        String world = "Hello" + "World" + " Bruh";
         String bruh = world + "bruh";
         int myInt = 0;
         myInt += demo;
         myInt = demo2;
+        for (int bruhMoment = myInt + 1; bruhMoment <= bruh + 2; i++) {
+        }
+        while (bruhMoment > myInt) {
+        }
 //         return world;
 //         return "World";
 //         return world + "World";
