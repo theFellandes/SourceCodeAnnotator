@@ -5,11 +5,7 @@ let lazyDocButton = document.querySelector("#lazyDocButton");
 let inputForm = document.querySelector("#inputForm");
 
 lazyDocButton.addEventListener("click", function () {
-    fetch("/lazydoc", {method: "POST"})
-        .then(data => {
-            console.log(data);
-            sourceOutput.value = data;
-        })
+    inputForm.submit();
 });
 
 chooseFileButton.addEventListener("change", function () {

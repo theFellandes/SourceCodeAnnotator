@@ -10,8 +10,8 @@ def main():
         java_function = JavaFunction(function)
         for line in function.body:
             java_function.get_variable_names_where_params_are_used(line)
-            comment_loop(line)
-            print("BRUUUUUUUUUUUH= " + comment_if(line))
+            print(comment_loop(line))
+            # print("BRUUUUUUUUUUUH= " + comment_if(line))
         print(java_function.params_used)
     # function = JavaFunction(cu.types[0].body[1])
     # method = cu.types[0].body[1]
@@ -112,7 +112,7 @@ def comment_loop(statement):
         return f"Iterates from {iter_declaration} until {iter_condition} is false, "
     elif type(statement).__name__ == "WhileStatement":
         iter_condition = stringify_statement(statement.condition)
-        return f"Loops until {iter_condition} is false, "
+        return f"Loops while {iter_condition}, "
 
 
 def stringify_statement(statement):
@@ -159,3 +159,5 @@ def create_if_comment(statement, first_statement=True):
 
 if __name__ == "__main__":
     main()
+# TODO: Class variable and function count and inheritance.
+# TODO:

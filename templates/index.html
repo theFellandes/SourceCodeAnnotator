@@ -27,10 +27,10 @@
     <div class="content">
         <div class="source-code-section">
             <h3 style="color: #88ff20;">Source Code</h3>
-            <form id="inputForm" enctype="multipart/form-data" method="post" action="/lazydoc" style="min-height: 0px;">
-                <textarea spellcheck="false" name="sourceCode" id="sourceText" cols="80" rows="35"
+            <form id="inputForm" enctype="multipart/form-data" method="POST" action="/lazydoc" style="min-height: 0px;">
+                <textarea spellcheck="false" name="sourceText" id="sourceText" cols="80" rows="35"
                     style="height: 100%;">
-{% if sourceCode %}{{sourceCode}}
+{% if sourceText %}{{sourceText}}
 {% else %}package com.company;
  
 public class myClass extends baseClass {
@@ -69,32 +69,34 @@ public class myClass extends baseClass {
         </div>
         <div class="output-section">
             <h3 style="color: #fff67b;">Annotated Output</h3>
-            <form action="">
-                <textarea spellcheck="false" name="sourceCode" id="sourceOutput" cols="80" rows="35">
-                package com.company;
-                
-                public class myClass extends baseClass {
-                
-                    public static void main(String[] args) {
-                        System.out.println("Hello");
-                        printWorld();
-                    }
-                
-                    public static int function(int param1) {
-                        super.myFunction();
-                        int bruh = param1 + 5 + 10;
-                        int bruh2 = param1;
-                        return 10;
-                    }
-                
-                    public static String getWorld(int demo, int demo2){
-                        String world = "Hello" + "World";
-                        String bruh = world + "bruh";
-                        int myInt = 0;
-                        myInt += demo;
-                        myInt = demo2;
-                    }
-                }
+            <form id="outputForm" enctype="multipart/form-data" style="min-height: 0px;">
+                <textarea spellcheck="false" name="sourceCode" id="sourceOutput" cols="80" rows="35" style="height: 100%;">
+{% if sourceOutput %}{{sourceOutput}}
+{% else %}package com.company;
+ 
+public class myClass extends baseClass {
+ 
+    public static void main(String[] args) {
+        System.out.println("Hello");
+        printWorld();
+    }
+ 
+    public static int function(int param1) {
+        super.myFunction();
+        int bruh = param1 + 5 + 10;
+        int bruh2 = param1;
+        return 10;
+    }
+ 
+    public static String getWorld(int demo, int demo2){
+        String world = "Hello" + "World";
+        String bruh = world + "bruh";
+        int myInt = 0;
+        myInt += demo;
+        myInt = demo2;
+    }
+}
+                    {% endif %}
                 </textarea>
             </form>
             <div style="background-color: #87DBDD;" class="button">Download</div>

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import os
 import openai
 
@@ -45,8 +45,8 @@ def read_file():
 
 @app.route('/lazydoc', methods=['GET', 'POST'])
 def read_text():
-    source_code_text = request.form['sourceCode']
-    return source_code_text
+    source_code_text = request.form['sourceText']
+    return render_template('index.html', sourceText=source_code_text, sourceOutput="Bruh")
 
 
 def annotate_source_code(filename: str, source_code_string: str):
