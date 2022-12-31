@@ -2,24 +2,53 @@ from Controller.java_controller import JavaController
 
 
 def main():
-    controller = JavaController("Main.java")
+    controller = JavaController("FibonacciForLoop.java")
     cu = controller.get_ast()
     print(cu)
-    functions = cu.types[0].body
-    for function in functions:
-        java_function = JavaFunction(function)
-        for line in function.body:
-            java_function.get_variable_names_where_params_are_used(line)
-            print(comment_loop(line))
-            # print("BRUUUUUUUUUUUH= " + comment_if(line))
-        print(java_function.params_used)
-    # function = JavaFunction(cu.types[0].body[1])
+    members = cu.types[0].body
+    function_count = 0
+    field_count = 0
+    inherits_from = ""
+    implements = []
+
+    if cu.types[0].extends:
+        inherits_from = cu.types[0].extends.name
+    if cu.types[0].implements:
+        for implement in cu.types[0].implements:
+            implements.append(implement.name)
+
+    for member in members:
+        if type(member).__name__ == "MethodDeclaration":
+            comment_functions(member)
+            function_count += 1
+        if type(member).__name__ == "FieldDeclaration":
+            field_count += len(member.declarators)
+
+    inherit_string = f"\n* Inherits from {inherits_from}" if inherits_from else ""
+    implements_string = f"\n* Implements {', '.join(map(str, implements))}" if implements else ""
+
+    class_comment = f"/**\n* {cu.types[0].name}{inherit_string}{implements_string}\n* Has {function_count} method(s)" \
+                    f"\n* Has {field_count} attribute(s)\n*\n* @author LazyDoc\n*/"
+    print(class_comment)
+
+
+# function = JavaFunction(cu.types[0].body[1])
     # method = cu.types[0].body[2]
     # print(method, "\n\n")
     # comment_return(method)
     # for statement_type in method.body:
     #     if type(statement_type).__name__ == "ReturnStatement":
     #         print(type(statement_type.expression).__name__)
+
+
+def comment_functions(function):
+    java_function = JavaFunction(function)
+    for line in function.body:
+        java_function.get_variable_names_where_params_are_used(line)
+        print(comment_loop(line))
+        print(comment_switch(line))
+        print(comment_if(line))
+    print(java_function.params_used)
 
 
 class JavaFunction:
@@ -107,6 +136,7 @@ def comment_loop(statement):
     elif type(statement).__name__ == "WhileStatement":
         iter_condition = stringify_statement(statement.condition)
         return f"Loops while {iter_condition}, "
+    return ""
 
 
 def stringify_statement(statement):
@@ -151,6 +181,26 @@ def create_if_comment(statement, first_statement=True):
     return f"Checks if {', '.join(map(str, conditions)) + or_else}"
 
 
+def comment_switch(statement):
+    if type(statement).__name__ == "SwitchStatement":
+        expression = stringify_statement(statement.expression)
+        case_comment = ""
+        for switch_case in statement.cases:
+            if switch_case.case:
+                case_comment += f"If {expression} is {stringify_statement(switch_case.case[0])}, "
+            else:
+                case_comment += f"Else "
+        return case_comment
+    return ""
+
+
+def comment_class(class_declaration, package=""):
+
+    print("Bruh moment")
+
+
 if __name__ == "__main__":
     main()
+
 # TODO: Class variable and function count and inheritance.
+# TODO: Put function comments together and place it into the file.
