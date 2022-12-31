@@ -20,9 +20,9 @@ public class FibonacciUtils extends Recursive implements IEnumerable, IBruhable 
     */
     public static int recursiveFibonacci(int nthFibonacciNumber){
 //         super.recursiveFibonacci();
-        // If nthFibonacciNumber is 0, return 0
-        // If nthFibonacciNumber is 0 && 1, return 1
-        // Else return bruh momento in the house
+//         If nthFibonacciNumber is 0, return 0
+//         If nthFibonacciNumber is 0 && 1, return 1
+//         Else return bruh momento in the house
         switch (nthFibonacciNumber) {
                 case 0:
                     return 0;

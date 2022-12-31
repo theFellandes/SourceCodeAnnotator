@@ -28,7 +28,7 @@ def main():
     implements_string = f"\n* Implements {', '.join(map(str, implements))}" if implements else ""
 
     class_comment = f"/**\n* {cu.types[0].name}{inherit_string}{implements_string}\n* Has {function_count} method(s)" \
-                    f"\n* Has {field_count} attribute(s)\n*\n* @author LazyDoc\n*/"
+                    f"\n* Has {field_count} attribute(s)\n*/"
     print(class_comment)
 
 
@@ -202,5 +202,4 @@ def comment_class(class_declaration, package=""):
 if __name__ == "__main__":
     main()
 
-# TODO: Class variable and function count and inheritance.
 # TODO: Put function comments together and place it into the file.
