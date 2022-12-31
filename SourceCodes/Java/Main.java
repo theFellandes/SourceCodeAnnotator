@@ -24,8 +24,8 @@ public class myClass extends baseClass {
         }
         while (bruhMoment > myInt) {
         }
-//         return world;
-//         return "World";
-//         return world + "World";
+        return world;
+        return "World";
+        return world + "World";
     }
 }
