@@ -203,3 +203,8 @@ if __name__ == "__main__":
     main()
 
 # TODO: Put function comments together and place it into the file.
+# TODO: ChatGPT communication.
+# TODO: Super function commenting
+# TODO: Recursive function commenting
+# TODO: Commenting statements' bodies
+# TODO: Web Crawling
