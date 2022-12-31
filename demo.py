@@ -2,7 +2,7 @@ from Controller.java_controller import JavaController
 
 
 def main():
-    controller = JavaController("FibonacciForLoop.java")
+    controller = JavaController("Main.java")
     cu = controller.get_ast()
     print(cu)
     functions = cu.types[0].body
@@ -14,7 +14,7 @@ def main():
             # print("BRUUUUUUUUUUUH= " + comment_if(line))
         print(java_function.params_used)
     # function = JavaFunction(cu.types[0].body[1])
-    # method = cu.types[0].body[1]
+    # method = cu.types[0].body[2]
     # print(method, "\n\n")
     # comment_return(method)
     # for statement_type in method.body:
@@ -69,13 +69,7 @@ class JavaFunction:
 def comment_return(method):
     for statement_type in method.body:
         if type(statement_type).__name__ == "ReturnStatement":
-            if type(statement_type.expression).__name__ == "MemberReference":
-                print("Returns " + statement_type.expression.member)
-            if type(statement_type.expression).__name__ == "Literal":
-                print("Returns " + statement_type.expression.value)
-            if type(statement_type.expression).__name__ == "BinaryOperation":
-                print("Returns", statement_type.expression.operandl.member,
-                      statement_type.expression.operator, statement_type.expression.operandr.value)
+            print(f"Returns {stringify_statement(statement_type.expression)}")
 
 
 def get_name_or_value(variable_or_literal, only_get_if_variable=False):
@@ -160,4 +154,3 @@ def create_if_comment(statement, first_statement=True):
 if __name__ == "__main__":
     main()
 # TODO: Class variable and function count and inheritance.
-# TODO:
