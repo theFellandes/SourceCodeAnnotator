@@ -30,8 +30,7 @@
             <form id="inputForm" enctype="multipart/form-data" method="POST" action="/lazydoc" style="min-height: 0px;">
                 <textarea spellcheck="false" name="sourceText" id="sourceText" cols="80" rows="35"
                     style="height: 100%;">
-{% if sourceText %}{{sourceText}}
-{% else %}package com.company;
+{% if sourceText %}{{sourceText}}{% else %}package com.company;
  
 public class myClass extends baseClass {
  
@@ -54,9 +53,7 @@ public class myClass extends baseClass {
         myInt += demo;
         myInt = demo2;
     }
-}
-                    {% endif %}
-                    </textarea>
+}{% endif %}</textarea>
             </form>
             <div>
                 <input type="file" name="sourceCode" id="fileUpload" style="display:none;">
@@ -69,10 +66,9 @@ public class myClass extends baseClass {
         </div>
         <div class="output-section">
             <h3 style="color: #fff67b;">Annotated Output</h3>
-            <form id="outputForm" enctype="multipart/form-data" style="min-height: 0px;">
+            <form id="outputForm" enctype="multipart/form-data" method="POST" action="/download" style="min-height: 0px;">
                 <textarea spellcheck="false" name="sourceOutput" id="sourceOutput" cols="80" rows="35" style="height: 100%;">
-{% if sourceOutput %}{{sourceOutput}}
-{% else %}package com.company;
+{% if sourceOutput %}{{sourceOutput}}{% else %}package com.company;
  
 public class myClass extends baseClass {
  
@@ -95,11 +91,9 @@ public class myClass extends baseClass {
         myInt += demo;
         myInt = demo2;
     }
-}
-                    {% endif %}
-                </textarea>
+}{% endif %}</textarea>
             </form>
-            <div style="background-color: #87DBDD;" class="button"><a href="/download">Download</a></div>
+            <div style="background-color: #87DBDD;" class="button" id="downloadButton">Download</div>
         </div>
     </div>
     <!-- <h1>Source Code Annotator</h1>

@@ -49,8 +49,8 @@ def read_text():
     return render_template('index.html', sourceText=source_code_text, sourceOutput="Bruh")
 
 
-@app.route('/download')
-def download_file(download_content = ""):
+@app.route('/download', methods=['GET', 'POST'])
+def download_file():
     if request.form['sourceOutput']:
         download_content = request.form['sourceOutput']
     return Response(
