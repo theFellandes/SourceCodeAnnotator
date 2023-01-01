@@ -45,6 +45,7 @@ def comment_functions(function):
     java_function = JavaFunction(function)
     for line in function.body:
         java_function.get_variable_names_where_params_are_used(line)
+        print(comment_super(line))
         print(comment_loop(line))
         print(comment_switch(line))
         print(comment_if(line))
@@ -194,9 +195,13 @@ def comment_switch(statement):
     return ""
 
 
-def comment_class(class_declaration, package=""):
+def comment_super(statement):
+    if type(statement).__name__ == "StatementExpression":
+        if type(statement.expression).__name__ == "SuperMethodInvocation":
+            super_function = statement.expression.member
+            return f"Calls parent's {super_function} function."
+    return ""
 
-    print("Bruh moment")
 
 
 if __name__ == "__main__":
@@ -204,7 +209,6 @@ if __name__ == "__main__":
 
 # TODO: Put function comments together and place it into the file.
 # TODO: ChatGPT communication.
-# TODO: Super function commenting
 # TODO: Recursive function commenting
 # TODO: Commenting statements' bodies
 # TODO: Web Crawling
