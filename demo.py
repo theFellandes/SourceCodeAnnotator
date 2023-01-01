@@ -19,7 +19,7 @@ def main():
 
     for member in members:
         if type(member).__name__ == "MethodDeclaration":
-            comment_functions(member)
+            print(comment_function(member))
             function_count += 1
         if type(member).__name__ == "FieldDeclaration":
             field_count += len(member.declarators)
@@ -41,15 +41,25 @@ def main():
     #         print(type(statement_type.expression).__name__)
 
 
-def comment_functions(function):
+def comment_function(function):
+    comment = f"\t/**\n\t* "
     java_function = JavaFunction(function)
     for line in function.body:
         java_function.get_variable_names_where_params_are_used(line)
-        print(comment_super(line))
-        print(comment_loop(line))
-        print(comment_switch(line))
-        print(comment_if(line))
-    print(java_function.params_used)
+        comment += comment_super(line)
+        comment += comment_loop(line)
+        comment += comment_switch(line)
+        comment += comment_if(line)
+    params_comment = ""
+    for param, used_variables in java_function.params_used.items():
+        params_comment += f"\n\t* @param {param} is used to find {', '.join(map(str, used_variables))}"
+    comment += f"{params_comment}\n\t*/"
+    return comment
+
+
+def line_break_comment(comment):
+    for index, char in enumerate(comment):
+        pass
 
 
 class JavaFunction:
@@ -206,8 +216,8 @@ def comment_super(statement):
 if __name__ == "__main__":
     main()
 
-# TODO: Put function comments together and place it into the file.
+# TODO: Put function comments together.
+# TODO: Commenting statements' bodies (loop, if, switch)
 # TODO: ChatGPT communication.
 # TODO: Recursive function commenting (so complicated)
-# TODO: Commenting statements' bodies (loop, if, switch)
 # TODO: Web Crawling

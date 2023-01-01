@@ -24,6 +24,7 @@ public class FibonacciUtils extends Recursive implements IEnumerable, IBruhable 
 //         Else return bruh momento in the house
 //         super.recursiveFibonacci();
         recursiveFibonacci();
+        int bruh = nthFibonacciNumber;
         switch (nthFibonacciNumber) {
                 case 0:
                     return 0;
