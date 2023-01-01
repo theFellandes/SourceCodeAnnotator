@@ -203,12 +203,11 @@ def comment_super(statement):
     return ""
 
 
-
 if __name__ == "__main__":
     main()
 
 # TODO: Put function comments together and place it into the file.
 # TODO: ChatGPT communication.
-# TODO: Recursive function commenting
-# TODO: Commenting statements' bodies
+# TODO: Recursive function commenting (so complicated)
+# TODO: Commenting statements' bodies (loop, if, switch)
 # TODO: Web Crawling
