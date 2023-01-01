@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response
 import os
 import openai
 
@@ -47,6 +47,17 @@ def read_file():
 def read_text():
     source_code_text = request.form['sourceText']
     return render_template('index.html', sourceText=source_code_text, sourceOutput="Bruh")
+
+
+@app.route('/download')
+def download_file(download_content = ""):
+    if request.form['sourceOutput']:
+        download_content = request.form['sourceOutput']
+    return Response(
+        download_content,
+        mimetype="text/plain",
+        headers={"Content-disposition":
+                 "attachment; filename=output.java"})
 
 
 def annotate_source_code(filename: str, source_code_string: str):
