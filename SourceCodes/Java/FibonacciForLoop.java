@@ -18,7 +18,7 @@ public class FibonacciUtils extends Recursive implements IEnumerable, IBruhable 
     * Checks if i <OPERATOR> 0, i <OPERATOR> 1 or else
     * @author LazyDoc
     */
-    public static int recursiveFibonacci(int nthFibonacciNumber, int bruhMoment){
+    protected static int recursiveFibonacci(int nthFibonacciNumber, bruh bruhMoment){
 //         If nthFibonacciNumber is 0, return 0
 //         If nthFibonacciNumber is 0 && 1, return 1
 //         Else return bruh momento in the house
@@ -59,5 +59,13 @@ public class FibonacciUtils extends Recursive implements IEnumerable, IBruhable 
         }
         while (demo >= denemeNum) {
         }
+    }
+
+    public static int power(int base, int exponent) {
+        int result = 1;
+        for (int i = 0; i < exponent; i++) {
+            result *= base;
+        }
+        return result;
     }
 }

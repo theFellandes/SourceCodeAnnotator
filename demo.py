@@ -1,4 +1,5 @@
 from Controller.java_controller import JavaController
+import re
 
 
 def main():
@@ -55,6 +56,7 @@ def comment_function(function):
         params_comment += f"\n\t* @param {param} is used to find {', '.join(map(str, used_variables))}"
     comment += f"{params_comment}\n\t*/"
     comment = line_break_comment(comment)
+    # add_comments_to_source_code()
     return comment
 
 
@@ -74,18 +76,33 @@ def line_break_comment(comment):
     return comment
 
 
+def add_comments_to_source_code(source_code, comment, function):
+    modifiers_regex = f"({'|'.join(map(str, function.modifiers))})[ ]+{{{len(function.modifiers)}}}"
+    parameters_regex = f"\([ ]*"
+    for param, param_type in zip(function.params, function.param_types):
+        parameters_regex += f"{param_type}[ ]+{param}[ ]*,[ ]*"
+    parameters_regex = parameters_regex[:-5] + "\)"
+    regex = f"{modifiers_regex}{function.return_type}[ ]+{function.function_name}[ ]*{parameters_regex}"
+    # TODO: Get source code as string
+    # re.fullmatch(regex, )
+
+
 class JavaFunction:
     def __init__(self, function_tree):
         self.function_tree = function_tree
         self.function_name = ""
         self.params = []
+        self.param_types = []
+        self.modifiers = self.function_tree.modifiers
+        self.return_type = self.function_tree.return_type.name
         self.params_used = {}
         self.get_param_names()
         self.get_function_name()
 
     def get_param_names(self):
-        for param_name in self.function_tree.parameters:
-            self.params.append(param_name.name)
+        for param in self.function_tree.parameters:
+            self.params.append(param.name)
+            self.param_types.append(param.type.name)
 
     def get_function_name(self):
         self.function_name = self.function_tree.name
@@ -228,6 +245,7 @@ def comment_super(statement):
 if __name__ == "__main__":
     main()
 
+# TODO: Get source code as string
 # TODO: Put function comments together.
 # TODO: Commenting statements' bodies (loop, if, switch)
 # TODO: ChatGPT communication.
