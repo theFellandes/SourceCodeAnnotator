@@ -260,8 +260,6 @@ def comment_super(statement):
 if __name__ == "__main__":
     main()
 
-# TODO: Get source code as string
-# TODO: Put function comments together.
 # TODO: Commenting statements' bodies (loop, if, switch)
 # TODO: ChatGPT communication.
 # TODO: Recursive function commenting (so complicated)
