@@ -23,7 +23,7 @@ def main():
             java_function = JavaFunction(member)
             comment = comment_function(java_function)
             # print(comment)
-            controller.source_code_string = add_comments_to_source_code(controller.source_code_string, comment, java_function)
+            controller.source_code_string = add_function_comments_to_source_code(controller.source_code_string, comment, java_function)
             function_count += 1
         if type(member).__name__ == "FieldDeclaration":
             field_count += len(member.declarators)
@@ -33,6 +33,7 @@ def main():
 
     class_comment = f"/**\n* {cu.types[0].name}{inherit_string}{implements_string}\n* Has {function_count} method(s)" \
                     f"\n* Has {field_count} attribute(s)\n*/"
+    controller.source_code_string = add_class_comment_to_source_code(controller.source_code_string, class_comment)
     # print(class_comment)
 
 
@@ -77,7 +78,7 @@ def line_break_comment(comment):
     return comment
 
 
-def add_comments_to_source_code(source_code, comment, function):
+def add_function_comments_to_source_code(source_code, comment, function):
     modifiers_regex = f"(({'|'.join(map(str, function.modifiers))})[ ]+){{{len(function.modifiers)}}}"
     parameters_regex = fr"\([ ]*"
     for param, param_type in zip(function.params, function.param_types):
@@ -88,6 +89,15 @@ def add_comments_to_source_code(source_code, comment, function):
     source_code = source_code[:match_object.span()[0]] + f"{comment}\n\t" \
                                                        + source_code[match_object.span()[0]:match_object.span()[1]] \
                                                        + source_code[match_object.span()[1]:]
+    return source_code
+
+
+def add_class_comment_to_source_code(source_code, comment):
+    class_regex = f"((public|final|abstract)[ ]+){{0,2}}class"
+    match_object = re.search(class_regex, source_code)
+    source_code = source_code[:match_object.span()[0]] + f"{comment}\n" \
+                  + source_code[match_object.span()[0]:match_object.span()[1]] \
+                  + source_code[match_object.span()[1]:]
     print(source_code)
     return source_code
 
