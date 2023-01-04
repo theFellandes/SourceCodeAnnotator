@@ -20,7 +20,10 @@ def main():
 
     for member in members:
         if type(member).__name__ == "MethodDeclaration":
-            print(comment_function(member))
+            java_function = JavaFunction(member)
+            comment = comment_function(java_function)
+            # print(comment)
+            controller.source_code_string = add_comments_to_source_code(controller.source_code_string, comment, java_function)
             function_count += 1
         if type(member).__name__ == "FieldDeclaration":
             field_count += len(member.declarators)
@@ -30,7 +33,7 @@ def main():
 
     class_comment = f"/**\n* {cu.types[0].name}{inherit_string}{implements_string}\n* Has {function_count} method(s)" \
                     f"\n* Has {field_count} attribute(s)\n*/"
-    print(class_comment)
+    # print(class_comment)
 
 
 # function = JavaFunction(cu.types[0].body[1])
@@ -42,10 +45,9 @@ def main():
     #         print(type(statement_type.expression).__name__)
 
 
-def comment_function(function):
-    comment = f"\t/**\n\t* "
-    java_function = JavaFunction(function)
-    for line in function.body:
+def comment_function(java_function):
+    comment = f"/**\n\t* "
+    for line in java_function.function_tree.body:
         java_function.get_variable_names_where_params_are_used(line)
         comment += comment_super(line)
         comment += comment_loop(line)
@@ -56,7 +58,6 @@ def comment_function(function):
         params_comment += f"\n\t* @param {param} is used to find {', '.join(map(str, used_variables))}"
     comment += f"{params_comment}\n\t*/"
     comment = line_break_comment(comment)
-    # add_comments_to_source_code()
     return comment
 
 
@@ -77,14 +78,18 @@ def line_break_comment(comment):
 
 
 def add_comments_to_source_code(source_code, comment, function):
-    modifiers_regex = f"({'|'.join(map(str, function.modifiers))})[ ]+{{{len(function.modifiers)}}}"
-    parameters_regex = f"\([ ]*"
+    modifiers_regex = f"(({'|'.join(map(str, function.modifiers))})[ ]+){{{len(function.modifiers)}}}"
+    parameters_regex = fr"\([ ]*"
     for param, param_type in zip(function.params, function.param_types):
         parameters_regex += f"{param_type}[ ]+{param}[ ]*,[ ]*"
-    parameters_regex = parameters_regex[:-5] + "\)"
-    regex = f"{modifiers_regex}{function.return_type}[ ]+{function.function_name}[ ]*{parameters_regex}"
-    # TODO: Get source code as string
-    # re.fullmatch(regex, )
+    parameters_regex = parameters_regex[:-5] + fr"\)"
+    regex = fr"{modifiers_regex}{function.return_type}[ ]+{function.function_name}[ ]*{parameters_regex}"
+    match_object = re.search(regex, source_code)
+    source_code = source_code[:match_object.span()[0]] + f"{comment}\n\t" \
+                                                       + source_code[match_object.span()[0]:match_object.span()[1]] \
+                                                       + source_code[match_object.span()[1]:]
+    print(source_code)
+    return source_code
 
 
 class JavaFunction:

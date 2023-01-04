@@ -13,6 +13,7 @@ public class FibonacciUtils extends Recursive implements IEnumerable, IBruhable 
     int bruhMome = 5;
     int bruhMom = 5;
     int bruhMo = 5;
+
     /**
     * Iterates from i = 0 until i <= nthFibonacciNumber,
     * Checks if i <OPERATOR> 0, i <OPERATOR> 1 or else
