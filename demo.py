@@ -2,6 +2,40 @@ from Controller.java_controller import JavaController
 import re
 
 
+def script_entry_point(controller: JavaController):
+    cu = controller.get_ast()
+    members = cu.types[0].body
+    function_count = 0
+    field_count = 0
+    inherits_from = ""
+    implements = []
+
+    if cu.types[0].extends:
+        inherits_from = cu.types[0].extends.name
+    if cu.types[0].implements:
+        for implement in cu.types[0].implements:
+            implements.append(implement.name)
+
+    for member in members:
+        if type(member).__name__ == "MethodDeclaration":
+            # TODO Crashes here.
+            java_function = JavaFunction(member)
+            comment = comment_function(java_function)
+            # print(comment)
+            controller.source_code_string = add_function_comments_to_source_code(controller.source_code_string, comment,
+                                                                                 java_function)
+            function_count += 1
+        if type(member).__name__ == "FieldDeclaration":
+            field_count += len(member.declarators)
+
+    inherit_string = f"\n* Inherits from {inherits_from}" if inherits_from else ""
+    implements_string = f"\n* Implements {', '.join(map(str, implements))}" if implements else ""
+
+    class_comment = f"/**\n* {cu.types[0].name}{inherit_string}{implements_string}\n* Has {function_count} method(s)" \
+                    f"\n* Has {field_count} attribute(s)\n*/"
+    controller.source_code_string = add_class_comment_to_source_code(controller.source_code_string, class_comment)
+    return controller.source_code_string
+
 def main():
     controller = JavaController("FibonacciForLoop.java")
     cu = controller.get_ast()
@@ -35,16 +69,6 @@ def main():
                     f"\n* Has {field_count} attribute(s)\n*/"
     controller.source_code_string = add_class_comment_to_source_code(controller.source_code_string, class_comment)
     # print(class_comment)
-
-
-# function = JavaFunction(cu.types[0].body[1])
-    # method = cu.types[0].body[2]
-    # print(method, "\n\n")
-    # comment_return(method)
-    # for statement_type in method.body:
-    #     if type(statement_type).__name__ == "ReturnStatement":
-    #         print(type(statement_type.expression).__name__)
-
 
 def comment_function(java_function):
     comment = f"/**\n\t* "
@@ -108,7 +132,7 @@ class JavaFunction:
         self.params = []
         self.param_types = []
         self.modifiers = self.function_tree.modifiers
-        self.return_type = self.return_type = self.function_tree.return_type.name if self.function_tree.return_type else "void"
+        self.return_type = self.function_tree.return_type.name if self.function_tree.return_type else "void"
         self.params_used = {}
         self.get_param_names()
         self.get_function_name()

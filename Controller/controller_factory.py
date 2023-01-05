@@ -14,7 +14,7 @@ class ControllerFactory:
     def get_controller(self):
         match settings.get_file_extension(self.source_code_file_name):
             case 'java':
-                return JavaController(self.source_code_file_name)
+                return JavaController(self.source_code_file_name, self.source_code_string)
             case 'py':
                 return PythonController(self.source_code_file_name)
             case _:

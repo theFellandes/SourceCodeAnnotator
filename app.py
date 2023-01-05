@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify, Response
 import os
 import openai
 
+import demo
 from Controller.annotator_controller import AnnotatorController
 from Controller.controller_factory import ControllerFactory
 
@@ -46,7 +47,12 @@ def read_file():
 @app.route('/lazydoc', methods=['GET', 'POST'])
 def read_text():
     source_code_text = request.form['sourceText']
-    return render_template('index.html', sourceText=source_code_text, sourceOutput="Bruh")
+    try:
+        annotator_controller = annotate_source_code('java', source_code_text)
+        source_output = demo.script_entry_point(annotator_controller)
+    except Exception as exception:
+        source_output = "Java Syntax Error"
+    return render_template('index.html', sourceText=source_code_text, sourceOutput=source_output)
 
 
 @app.route('/download', methods=['GET', 'POST'])
@@ -62,8 +68,7 @@ def download_file():
 
 def annotate_source_code(filename: str, source_code_string: str):
     controller = ControllerFactory(filename, source_code_string).get_controller()
-    annotator_controller = AnnotatorController(controller)
-    annotator_controller.generate_report()
+    return controller
 
 
 def get_file_extension():
