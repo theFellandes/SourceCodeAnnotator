@@ -23,7 +23,9 @@ public class FibonacciUtils extends Recursive implements IEnumerable, IBruhable 
         return 10;
     }
 
-    public int recursiveFibonacci(int nthFibonacciNumber, bruh bruhMoment){
+    public void recursiveFibonacci(int[] nthFibonacciNumber, bruh bruhMoment){
+       String[][] cars = {{"Volvo"}};
+       cars[0] = bruhMoment;
 //         If nthFibonacciNumber is 0, return 0
 //         If nthFibonacciNumber is 0 && 1, return 1
 //         Else return bruh momento in the house
@@ -31,31 +33,40 @@ public class FibonacciUtils extends Recursive implements IEnumerable, IBruhable 
         recursiveFibonacci();
         int bruh = nthFibonacciNumber;
         int bruhh = bruhMoment;
-//         switch (nthFibonacciNumber) {
-//                 case 0:
-//                     return 0;
-//                 case 0 && 1:
-//                     return 1;
-//                 default:
-//                     return recursiveFibonacci(nthFibonacciNumber - 1)
-//                             + recursiveFibonacci(nthFibonacciNumber - 2);
-//         }
-        if(i == 0){ // Checks if i <OPERATOR> 0
-            super.myFunction();
-//             System.out.println("Fibonacci number " + i + " is: " + 0);
-//             recursiveFibonacci(i-1);
-        }else if(i == 1){ //, i <OPERATOR> <COMPARATOR>
-            super.myFunction();
-//             bruhFunction();
-//             System.out.println("Fibonacci number " + i + " is: " + 1);
-        }else if(i == 2){ //, i <OPERATOR> <COMPARATOR>
-            super.myFunction();
-//             System.out.println("Fibonacci number " + i + " is: " + 1);
-        }else{ // or else
-            super.myFunction();
-//             System.out.println("Fibonacci number " + i + " is: " + (recursiveFibonacci(i-1) +
-//             recursiveFibonacci(i-2)));
+        switch (nthFibonacciNumber) {
+                case 0:
+                    if(i == cars[0][function(1)]){ // Checks if i <OPERATOR> 0
+                        super.myFunction();
+                    }else if(i == 1){ //, i <OPERATOR> <COMPARATOR>
+                        super.myFunction();
+                    }else if(i == 2){ //, i <OPERATOR> <COMPARATOR>
+                        super.myFunction();
+                    }else{ // or else
+                        super.myFunction();
+                    }
+                    return 0;
+                case 0 && 1:
+                    return 1;
+                default:
+                    return recursiveFibonacci(nthFibonacciNumber - 1)
+                            + recursiveFibonacci(nthFibonacciNumber - 2);
         }
+//         if(i == cars[0][function(1)]){ // Checks if i <OPERATOR> 0
+//             super.myFunction();
+// //             System.out.println("Fibonacci number " + i + " is: " + 0);
+// //             recursiveFibonacci(i-1);
+//         }else if(i == 1){ //, i <OPERATOR> <COMPARATOR>
+//             super.myFunction();
+// //             bruhFunction();
+// //             System.out.println("Fibonacci number " + i + " is: " + 1);
+//         }else if(i == 2){ //, i <OPERATOR> <COMPARATOR>
+//             super.myFunction();
+// //             System.out.println("Fibonacci number " + i + " is: " + 1);
+//         }else{ // or else
+//             super.myFunction();
+// //             System.out.println("Fibonacci number " + i + " is: " + (recursiveFibonacci(i-1) +
+// //             recursiveFibonacci(i-2)));
+//         }
 //         for(int i = 0; i <= nthFibonacciNumber; i++){
 //             if(i == 0){ // Checks if i <OPERATOR> 0
 //                 System.out.println("Fibonacci number " + i + " is: " + 0);
