@@ -36,6 +36,7 @@ def script_entry_point(controller: JavaController):
     controller.source_code_string = add_class_comment_to_source_code(controller.source_code_string, class_comment)
     return controller.source_code_string
 
+
 def main():
     controller = JavaController("FibonacciForLoop.java")
     cu = controller.get_ast()
@@ -70,14 +71,12 @@ def main():
     controller.source_code_string = add_class_comment_to_source_code(controller.source_code_string, class_comment)
     # print(class_comment)
 
+
 def comment_function(java_function):
     comment = f"/**\n\t* "
     for line in java_function.function_tree.body:
         java_function.get_variable_names_where_params_are_used(line)
-        comment += comment_super(line)
-        comment += comment_loop(line)
-        comment += comment_switch(line)
-        comment += comment_if(line)
+        comment += run_all_comment_functions(line)
     params_comment = "\n\t*" if java_function.params_used.items() else ""
     for param, used_variables in java_function.params_used.items():
         params_comment += f"\n\t* @param {param} is used to find {', '.join(map(str, used_variables))}"
@@ -86,15 +85,26 @@ def comment_function(java_function):
     return comment
 
 
+def run_all_comment_functions(line):
+    comment = ""
+    comment += comment_super(line)
+    comment += comment_loop(line)
+    comment += comment_switch(line)
+    comment += comment_if(line)
+    return comment
+
+
 def line_break_comment(comment):
+    current_index = 9
+    line_start_index = 8
     last_space_index = 0
-    current_index = 8
     while current_index < len(comment):
         if comment[current_index] == " ":
             last_space_index = current_index
-        if (current_index - 5) % 80 == 0:
-            comment = comment[:last_space_index - 1] + "\n\t* " + comment[last_space_index + 1:]
-            current_index = last_space_index + 3
+        if (current_index - line_start_index) % 85 == 0:
+            comment = comment[:last_space_index] + "\n\t* " + comment[last_space_index + 1:]
+            current_index = last_space_index + 4
+            line_start_index = current_index - 1
         current_index += 1
         if comment[current_index:current_index + 5] == "\n\t* @":
             break
@@ -210,10 +220,16 @@ def comment_loop(statement):
     if type(statement).__name__ == "ForStatement":
         iter_condition = stringify_statement(statement.control.condition)
         iter_declaration = stringify_statement(statement.control.init)
-        return f"Iterates from {iter_declaration} until {iter_condition} is false, "
+        comment = f"Iterates from {iter_declaration} until {iter_condition} is false, "
+        for inner_statement in statement.body.statements:
+            comment += run_all_comment_functions(inner_statement)
+        return comment
     elif type(statement).__name__ == "WhileStatement":
         iter_condition = stringify_statement(statement.condition)
-        return f"Loops while {iter_condition}, "
+        comment = f"Loops while {iter_condition}, "
+        for inner_statement in statement.body.statements:
+            comment += run_all_comment_functions(inner_statement)
+        return comment
     return ""
 
 
@@ -243,20 +259,33 @@ def comment_if(statement):
 
 
 def create_if_comment(statement, first_statement=True):
+    comment = ""
+    inner_comments = []
     conditions = []
     else_exists = False
     if type(statement).__name__ == "IfStatement":
         conditions.append(stringify_statement(statement.condition))
+        for inner_statement in statement.then_statement.statements:
+            inner_comments.append(run_all_comment_functions(inner_statement))
+
         if statement.else_statement:
-            condition, else_exists = create_if_comment(statement.else_statement, False)
+            condition, else_exists, inner_comment = create_if_comment(statement.else_statement, False)
             conditions.extend(condition)
+            inner_comments.extend(inner_comment)
 
     if type(statement).__name__ == "BlockStatement":
-        return conditions, True
+        return conditions, True, inner_comments
     if not first_statement:
-        return conditions, else_exists
+        return conditions, else_exists, inner_comments
     or_else = " or else, " if else_exists else ", "
-    return f"Checks if {', '.join(map(str, conditions)) + or_else}"
+    comment = f"Checks if "
+    for index, condition in enumerate(conditions):
+        comment += f"{'' if index == 0 else 'or if '}{condition}, and {inner_comments[index]}; "
+    if else_exists:
+        comment += f"else, {inner_comments[-1]}"
+    else:
+        comment += f"{comment[:-2]}"
+    return comment
 
 
 # TODO: Change the switch comment
@@ -277,13 +306,17 @@ def comment_super(statement):
     if type(statement).__name__ == "StatementExpression":
         if type(statement.expression).__name__ == "SuperMethodInvocation":
             super_function = statement.expression.member
-            return f"Calls parent's {super_function} function."
+            return f"Calls parent's {super_function} function"
     return ""
 
 
 if __name__ == "__main__":
     main()
 
+# TODO: Add array support everywhere (stringify, parameters, etc)
+# TODO: Check if stringify, stringifies functions
+# TODO: Let parameters look if they are used in an array
+# TODO: Look at void if it is a problem
 # TODO: Use a different comment for switch statement (If the value of nthFibonacciNumber matches 0, or matches 0 && 1)
 # TODO: Commenting statements' bodies (loop, if, switch)
 # TODO: ChatGPT communication.

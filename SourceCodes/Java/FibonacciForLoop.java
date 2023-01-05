@@ -16,7 +16,14 @@ public class FibonacciUtils extends Recursive implements IEnumerable, IBruhable 
         myInt = demo2;
     }
 
-    protected static int recursiveFibonacci(int nthFibonacciNumber, bruh bruhMoment){
+    public static int function(int param1) {
+        super.myFunction();
+        int bruh = param1 + 5 + 10;
+        int bruh2 = param1;
+        return 10;
+    }
+
+    public int recursiveFibonacci(int nthFibonacciNumber, bruh bruhMoment){
 //         If nthFibonacciNumber is 0, return 0
 //         If nthFibonacciNumber is 0 && 1, return 1
 //         Else return bruh momento in the house
@@ -24,39 +31,46 @@ public class FibonacciUtils extends Recursive implements IEnumerable, IBruhable 
         recursiveFibonacci();
         int bruh = nthFibonacciNumber;
         int bruhh = bruhMoment;
-        switch (nthFibonacciNumber) {
-                case 0:
-                    return 0;
-                case 0 && 1:
-                    return 1;
-                default:
-                    return recursiveFibonacci(nthFibonacciNumber - 1)
-                            + recursiveFibonacci(nthFibonacciNumber - 2);
-        }
+//         switch (nthFibonacciNumber) {
+//                 case 0:
+//                     return 0;
+//                 case 0 && 1:
+//                     return 1;
+//                 default:
+//                     return recursiveFibonacci(nthFibonacciNumber - 1)
+//                             + recursiveFibonacci(nthFibonacciNumber - 2);
+//         }
         if(i == 0){ // Checks if i <OPERATOR> 0
-            System.out.println("Fibonacci number " + i + " is: " + 0);
-            recursiveFibonacci(i-1);
+            super.myFunction();
+//             System.out.println("Fibonacci number " + i + " is: " + 0);
+//             recursiveFibonacci(i-1);
         }else if(i == 1){ //, i <OPERATOR> <COMPARATOR>
-            System.out.println("Fibonacci number " + i + " is: " + 1);
+            super.myFunction();
+//             bruhFunction();
+//             System.out.println("Fibonacci number " + i + " is: " + 1);
         }else if(i == 2){ //, i <OPERATOR> <COMPARATOR>
-            System.out.println("Fibonacci number " + i + " is: " + 1);
+            super.myFunction();
+//             System.out.println("Fibonacci number " + i + " is: " + 1);
         }else{ // or else
-            System.out.println("Fibonacci number " + i + " is: " + (recursiveFibonacci(i-1) +
-            recursiveFibonacci(i-2)));
+            super.myFunction();
+//             System.out.println("Fibonacci number " + i + " is: " + (recursiveFibonacci(i-1) +
+//             recursiveFibonacci(i-2)));
         }
-        for(int i = 0; i <= nthFibonacciNumber; i++){
-            if(i == 0){ // Checks if i <OPERATOR> 0
-                System.out.println("Fibonacci number " + i + " is: " + 0);
-                recursiveFibonacci(i-1);
-            }else if(i == 1){ //, i <OPERATOR> <COMPARATOR>
-                System.out.println("Fibonacci number " + i + " is: " + 1);
-            }else{ // or else
-                System.out.println("Fibonacci number " + i + " is: " + (recursiveFibonacci(i-1) +
-                recursiveFibonacci(i-2)));
-            }
-        }
-        while (demo >= denemeNum) {
-        }
+//         for(int i = 0; i <= nthFibonacciNumber; i++){
+//             if(i == 0){ // Checks if i <OPERATOR> 0
+//                 System.out.println("Fibonacci number " + i + " is: " + 0);
+//                 recursiveFibonacci(i-1);
+//             }else if(i == 1){ //, i <OPERATOR> <COMPARATOR>
+//                 System.out.println("Fibonacci number " + i + " is: " + 1);
+//             }else{ // or else
+//                 System.out.println("Fibonacci number " + i + " is: " + (recursiveFibonacci(i-1) +
+//                 recursiveFibonacci(i-2)));
+//             }
+//         }
+//         while (demo >= denemeNum) {
+//             for(int i = 0; i <= nthFibonacciNumber; i++){
+//             }
+//         }
     }
 
     public static int power(int base, int exponent) {
