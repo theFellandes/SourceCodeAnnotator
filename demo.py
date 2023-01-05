@@ -54,7 +54,7 @@ def comment_function(java_function):
         comment += comment_loop(line)
         comment += comment_switch(line)
         comment += comment_if(line)
-    params_comment = ""
+    params_comment = "\n\t*" if java_function.params_used.items() else ""
     for param, used_variables in java_function.params_used.items():
         params_comment += f"\n\t* @param {param} is used to find {', '.join(map(str, used_variables))}"
     comment += f"{params_comment}\n\t*/"
@@ -68,12 +68,11 @@ def line_break_comment(comment):
     while current_index < len(comment):
         if comment[current_index] == " ":
             last_space_index = current_index
-        if (current_index - 5) % 110 == 0:
+        if (current_index - 5) % 80 == 0:
             comment = comment[:last_space_index - 1] + "\n\t* " + comment[last_space_index + 1:]
             current_index = last_space_index + 3
         current_index += 1
         if comment[current_index:current_index + 5] == "\n\t* @":
-            comment = comment[:current_index - 1] + "\n\t*" + comment[current_index:]
             break
     return comment
 
@@ -109,7 +108,7 @@ class JavaFunction:
         self.params = []
         self.param_types = []
         self.modifiers = self.function_tree.modifiers
-        self.return_type = self.function_tree.return_type.name
+        self.return_type = self.return_type = self.function_tree.return_type.name if self.function_tree.return_type else "void"
         self.params_used = {}
         self.get_param_names()
         self.get_function_name()
@@ -236,13 +235,14 @@ def create_if_comment(statement, first_statement=True):
     return f"Checks if {', '.join(map(str, conditions)) + or_else}"
 
 
+# TODO: Change the switch comment
 def comment_switch(statement):
     if type(statement).__name__ == "SwitchStatement":
         expression = stringify_statement(statement.expression)
         case_comment = ""
         for switch_case in statement.cases:
             if switch_case.case:
-                case_comment += f"If {expression} is {stringify_statement(switch_case.case[0])}, "
+                case_comment += f"If the value of {expression} matches {stringify_statement(switch_case.case[0])}, "
             else:
                 case_comment += f"Else "
         return case_comment
@@ -260,6 +260,7 @@ def comment_super(statement):
 if __name__ == "__main__":
     main()
 
+# TODO: Use a different comment for switch statement (If the value of nthFibonacciNumber matches 0, or matches 0 && 1)
 # TODO: Commenting statements' bodies (loop, if, switch)
 # TODO: ChatGPT communication.
 # TODO: Recursive function commenting (so complicated)
