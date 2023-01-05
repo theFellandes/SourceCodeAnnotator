@@ -113,10 +113,13 @@ def line_break_comment(comment):
 
 def add_function_comments_to_source_code(source_code, comment, function):
     modifiers_regex = f"(({'|'.join(map(str, function.modifiers))})[ ]+){{{len(function.modifiers)}}}"
-    parameters_regex = fr"\([ ]*"
-    for param, param_type in zip(function.params, function.param_types):
-        parameters_regex += f"{param_type}[ ]+{param}[ ]*,[ ]*"
-    parameters_regex = parameters_regex[:-5] + fr"\)"
+    if function.params:
+        parameters_regex = fr"\([ ]*"
+        for param, param_type in zip(function.params, function.param_types):
+            parameters_regex += fr"{param_type}[ ]*(\[[ ]*\])*[ ]+{param}[ ]*,[ ]*"
+        parameters_regex = parameters_regex[:-5] + fr"\)"
+    else:
+        parameters_regex = fr"\([ ]*\)"
     regex = fr"{modifiers_regex}{function.return_type}[ ]+{function.function_name}[ ]*{parameters_regex}"
     match_object = re.search(regex, source_code)
     source_code = source_code[:match_object.span()[0]] + f"{comment}\n\t" \
@@ -167,13 +170,13 @@ class JavaFunction:
                 variables_used = get_variables_used_in_binary_operation(expression.declarators[0].initializer)
 
             for param in self.params:
-                if get_name_or_value(initializer, True) == param or param in variables_used:
+                if stringify_statement(initializer) == param or param in variables_used:
                     if param not in self.params_used:
                         self.params_used[param] = [expression.declarators[0].name]
                     if expression.declarators[0].name not in self.params_used[param]:
                         self.params_used[param].append(expression.declarators[0].name)
         elif type(expression).__name__ == "StatementExpression" and type(expression.expression).__name__ == "Assignment":
-            assignee = expression.expression.expressionl.member
+            assignee = stringify_statement(expression.expression.expressionl)
             variables_used = get_variables_used_in_assignment_expression(expression)
             for param in self.params:
                 if param in variables_used:
@@ -241,14 +244,24 @@ def stringify_statement(statement):
         left_side = statement.declarators[0].name
         right_side = stringify_statement(statement.declarators[0].initializer)
         operator = "="
-    if type(statement).__name__ == "BinaryOperation":
+    elif type(statement).__name__ == "BinaryOperation":
         left_side = stringify_statement(statement.operandl)
         right_side = stringify_statement(statement.operandr)
         operator = statement.operator
     elif type(statement).__name__ == "MemberReference":
+        if statement.selectors:
+            selectors_comment = ""
+            for selector in statement.selectors:
+                selectors_comment += f"[{stringify_statement(selector.index)}]"
+            return f"{statement.member}{selectors_comment}"
         return statement.member
     elif type(statement).__name__ == "Literal":
         return statement.value
+    elif type(statement).__name__ == "MethodInvocation":
+        arguments = []
+        for argument in statement.arguments:
+            arguments.append(stringify_statement(argument))
+        return f"{statement.member}({', '.join(map(str, arguments))})"
     return f"{left_side} {operator} {right_side}"
 
 
@@ -291,13 +304,21 @@ def create_if_comment(statement, first_statement=True):
 # TODO: Change the switch comment
 def comment_switch(statement):
     if type(statement).__name__ == "SwitchStatement":
+        first_case = True
         expression = stringify_statement(statement.expression)
-        case_comment = ""
+        case_comment = f"If the value of {expression}"
         for switch_case in statement.cases:
             if switch_case.case:
-                case_comment += f"If the value of {expression} matches {stringify_statement(switch_case.case[0])}, "
+                case_comment += f"{'' if first_case else 'or'} matches {stringify_statement(switch_case.case[0])}, "
+                for inner_statement in switch_case.statements:
+                    case_comment += run_all_comment_functions(inner_statement)
+                case_comment += "; "
+                first_case = False
             else:
-                case_comment += f"Else "
+                case_comment += f"or by default, "
+                for inner_statement in switch_case.statements:
+                    case_comment += run_all_comment_functions(inner_statement)
+                case_comment += " "
         return case_comment
     return ""
 
@@ -313,12 +334,11 @@ def comment_super(statement):
 if __name__ == "__main__":
     main()
 
-# TODO: Add array support everywhere (stringify, parameters, etc)
-# TODO: Check if stringify, stringifies functions
-# TODO: Let parameters look if they are used in an array
-# TODO: Look at void if it is a problem
-# TODO: Use a different comment for switch statement (If the value of nthFibonacciNumber matches 0, or matches 0 && 1)
-# TODO: Commenting statements' bodies (loop, if, switch)
+# TODO: Sentence structure in comments, also punctuation
+# TODO: When does the inner comments of a for loop end and the comment for the statement after for begin
+# TODO: Comments get crowded VERY quickly
+# TODO: Comment normal lines
+# TODO: Comment parameters can't check inner statements
 # TODO: ChatGPT communication.
 # TODO: Recursive function commenting (so complicated)
 # TODO: Web Crawling
