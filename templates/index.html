@@ -17,9 +17,9 @@
     <nav class="navbar">
         <a href="."><img class="logo" src="../static/logo.png" alt="logo"></a>
         <div class="links">
-            <h2><a href="">How To</a></h2>
-            <h2><a href="">Pricing</a></h2>
-            <h2><a href="">About Us</a></h2>
+            <h2><a href="/howto">How To</a></h2>
+            <h2><a href="/pricing">Pricing</a></h2>
+            <h2><a href="/about">About Us</a></h2>
             <div><a target="_blank" href="https://github.com/theFellandes/SourceCodeAnnotator"><img class="github"
                         src="../static/github.png" alt="github logo"></a></div>
         </div>
@@ -70,21 +70,41 @@ public class myClass extends baseClass {
                 <textarea spellcheck="false" name="sourceOutput" id="sourceOutput" cols="80" rows="35" style="height: 100%;">
 {% if sourceOutput %}{{sourceOutput}}{% else %}package com.company;
  
+/**
+* myClass
+* Inherits from baseClass
+* Has 3 method(s)
+* Has 0 attribute(s)
+*/
 public class myClass extends baseClass {
- 
-    public static void main(String[] args) {
+
+    /**
+	*
+	*/
+	public static void main(String[] args) {
         System.out.println("Hello");
         printWorld();
     }
- 
-    public static int function(int param1) {
+
+    /**
+	* Calls parent's myFunction function
+	*
+	* @param param1 is used to find bruh, bruh2
+	*/
+	public static int function(int param1) {
         super.myFunction();
         int bruh = param1 + 5 + 10;
         int bruh2 = param1;
         return 10;
     }
- 
-    public static String getWorld(int demo, int demo2){
+
+    /**
+	*
+	*
+	* @param demo is used to find myInt
+	* @param demo2 is used to find myInt
+	*/
+	public static String getWorld(int demo, int demo2){
         String world = "Hello" + "World";
         String bruh = world + "bruh";
         int myInt = 0;
@@ -96,17 +116,6 @@ public class myClass extends baseClass {
             <div style="background-color: #87DBDD;" class="button" id="downloadButton">Download</div>
         </div>
     </div>
-    <!-- <h1>Source Code Annotator</h1>
-    
-    <form id="source_code_form" enctype="multipart/form-data" method="post" action="#">
-        <label for="source_code_text"></label><textarea id="source_code_text" name="source_code_text"></textarea>
-        <br>
-        <input type="submit" value="submit" id="submit" />
-        <br>
-        <input id="fileupload" name="source_code" type="file" accept=".java,.py"/>
-        <br>
-        <input type="submit" value="submit" id="submit" />
-    </form> -->
 </body>
 
 </html>

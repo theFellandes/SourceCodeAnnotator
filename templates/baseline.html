@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="../static/script.js" defer></script>
+    <title>LazyDoc</title>
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="."><img class="logo" src="../static/logo.png" alt="logo"></a>
+        <div class="links">
+            <h2><a href="/howto">How To</a></h2>
+            <h2><a href="/pricing">Pricing</a></h2>
+            <h2><a href="/about">About Us</a></h2>
+            <div><a target="_blank" href="https://github.com/theFellandes/SourceCodeAnnotator"><img class="github"
+                        src="../static/github.png" alt="github logo"></a></div>
+        </div>
+    </nav>
+    {% block content %}{% endblock %}
+</body>
+</html>
