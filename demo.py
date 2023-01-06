@@ -18,7 +18,6 @@ def script_entry_point(controller: JavaController):
 
     for member in members:
         if type(member).__name__ == "MethodDeclaration":
-            # TODO Crashes here.
             java_function = JavaFunction(member)
             comment = comment_function(java_function)
             # print(comment)
