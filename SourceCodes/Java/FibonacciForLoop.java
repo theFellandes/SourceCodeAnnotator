@@ -32,7 +32,7 @@ public class FibonacciUtils extends Recursive implements IEnumerable, IBruhable 
 //         super.recursiveFibonacci();
         recursiveFibonacci();
         int bruh = recursiveFibonacci(nthFibonacciNumber, bruhFunction(bruhMoment));
-        int bruhh = bruhMoment;
+        int bruhh = nthFibonacciNumber[bruhMoment];
         switch (nthFibonacciNumber) {
                 case 0:
                     if(i == cars[0][function(1)]){ // Checks if i <OPERATOR> 0

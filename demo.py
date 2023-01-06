@@ -37,7 +37,7 @@ def script_entry_point(controller: JavaController):
 
 
 def main():
-    controller = JavaController("FibonacciForLoop.java")
+    controller = JavaController("GithubExample.java")
     cu = controller.get_ast()
     print(cu)
     members = cu.types[0].body
@@ -57,7 +57,8 @@ def main():
             java_function = JavaFunction(member)
             comment = comment_function(java_function)
             # print(comment)
-            controller.source_code_string = add_function_comments_to_source_code(controller.source_code_string, comment, java_function)
+            controller.source_code_string = add_function_comments_to_source_code(controller.source_code_string, comment,
+                                                                                 java_function)
             function_count += 1
         if type(member).__name__ == "FieldDeclaration":
             field_count += len(member.declarators)
@@ -77,8 +78,10 @@ def comment_function(java_function):
         java_function.get_variable_names_where_params_are_used(line)
         comment += run_all_comment_functions(line, java_function)
     params_comment = "\n\t*" if java_function.params_used.items() else ""
-    for param, used_variables in java_function.params_used.items():
-        params_comment += f"\n\t* @param {param} is used to find {', '.join(map(str, used_variables))}"
+    # for param, used_variables in java_function.params_used.items():
+    #     params_comment += f"\n\t* @param {param} is used to find {', '.join(map(str, used_variables))}"
+    for param in java_function.params:
+        params_comment += f"\n\t* @param {param}{' is used to find ' + ', '.join(map(str, java_function.params_used.get(param))) if java_function.params_used.get(param) else ''}"
     comment += f"{params_comment}\n\t*/"
     comment = line_break_comment(comment)
     return comment
@@ -115,15 +118,15 @@ def add_function_comments_to_source_code(source_code, comment, function):
     if function.params:
         parameters_regex = fr"\([ ]*"
         for param, param_type in zip(function.params, function.param_types):
-            parameters_regex += fr"{param_type}[ ]*(\[[ ]*\])*[ ]+{param}[ ]*,[ ]*"
+            parameters_regex += fr"{param_type}[ ]*(\[[ ]*\])*(\<([ ]*[^\s]*[ ]*[,]*)+\>)*[ ]+{param}[ ]*,[ ]*"
         parameters_regex = parameters_regex[:-5] + fr"\)"
     else:
         parameters_regex = fr"\([ ]*\)"
     regex = fr"{modifiers_regex}{function.return_type}[ ]+{function.function_name}[ ]*{parameters_regex}"
     match_object = re.search(regex, source_code)
     source_code = source_code[:match_object.span()[0]] + f"{comment}\n\t" \
-                                                       + source_code[match_object.span()[0]:match_object.span()[1]] \
-                                                       + source_code[match_object.span()[1]:]
+                  + source_code[match_object.span()[0]:match_object.span()[1]] \
+                  + source_code[match_object.span()[1]:]
     return source_code
 
 
@@ -354,7 +357,6 @@ if __name__ == "__main__":
 
 # TODO: Sentence structure in comments, also punctuation
 # TODO: When does the inner comments of a for loop end and the comment for the statement after for begin
-# TODO: Comments get crowded VERY quickly
 # TODO: Comment normal lines
 # TODO: ChatGPT communication.
 # TODO: Recursive function commenting (so complicated)
