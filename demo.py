@@ -75,7 +75,7 @@ def comment_function(java_function):
     comment = f"/**\n\t* "
     for line in java_function.function_tree.body:
         java_function.get_variable_names_where_params_are_used(line)
-        comment += run_all_comment_functions(line)
+        comment += run_all_comment_functions(line, java_function)
     params_comment = "\n\t*" if java_function.params_used.items() else ""
     for param, used_variables in java_function.params_used.items():
         params_comment += f"\n\t* @param {param} is used to find {', '.join(map(str, used_variables))}"
@@ -84,12 +84,12 @@ def comment_function(java_function):
     return comment
 
 
-def run_all_comment_functions(line):
+def run_all_comment_functions(line, java_function):
     comment = ""
     comment += comment_super(line)
-    comment += comment_loop(line)
-    comment += comment_switch(line)
-    comment += comment_if(line)
+    comment += comment_loop(line, java_function)
+    comment += comment_switch(line, java_function)
+    comment += comment_if(line, java_function)
     return comment
 
 
@@ -166,7 +166,9 @@ class JavaFunction:
             initializer = expression.declarators[0].initializer
 
             if type(initializer).__name__ == "BinaryOperation":
-                variables_used = get_variables_used_in_binary_operation(expression.declarators[0].initializer)
+                variables_used.extend(get_variables_used_in_binary_operation(expression.declarators[0].initializer))
+            elif type(initializer).__name__ == "MethodInvocation":
+                variables_used.extend(get_argument_names(initializer))
 
             for param in self.params:
                 if stringify_statement(initializer) == param or param in variables_used:
@@ -174,6 +176,7 @@ class JavaFunction:
                         self.params_used[param] = [expression.declarators[0].name]
                     if expression.declarators[0].name not in self.params_used[param]:
                         self.params_used[param].append(expression.declarators[0].name)
+
         elif type(expression).__name__ == "StatementExpression" and type(expression.expression).__name__ == "Assignment":
             assignee = stringify_statement(expression.expression.expressionl)
             variables_used = get_variables_used_in_assignment_expression(expression)
@@ -183,6 +186,16 @@ class JavaFunction:
                         self.params_used[param] = [assignee]
                     if assignee not in self.params_used[param]:
                         self.params_used[param].append(assignee)
+
+
+def get_argument_names(method_invocation):
+    argument_names = []
+    for argument in method_invocation.arguments:
+        if type(argument).__name__ == "MethodInvocation":
+            argument_names.extend(get_argument_names(argument))
+        elif type(argument).__name__ == "MemberReference":
+            argument_names.append(argument.member)
+    return argument_names
 
 
 def comment_return(method):
@@ -205,6 +218,8 @@ def get_variables_used_in_binary_operation(expression):
         variables.extend(get_variables_used_in_binary_operation(expression.operandr))
     elif type(expression).__name__ == "MemberReference":
         return [expression.member]
+    elif type(expression).__name__ == "MethodInvocation":
+        return get_argument_names(expression)
     return variables
 
 
@@ -218,19 +233,21 @@ def get_variables_used_in_assignment_expression(expression):
     return variables
 
 
-def comment_loop(statement):
+def comment_loop(statement, java_function):
     if type(statement).__name__ == "ForStatement":
         iter_condition = stringify_statement(statement.control.condition)
         iter_declaration = stringify_statement(statement.control.init)
         comment = f"Iterates from {iter_declaration} until {iter_condition} is false, "
         for inner_statement in statement.body.statements:
-            comment += run_all_comment_functions(inner_statement)
+            comment += run_all_comment_functions(inner_statement, java_function)
+            java_function.get_variable_names_where_params_are_used(inner_statement)
         return comment
     elif type(statement).__name__ == "WhileStatement":
         iter_condition = stringify_statement(statement.condition)
         comment = f"Loops while {iter_condition}, "
         for inner_statement in statement.body.statements:
-            comment += run_all_comment_functions(inner_statement)
+            comment += run_all_comment_functions(inner_statement, java_function)
+            java_function.get_variable_names_where_params_are_used(inner_statement)
         return comment
     return ""
 
@@ -264,13 +281,13 @@ def stringify_statement(statement):
     return f"{left_side} {operator} {right_side}"
 
 
-def comment_if(statement):
+def comment_if(statement, java_function):
     if type(statement).__name__ != "IfStatement":
         return ""
-    return create_if_comment(statement)
+    return create_if_comment(statement, java_function)
 
 
-def create_if_comment(statement, first_statement=True):
+def create_if_comment(statement, java_function, first_statement=True):
     comment = ""
     inner_comments = []
     conditions = []
@@ -278,10 +295,11 @@ def create_if_comment(statement, first_statement=True):
     if type(statement).__name__ == "IfStatement":
         conditions.append(stringify_statement(statement.condition))
         for inner_statement in statement.then_statement.statements:
-            inner_comments.append(run_all_comment_functions(inner_statement))
+            inner_comments.append(run_all_comment_functions(inner_statement, java_function))
+            java_function.get_variable_names_where_params_are_used(inner_statement)
 
         if statement.else_statement:
-            condition, else_exists, inner_comment = create_if_comment(statement.else_statement, False)
+            condition, else_exists, inner_comment = create_if_comment(statement.else_statement, java_function, False)
             conditions.extend(condition)
             inner_comments.extend(inner_comment)
 
@@ -300,7 +318,7 @@ def create_if_comment(statement, first_statement=True):
     return comment
 
 
-def comment_switch(statement):
+def comment_switch(statement, java_function):
     if type(statement).__name__ == "SwitchStatement":
         first_case = True
         expression = stringify_statement(statement.expression)
@@ -309,13 +327,15 @@ def comment_switch(statement):
             if switch_case.case:
                 case_comment += f"{'' if first_case else 'or'} matches {stringify_statement(switch_case.case[0])}, "
                 for inner_statement in switch_case.statements:
-                    case_comment += run_all_comment_functions(inner_statement)
+                    case_comment += run_all_comment_functions(inner_statement, java_function)
+                    java_function.get_variable_names_where_params_are_used(inner_statement)
                 case_comment += "; "
                 first_case = False
             else:
                 case_comment += f"or by default, "
                 for inner_statement in switch_case.statements:
-                    case_comment += run_all_comment_functions(inner_statement)
+                    case_comment += run_all_comment_functions(inner_statement, java_function)
+                    java_function.get_variable_names_where_params_are_used(inner_statement)
                 case_comment += " "
         return case_comment
     return ""
@@ -336,7 +356,6 @@ if __name__ == "__main__":
 # TODO: When does the inner comments of a for loop end and the comment for the statement after for begin
 # TODO: Comments get crowded VERY quickly
 # TODO: Comment normal lines
-# TODO: Comment parameters can't check inner statements
 # TODO: ChatGPT communication.
 # TODO: Recursive function commenting (so complicated)
 # TODO: Web Crawling

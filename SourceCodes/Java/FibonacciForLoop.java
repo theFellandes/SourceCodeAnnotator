@@ -1,27 +1,27 @@
 package week2;
 
 public class FibonacciUtils extends Recursive implements IEnumerable, IBruhable {
-    int bruhMomento = 5;
-    int bruhMoment = 5;
-    int bruhMomen = 5;
-    int bruhMome = 5;
-    int bruhMom = 5;
-    int bruhMo = 5;
-
-    public static String getWorld(int demo, int demo2){
-        String world = "Hello" + "World";
-        String bruh = world + "bruh";
-        int myInt = 0;
-        myInt += demo;
-        myInt = demo2;
-    }
-
-    public static int function(int param1) {
-        super.myFunction();
-        int bruh = param1 + 5 + 10;
-        int bruh2 = param1;
-        return 10;
-    }
+//     int bruhMomento = 5;
+//     int bruhMoment = 5;
+//     int bruhMomen = 5;
+//     int bruhMome = 5;
+//     int bruhMom = 5;
+//     int bruhMo = 5;
+//
+//     public static String getWorld(int demo, int demo2){
+//         String world = "Hello" + "World";
+//         String bruh = world + "bruh";
+//         int myInt = 0;
+//         myInt += demo;
+//         myInt = demo2;
+//     }
+//
+//     public static int function(int param1) {
+//         super.myFunction();
+//         int bruh = param1 + 5 + 10;
+//         int bruh2 = param1;
+//         return 10;
+//     }
 
     public void recursiveFibonacci(int[] nthFibonacciNumber, bruh bruhMoment){
        String[][] cars = {{"Volvo"}};
@@ -31,11 +31,12 @@ public class FibonacciUtils extends Recursive implements IEnumerable, IBruhable 
 //         Else return bruh momento in the house
 //         super.recursiveFibonacci();
         recursiveFibonacci();
-        int bruh = nthFibonacciNumber;
+        int bruh = recursiveFibonacci(nthFibonacciNumber, bruhFunction(bruhMoment));
         int bruhh = bruhMoment;
         switch (nthFibonacciNumber) {
                 case 0:
                     if(i == cars[0][function(1)]){ // Checks if i <OPERATOR> 0
+                        int hurb = bruhMoment;
                         super.myFunction();
                     }else if(i == 1){ //, i <OPERATOR> <COMPARATOR>
                         super.myFunction();
