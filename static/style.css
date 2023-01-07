@@ -248,6 +248,67 @@ textarea {
   font-family: "Open Sans", sans-serif;
 }
 
+.cards {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 50px;
+  width: 100%;
+}
+
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  flex: 0 1 500px;
+  border: solid 2px black;
+  border-radius: 8px;
+  padding: 20px 20px;
+  font-size: 18px;
+  height: 400px;
+  width: 100%;
+  background-color: #fff;
+  font-family: "Open Sans", sans-serif;
+}
+
+.card-title {
+  text-decoration: underline;
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: -20px;
+}
+
+.card-credits {
+  font-size: 48px;
+  font-weight: bold;
+}
+
+.card-button {
+  background-color: #FFFFFF;
+  border: 2px solid #222222;
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: #222222;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 20px;
+  width: 250px;
+  min-width: 200px;
+  margin: 0;
+  margin-top: 5px;
+  outline: none;
+  padding: 13px 23px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  touch-action: manipulation;
+  transition: box-shadow .2s, -ms-transform .1s, -webkit-transform .1s, transform .1s;
+  user-select: none;
+  -webkit-user-select: none;}
+
 .header {
   margin-left: 50px;
 }
@@ -346,7 +407,7 @@ textarea {
 
 textarea,
 pre {
-    -moz-tab-size : 4;
-      -o-tab-size : 4;
-         tab-size : 4;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
 }
