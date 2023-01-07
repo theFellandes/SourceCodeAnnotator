@@ -19,6 +19,8 @@ def script_entry_point(controller: JavaController):
     for member in members:
         if type(member).__name__ == "MethodDeclaration":
             java_function = JavaFunction(member)
+            if java_function.function_name == "main":
+                continue
             comment = comment_function(java_function)
             # print(comment)
             controller.source_code_string = add_function_comments_to_source_code(controller.source_code_string, comment,
@@ -37,39 +39,10 @@ def script_entry_point(controller: JavaController):
 
 
 def main():
-    controller = JavaController("GithubExample.java")
+    controller = JavaController("Main.java")
     cu = controller.get_ast()
     print(cu)
-    members = cu.types[0].body
-    function_count = 0
-    field_count = 0
-    inherits_from = ""
-    implements = []
-
-    if cu.types[0].extends:
-        inherits_from = cu.types[0].extends.name
-    if cu.types[0].implements:
-        for implement in cu.types[0].implements:
-            implements.append(implement.name)
-
-    for member in members:
-        if type(member).__name__ == "MethodDeclaration":
-            java_function = JavaFunction(member)
-            comment = comment_function(java_function)
-            # print(comment)
-            controller.source_code_string = add_function_comments_to_source_code(controller.source_code_string, comment,
-                                                                                 java_function)
-            function_count += 1
-        if type(member).__name__ == "FieldDeclaration":
-            field_count += len(member.declarators)
-
-    inherit_string = f"\n* Inherits from {inherits_from}" if inherits_from else ""
-    implements_string = f"\n* Implements {', '.join(map(str, implements))}" if implements else ""
-
-    class_comment = f"/**\n* {cu.types[0].name}{inherit_string}{implements_string}\n* Has {function_count} method(s)" \
-                    f"\n* Has {field_count} attribute(s)\n*/"
-    controller.source_code_string = add_class_comment_to_source_code(controller.source_code_string, class_comment)
-    # print(class_comment)
+    script_entry_point(controller)
 
 
 def comment_function(java_function):
@@ -85,6 +58,10 @@ def comment_function(java_function):
     comment += f"{params_comment}\n\t*/"
     comment = line_break_comment(comment)
     return comment
+
+
+def comment_get_set_functions(java_function):
+    pass
 
 
 def run_all_comment_functions(line, java_function):
@@ -355,9 +332,10 @@ def comment_super(statement):
 if __name__ == "__main__":
     main()
 
+# TODO: Comment get set functions separately
+# TODO: Comment normal lines (function call, )
 # TODO: Sentence structure in comments, also punctuation
 # TODO: When does the inner comments of a for loop end and the comment for the statement after for begin
-# TODO: Comment normal lines
 # TODO: ChatGPT communication.
 # TODO: Recursive function commenting (so complicated)
 # TODO: Web Crawling
