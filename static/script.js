@@ -5,14 +5,21 @@ let lazyDocButton = document.querySelector("#lazyDocButton");
 let downloadButton = document.querySelector("#downloadButton");
 let inputForm = document.querySelector("#inputForm");
 let outputForm = document.querySelector("#outputForm");
+let chad = document.querySelector("#chad");
 
 lazyDocButton.addEventListener("click", function () {
+    inputForm.action = "/lazydoc";
     inputForm.submit();
 });
 
 downloadButton.addEventListener("click", function () {
     outputForm.submit();
 });
+
+chad.addEventListener("click", function () {
+    inputForm.action = "/openai";
+    inputForm.submit();
+})
 
 chooseFileButton.addEventListener("change", function () {
     let fr = new FileReader();

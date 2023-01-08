@@ -34,21 +34,20 @@ def pricing():
     return render_template('pricing.html')
 
 
-@app.route('/openai', methods=['GET', 'POST'])
+@app.route('/openai', methods=['POST'])
 def openai_request():
-    openai.Model.list()
-    if request.method == "POST":
-        animal = request.form["animal"]
-        response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt="Say this is a test",
-            max_tokens=7,
-            temperature=0
-        )
-        return redirect(url_for("index", result=response.choices[0].text))
+    source_code = request.form["sourceText"]
+    prompt = "can you create javadoc comments for the following java class\n" + source_code
 
-    result = request.args.get("result")
-    return render_template("animal.html", result=result)
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=prompt,
+        max_tokens=1000,
+        temperature=0.6
+    )
+    source_output = response.choices[0].text
+
+    return render_template("index.html", sourceText=source_code, sourceOutput=source_output)
 
 
 def read_file():
@@ -61,7 +60,7 @@ def read_text():
     source_code_text = request.form['sourceText']
     try:
         annotator_controller = annotate_source_code('java', source_code_text)
-        source_output = demo.script_entry_point(annotator_controller)
+        source_output = demo.lazydoc_entry_point(annotator_controller)
     except Exception as exception:
         source_output = "Java Syntax Error"
     return render_template('index.html', sourceText=source_code_text, sourceOutput=source_output)

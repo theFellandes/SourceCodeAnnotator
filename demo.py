@@ -2,7 +2,10 @@ from Controller.java_controller import JavaController
 import re
 
 
-def script_entry_point(controller: JavaController):
+LAST_EXPR = ""
+
+
+def lazydoc_entry_point(controller: JavaController):
     cu = controller.get_ast()
     members = cu.types[0].body
     function_count = 0
@@ -21,8 +24,12 @@ def script_entry_point(controller: JavaController):
             java_function = JavaFunction(member)
             if java_function.function_name == "main":
                 continue
-            comment = comment_function(java_function)
-            # print(comment)
+            elif (java_function.function_name.startswith("get") or java_function.function_name.startswith("set")) \
+                    and len(java_function.function_tree.body) == 1:
+                comment = comment_get_set_functions(java_function)
+            else:
+                comment = comment_function(java_function)
+
             controller.source_code_string = add_function_comments_to_source_code(controller.source_code_string, comment,
                                                                                  java_function)
             function_count += 1
@@ -39,37 +46,43 @@ def script_entry_point(controller: JavaController):
 
 
 def main():
-    controller = JavaController("Main.java")
+    controller = JavaController("complex/reversed.java")
     cu = controller.get_ast()
     print(cu)
-    script_entry_point(controller)
+    lazydoc_entry_point(controller)
 
 
-def comment_function(java_function):
+def comment_function(java_function, alternative_comment=""):
     comment = f"/**\n\t* "
-    for line in java_function.function_tree.body:
-        java_function.get_variable_names_where_params_are_used(line)
-        comment += run_all_comment_functions(line, java_function)
-    params_comment = "\n\t*" if java_function.params_used.items() else ""
-    # for param, used_variables in java_function.params_used.items():
-    #     params_comment += f"\n\t* @param {param} is used to find {', '.join(map(str, used_variables))}"
-    for param in java_function.params:
-        params_comment += f"\n\t* @param {param}{' is used to find ' + ', '.join(map(str, java_function.params_used.get(param))) if java_function.params_used.get(param) else ''}"
-    comment += f"{params_comment}\n\t*/"
+    if alternative_comment:
+        comment += alternative_comment
+    else:
+        for line in java_function.function_tree.body:
+            java_function.get_variable_names_where_params_are_used(line)
+            comment += run_all_comment_functions(line, java_function)
+        params_comment = "\n\t*" if java_function.params else ""
+        for param in java_function.params:
+            params_comment += f"\n\t* @param {param}{' is used to find ' + ', '.join(map(str, java_function.params_used.get(param))) if java_function.params_used.get(param) else ''}"
+        comment += f"{params_comment}"
+    comment += f"\n\t*/"
     comment = line_break_comment(comment)
     return comment
 
 
 def comment_get_set_functions(java_function):
-    pass
+    return comment_function(java_function, f"{java_function.function_name[0:3].capitalize()}s the {java_function.function_name[3:]}")
 
 
 def run_all_comment_functions(line, java_function):
+    # Order of these function calls matter, for one above the if, we should put a dot after its comment.
     comment = ""
-    comment += comment_super(line)
     comment += comment_loop(line, java_function)
     comment += comment_switch(line, java_function)
     comment += comment_if(line, java_function)
+    if comment:
+        comment = comment[:-1] + ". "
+    comment += comment_super(line)
+    comment += comment_normal_line(line)
     return comment
 
 
@@ -136,9 +149,6 @@ class JavaFunction:
 
     def get_function_name(self):
         self.function_name = self.function_tree.name
-
-    def generate_comment(self):
-        pass
 
     def get_variable_names_where_params_are_used(self, expression):
         variables_used = []
@@ -214,7 +224,9 @@ def get_variables_used_in_assignment_expression(expression):
 
 
 def comment_loop(statement, java_function):
+    global LAST_EXPR
     if type(statement).__name__ == "ForStatement":
+        LAST_EXPR = ""
         iter_condition = stringify_statement(statement.control.condition)
         iter_declaration = stringify_statement(statement.control.init)
         comment = f"Iterates from {iter_declaration} until {iter_condition} is false, "
@@ -223,6 +235,7 @@ def comment_loop(statement, java_function):
             java_function.get_variable_names_where_params_are_used(inner_statement)
         return comment
     elif type(statement).__name__ == "WhileStatement":
+        LAST_EXPR = ""
         iter_condition = stringify_statement(statement.condition)
         comment = f"Loops while {iter_condition}, "
         for inner_statement in statement.body.statements:
@@ -258,12 +271,19 @@ def stringify_statement(statement):
         for argument in statement.arguments:
             arguments.append(stringify_statement(argument))
         return f"{statement.member}({', '.join(map(str, arguments))})"
+    elif type(statement).__name__ == "ArrayCreator":
+        string = f"new {statement.type.name}"
+        for dimension in statement.dimensions:
+            string += f"[{stringify_statement(dimension)}]"
+        return string
     return f"{left_side} {operator} {right_side}"
 
 
 def comment_if(statement, java_function):
     if type(statement).__name__ != "IfStatement":
         return ""
+    global LAST_EXPR
+    LAST_EXPR = ""
     return create_if_comment(statement, java_function)
 
 
@@ -300,6 +320,8 @@ def create_if_comment(statement, java_function, first_statement=True):
 
 def comment_switch(statement, java_function):
     if type(statement).__name__ == "SwitchStatement":
+        global LAST_EXPR
+        LAST_EXPR = ""
         first_case = True
         expression = stringify_statement(statement.expression)
         case_comment = f"If the value of {expression}"
@@ -324,18 +346,64 @@ def comment_switch(statement, java_function):
 def comment_super(statement):
     if type(statement).__name__ == "StatementExpression":
         if type(statement.expression).__name__ == "SuperMethodInvocation":
+            global LAST_EXPR
+            LAST_EXPR = ""
             super_function = statement.expression.member
-            return f"Calls parent's {super_function} function"
+            return f"Calls parent's {super_function} method "
+    return ""
+
+
+def comment_normal_line(statement):
+    global LAST_EXPR
+    if type(statement).__name__ == "StatementExpression":
+        if type(statement.expression).__name__ == "MethodInvocation":
+            if LAST_EXPR == "MethodInvocation":
+                comment = f"\b, {statement.expression.member} method "
+            else:
+                comment = f"Calls the {statement.expression.member} method "
+            LAST_EXPR = "MethodInvocation"
+            return comment
+        if type(statement.expression).__name__ == "Assignment":
+            LAST_EXPR = "Assignment"
+            match statement.expression.type:
+                case "+=":
+                    return f"Increments {stringify_statement(statement.expression.expressionl)} by {stringify_statement(statement.expression.value)} "
+                case "-=":
+                    return f"Subtracts {stringify_statement(statement.expression.value)} from {stringify_statement(statement.expression.expressionl)} "
+                case "*=":
+                    return f"Multiplies {stringify_statement(statement.expression.expressionl)} by {stringify_statement(statement.expression.value)} "
+                case "/=":
+                    return f"Divides {stringify_statement(statement.expression.expressionl)} by {stringify_statement(statement.expression.value)} "
+                case "%=":
+                    return f"Updates the value of {stringify_statement(statement.expression.expressionl)} by taking its modulus with {stringify_statement(statement.expression.value)} "
+                case "=":
+                    return f"Assigns {stringify_statement(statement.expression.value)} to {stringify_statement(statement.expression.expressionl)} "
+        if type(statement.expression).__name__ == "MemberReference":
+            LAST_EXPR = "MemberReference"
+            if statement.expression.postfix_operators[0] == "++" or statement.expression.prefix_operators[0] == "++":
+                return f"Increments the {statement.expression.member} "
+            if statement.expression.postfix_operators[0] == "--" or statement.expression.prefix_operators[0] == "--":
+                return f"Decrements the {statement.expression.member} "
+    if type(statement).__name__ == "ReturnStatement":
+        LAST_EXPR = "ReturnStatement"
+        return f"Returns {stringify_statement(statement.expression)} "
+    if type(statement).__name__ == "LocalVariableDeclaration":
+        if LAST_EXPR == "LocalVariableDeclaration":
+            comment = f"\b, {stringify_statement(statement.declarators[0].initializer)} to {statement.declarators[0].name} "
+        else:
+            comment = f"Assigns the value of {stringify_statement(statement.declarators[0].initializer)} to {statement.declarators[0].name} "
+        LAST_EXPR = "LocalVariableDeclaration"
+        return comment
     return ""
 
 
 if __name__ == "__main__":
     main()
 
-# TODO: Comment get set functions separately
-# TODO: Comment normal lines (function call, )
+# TODO: Create special comment for functions like print (Prints x to the console)
+# TODO: Maybe add special comment to start if there is only one return. (Returns bruhMoment.)
 # TODO: Sentence structure in comments, also punctuation
 # TODO: When does the inner comments of a for loop end and the comment for the statement after for begin
 # TODO: ChatGPT communication.
 # TODO: Recursive function commenting (so complicated)
-# TODO: Web Crawling
+# TODO: Web Crawling (Look at the qualifier and if it is a well known java class send that to google)

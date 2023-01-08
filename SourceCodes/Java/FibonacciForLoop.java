@@ -6,7 +6,7 @@ public class FibonacciUtils extends Recursive implements IEnumerable, IBruhable 
 //     int bruhMomen = 5;
 //     int bruhMome = 5;
 //     int bruhMom = 5;
-//     int bruhMo = 5;
+    int bruhMo = 5;
 //
 //     public static String getWorld(int demo, int demo2){
 //         String world = "Hello" + "World";
@@ -91,5 +91,13 @@ public class FibonacciUtils extends Recursive implements IEnumerable, IBruhable 
             result *= base;
         }
         return result;
+    }
+
+    public int getBruhMo() {
+        return bruhMo;
+    }
+
+    public void setBruhMo(int value) {
+        bruhMo = value;
     }
 }

@@ -18,13 +18,13 @@ public class myClass extends baseClass {
         String world = "Hello" + "World" + " Bruh";
         String bruh = world + "bruh";
         int myInt = 0;
-        myInt += demo;
         myInt = demo2;
         for (int bruhMoment = myInt + 1; bruhMoment <= bruh + 2; i++) {
+            myInt += demo;
         }
         while (bruhMoment > myInt) {
+            return world;
         }
-        return world;
         return "World";
         return world + "World";
     }
