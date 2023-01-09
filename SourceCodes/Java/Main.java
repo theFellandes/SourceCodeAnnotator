@@ -20,6 +20,8 @@ public class myClass extends baseClass {
         int myInt = 0;
         myInt = demo2;
         for (int bruhMoment = myInt + 1; bruhMoment <= bruh + 2; i++) {
+            String world = "Hello" + "World" + " Bruh";
+            String bruh = world + "bruh";
             myInt += demo;
         }
         while (bruhMoment > myInt) {

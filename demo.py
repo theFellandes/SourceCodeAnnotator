@@ -3,6 +3,7 @@ import re
 
 
 LAST_EXPR = ""
+B = "\b"
 
 
 def lazydoc_entry_point(controller: JavaController):
@@ -46,7 +47,7 @@ def lazydoc_entry_point(controller: JavaController):
 
 
 def main():
-    controller = JavaController("complex/reversed.java")
+    controller = JavaController("FibonacciForLoop.java")
     cu = controller.get_ast()
     print(cu)
     lazydoc_entry_point(controller)
@@ -59,7 +60,8 @@ def comment_function(java_function, alternative_comment=""):
     else:
         for line in java_function.function_tree.body:
             java_function.get_variable_names_where_params_are_used(line)
-            comment += run_all_comment_functions(line, java_function)
+            line_comment = run_all_comment_functions(line, java_function) + "\b. "
+            comment += line_comment[0].upper() + line_comment[1:]
         params_comment = "\n\t*" if java_function.params else ""
         for param in java_function.params:
             params_comment += f"\n\t* @param {param}{' is used to find ' + ', '.join(map(str, java_function.params_used.get(param))) if java_function.params_used.get(param) else ''}"
@@ -79,11 +81,11 @@ def run_all_comment_functions(line, java_function):
     comment += comment_loop(line, java_function)
     comment += comment_switch(line, java_function)
     comment += comment_if(line, java_function)
-    if comment:
-        comment = comment[:-1] + ". "
+    # if comment:
+    #     comment = comment[:-1] + ". "
     comment += comment_super(line)
     comment += comment_normal_line(line)
-    return comment
+    return comment[0].lower() + comment[1:]
 
 
 def line_break_comment(comment):
@@ -94,7 +96,13 @@ def line_break_comment(comment):
         if comment[current_index] == " ":
             last_space_index = current_index
         if (current_index - line_start_index) % 85 == 0:
-            comment = comment[:last_space_index] + "\n\t* " + comment[last_space_index + 1:]
+            offset = 0
+            if comment[last_space_index + 1] == "\b":
+                offset += 2
+            if comment[last_space_index + 2] == "\b":
+                offset += 1
+
+            comment = comment[:last_space_index + offset] + "\n\t* " + comment[last_space_index + (1 if not offset else 0) + offset:]
             current_index = last_space_index + 4
             line_start_index = current_index - 1
         current_index += 1
@@ -225,22 +233,25 @@ def get_variables_used_in_assignment_expression(expression):
 
 def comment_loop(statement, java_function):
     global LAST_EXPR
+    inner_comments = []
     if type(statement).__name__ == "ForStatement":
         LAST_EXPR = ""
         iter_condition = stringify_statement(statement.control.condition)
         iter_declaration = stringify_statement(statement.control.init)
-        comment = f"Iterates from {iter_declaration} until {iter_condition} is false, "
+        comment = f"Iterates from {iter_declaration} until {iter_condition} is false: "
         for inner_statement in statement.body.statements:
-            comment += run_all_comment_functions(inner_statement, java_function)
+            inner_comments.append(run_all_comment_functions(inner_statement, java_function))
             java_function.get_variable_names_where_params_are_used(inner_statement)
+        comment += '\b, '.join(map(str, inner_comments))
         return comment
     elif type(statement).__name__ == "WhileStatement":
         LAST_EXPR = ""
         iter_condition = stringify_statement(statement.condition)
-        comment = f"Loops while {iter_condition}, "
+        comment = f"Loops while {iter_condition}: "
         for inner_statement in statement.body.statements:
-            comment += run_all_comment_functions(inner_statement, java_function)
+            inner_comments.append(run_all_comment_functions(inner_statement, java_function))
             java_function.get_variable_names_where_params_are_used(inner_statement)
+        comment += '\b, '.join(map(str, inner_comments))
         return comment
     return ""
 
@@ -276,6 +287,11 @@ def stringify_statement(statement):
         for dimension in statement.dimensions:
             string += f"[{stringify_statement(dimension)}]"
         return string
+    elif type(statement).__name__ == "ArrayInitializer":
+        initializers = []
+        for initializer in statement.initializers:
+            initializers.append(stringify_statement(initializer))
+        return f"{{{', '.join(map(str, initializers))}}}"
     return f"{left_side} {operator} {right_side}"
 
 
@@ -289,6 +305,7 @@ def comment_if(statement, java_function):
 
 def create_if_comment(statement, java_function, first_statement=True):
     comment = ""
+    comments = []
     inner_comments = []
     conditions = []
     else_exists = False
@@ -296,12 +313,13 @@ def create_if_comment(statement, java_function, first_statement=True):
         conditions.append(stringify_statement(statement.condition))
         for inner_statement in statement.then_statement.statements:
             inner_comments.append(run_all_comment_functions(inner_statement, java_function))
+            comments.append(inner_comments)
             java_function.get_variable_names_where_params_are_used(inner_statement)
 
         if statement.else_statement:
             condition, else_exists, inner_comment = create_if_comment(statement.else_statement, java_function, False)
             conditions.extend(condition)
-            inner_comments.extend(inner_comment)
+            comments.append(inner_comment)
 
     if type(statement).__name__ == "BlockStatement":
         return conditions, True, inner_comments
@@ -310,11 +328,11 @@ def create_if_comment(statement, java_function, first_statement=True):
     or_else = " or else, " if else_exists else ", "
     comment = f"Checks if "
     for index, condition in enumerate(conditions):
-        comment += f"{'' if index == 0 else 'or if '}{condition}, and {inner_comments[index]}; "
+        comment += f"{'' if index == 0 else 'or if '}{condition}: and {f'{B}, '.join(map(str, comments[index]))}{B}; "
     if else_exists:
-        comment += f"else, {inner_comments[-1]}"
+        comment += f"else, {f'{B}, '.join(map(str, comments[-1]))}"
     else:
-        comment += f"{comment[:-2]}"
+        comment += f"{f'{B}, '.join(map(str, comment[:-2]))}"
     return comment
 
 
@@ -327,18 +345,17 @@ def comment_switch(statement, java_function):
         case_comment = f"If the value of {expression}"
         for switch_case in statement.cases:
             if switch_case.case:
-                case_comment += f"{'' if first_case else 'or'} matches {stringify_statement(switch_case.case[0])}, "
+                case_comment += f"{'' if first_case else 'or'} matches {stringify_statement(switch_case.case[0])}: "
                 for inner_statement in switch_case.statements:
                     case_comment += run_all_comment_functions(inner_statement, java_function)
                     java_function.get_variable_names_where_params_are_used(inner_statement)
-                case_comment += "; "
+                case_comment += "\b; "
                 first_case = False
             else:
                 case_comment += f"or by default, "
                 for inner_statement in switch_case.statements:
                     case_comment += run_all_comment_functions(inner_statement, java_function)
                     java_function.get_variable_names_where_params_are_used(inner_statement)
-                case_comment += " "
         return case_comment
     return ""
 
@@ -357,11 +374,15 @@ def comment_normal_line(statement):
     global LAST_EXPR
     if type(statement).__name__ == "StatementExpression":
         if type(statement.expression).__name__ == "MethodInvocation":
-            if LAST_EXPR == "MethodInvocation":
-                comment = f"\b, {statement.expression.member} method "
+            if statement.expression.member == "println" or statement.expression.member == "print":
+                comment = f"Prints {stringify_statement(statement.expression.arguments[0])} to the console "
+                LAST_EXPR = "MethodInvocationPrint"
             else:
-                comment = f"Calls the {statement.expression.member} method "
-            LAST_EXPR = "MethodInvocation"
+                if LAST_EXPR == "MethodInvocation":
+                    comment = f"\b\b, {statement.expression.member} method "
+                else:
+                    comment = f"Calls the {statement.expression.member} method "
+                    LAST_EXPR = "MethodInvocation"
             return comment
         if type(statement.expression).__name__ == "Assignment":
             LAST_EXPR = "Assignment"
@@ -389,9 +410,9 @@ def comment_normal_line(statement):
         return f"Returns {stringify_statement(statement.expression)} "
     if type(statement).__name__ == "LocalVariableDeclaration":
         if LAST_EXPR == "LocalVariableDeclaration":
-            comment = f"\b, {stringify_statement(statement.declarators[0].initializer)} to {statement.declarators[0].name} "
+            comment = f"\b\b, {statement.declarators[0].name} with {stringify_statement(statement.declarators[0].initializer)} "
         else:
-            comment = f"Assigns the value of {stringify_statement(statement.declarators[0].initializer)} to {statement.declarators[0].name} "
+            comment = f"Initializes {statement.declarators[0].name} with {stringify_statement(statement.declarators[0].initializer)} "
         LAST_EXPR = "LocalVariableDeclaration"
         return comment
     return ""
@@ -400,7 +421,6 @@ def comment_normal_line(statement):
 if __name__ == "__main__":
     main()
 
-# TODO: Create special comment for functions like print (Prints x to the console)
 # TODO: Maybe add special comment to start if there is only one return. (Returns bruhMoment.)
 # TODO: Sentence structure in comments, also punctuation
 # TODO: When does the inner comments of a for loop end and the comment for the statement after for begin

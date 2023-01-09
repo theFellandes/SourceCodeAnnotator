@@ -24,7 +24,7 @@ public class FibonacciUtils extends Recursive implements IEnumerable, IBruhable 
 //     }
 
     public void recursiveFibonacci(int[] nthFibonacciNumber, bruh bruhMoment){
-       String[][] cars = {{"Volvo"}};
+       String[][] cars = {{"Volvo", "bruh"}, "hurb"};
        cars[0] = bruhMoment;
 //         If nthFibonacciNumber is 0, return 0
 //         If nthFibonacciNumber is 0 && 1, return 1
@@ -39,10 +39,13 @@ public class FibonacciUtils extends Recursive implements IEnumerable, IBruhable 
                         int hurb = bruhMoment;
                         super.myFunction();
                     }else if(i == 1){ //, i <OPERATOR> <COMPARATOR>
+                        int hurb = bruhMoment;
                         super.myFunction();
                     }else if(i == 2){ //, i <OPERATOR> <COMPARATOR>
+                        int hurb = bruhMoment;
                         super.myFunction();
                     }else{ // or else
+                        int hurb = bruhMoment;
                         super.myFunction();
                     }
                     return 0;
