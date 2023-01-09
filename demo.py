@@ -47,7 +47,7 @@ def lazydoc_entry_point(controller: JavaController):
 
 
 def main():
-    controller = JavaController("FibonacciForLoop.java")
+    controller = JavaController("complex/reversed.java")
     cu = controller.get_ast()
     print(cu)
     lazydoc_entry_point(controller)
@@ -67,6 +67,7 @@ def comment_function(java_function, alternative_comment=""):
             params_comment += f"\n\t* @param {param}{' is used to find ' + ', '.join(map(str, java_function.params_used.get(param))) if java_function.params_used.get(param) else ''}"
         comment += f"{params_comment}"
     comment += f"\n\t*/"
+    comment = apply_backspace(comment)
     comment = line_break_comment(comment)
     return comment
 
@@ -96,13 +97,7 @@ def line_break_comment(comment):
         if comment[current_index] == " ":
             last_space_index = current_index
         if (current_index - line_start_index) % 85 == 0:
-            offset = 0
-            if comment[last_space_index + 1] == "\b":
-                offset += 2
-            if comment[last_space_index + 2] == "\b":
-                offset += 1
-
-            comment = comment[:last_space_index + offset] + "\n\t* " + comment[last_space_index + (1 if not offset else 0) + offset:]
+            comment = comment[:last_space_index] + "\n\t* " + comment[last_space_index + 1:]
             current_index = last_space_index + 4
             line_start_index = current_index - 1
         current_index += 1
@@ -416,6 +411,16 @@ def comment_normal_line(statement):
         LAST_EXPR = "LocalVariableDeclaration"
         return comment
     return ""
+
+
+def apply_backspace(s):
+    while True:
+        # if you find a character followed by a backspace, remove both
+        t = re.sub('.\b', '', s, count=1)
+        if len(s) == len(t):
+            # now remove any backspaces from beginning of string
+            return re.sub('\b+', '', t)
+        s = t
 
 
 if __name__ == "__main__":
