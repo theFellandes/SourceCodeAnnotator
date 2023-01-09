@@ -96,7 +96,7 @@ def line_break_comment(comment):
     while current_index < len(comment):
         if comment[current_index] == " ":
             last_space_index = current_index
-        if (current_index - line_start_index) % 85 == 0:
+        if (current_index - line_start_index) % 80 == 0:
             comment = comment[:last_space_index] + "\n\t* " + comment[last_space_index + 1:]
             current_index = last_space_index + 4
             line_start_index = current_index - 1
@@ -429,6 +429,5 @@ if __name__ == "__main__":
 # TODO: Maybe add special comment to start if there is only one return. (Returns bruhMoment.)
 # TODO: Sentence structure in comments, also punctuation
 # TODO: When does the inner comments of a for loop end and the comment for the statement after for begin
-# TODO: ChatGPT communication.
 # TODO: Recursive function commenting (so complicated)
 # TODO: Web Crawling (Look at the qualifier and if it is a well known java class send that to google)
