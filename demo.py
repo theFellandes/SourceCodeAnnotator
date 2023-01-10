@@ -288,7 +288,7 @@ def stringify_statement(statement):
             initializers.append(stringify_statement(initializer))
         return f"{{{', '.join(map(str, initializers))}}}"
     elif type(statement).__name__ == "Cast":
-        return f"({stringify_statement(statement.type)}) {stringify_statement(statement.expression)}"
+        return f"({statement.type.name}) {stringify_statement(statement.expression)}"
     return f"{left_side} {operator} {right_side}"
 
 
@@ -334,7 +334,7 @@ def create_if_comment(statement, java_function, first_statement=True):
     if else_exists:
         comment += f"else: {f'{B}, '.join(map(str, comments[-1]))}"
     else:
-        comment += f"{f'{B}, '.join(map(str, comment[:-2]))}"
+        comment += f"\b\b "
     return comment
 
 
