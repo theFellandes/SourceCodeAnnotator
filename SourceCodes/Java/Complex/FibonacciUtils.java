@@ -13,8 +13,9 @@ public class FibonacciUtils {
      */
     public static int recursiveFibonacci(int nthFibonacciNumber){
 
-        if (nthFibonacciNumber <= 1)
+        if (nthFibonacciNumber <= 1) {
             return nthFibonacciNumber;
+        }
 
         return recursiveFibonacci(nthFibonacciNumber - 1)
                 + recursiveFibonacci(nthFibonacciNumber - 2);
@@ -178,7 +179,7 @@ public class FibonacciUtils {
             F2 = F;
             if (F1 == 0 && F2 == 1) {
                 length = i + 1;
-                break;
+//                 break;
             }
         }
         return length;

@@ -92,6 +92,7 @@ public class FibonacciUtils extends Recursive implements IEnumerable, IBruhable 
         int result = 1;
         for (int i = 0; i < exponent; i++) {
             result *= base;
+            continue;
         }
         return result;
     }

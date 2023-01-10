@@ -24,7 +24,7 @@ def lazydoc_entry_point(controller: JavaController):
         if type(member).__name__ == "MethodDeclaration":
             java_function = JavaFunction(member)
             if java_function.function_name == "main":
-                continue
+                comment = comment_function(java_function, "Main function.")
             elif (java_function.function_name.startswith("get") or java_function.function_name.startswith("set")) \
                     and len(java_function.function_tree.body) == 1:
                 comment = comment_get_set_functions(java_function)
@@ -47,7 +47,7 @@ def lazydoc_entry_point(controller: JavaController):
 
 
 def main():
-    controller = JavaController("complex/reversed.java")
+    controller = JavaController("complex/FibonacciUtils.java")
     cu = controller.get_ast()
     print(cu)
     lazydoc_entry_point(controller)
@@ -115,7 +115,7 @@ def add_function_comments_to_source_code(source_code, comment, function):
         parameters_regex = parameters_regex[:-5] + fr"\)"
     else:
         parameters_regex = fr"\([ ]*\)"
-    regex = fr"{modifiers_regex}{function.return_type}[ ]+{function.function_name}[ ]*{parameters_regex}"
+    regex = fr"{modifiers_regex}{function.return_type}[ ]*(\[[ ]*\])*[ ]+{function.function_name}[ ]*{parameters_regex}"
     match_object = re.search(regex, source_code)
     source_code = source_code[:match_object.span()[0]] + f"{comment}\n\t" \
                   + source_code[match_object.span()[0]:match_object.span()[1]] \
@@ -287,6 +287,8 @@ def stringify_statement(statement):
         for initializer in statement.initializers:
             initializers.append(stringify_statement(initializer))
         return f"{{{', '.join(map(str, initializers))}}}"
+    elif type(statement).__name__ == "Cast":
+        return f"({stringify_statement(statement.type)}) {stringify_statement(statement.expression)}"
     return f"{left_side} {operator} {right_side}"
 
 
@@ -306,6 +308,7 @@ def create_if_comment(statement, java_function, first_statement=True):
     else_exists = False
     if type(statement).__name__ == "IfStatement":
         conditions.append(stringify_statement(statement.condition))
+
         for inner_statement in statement.then_statement.statements:
             inner_comments.append(run_all_comment_functions(inner_statement, java_function))
             comments.append(inner_comments)
@@ -314,18 +317,22 @@ def create_if_comment(statement, java_function, first_statement=True):
         if statement.else_statement:
             condition, else_exists, inner_comment = create_if_comment(statement.else_statement, java_function, False)
             conditions.extend(condition)
-            comments.append(inner_comment)
+            comments.extend(inner_comment)
 
     if type(statement).__name__ == "BlockStatement":
-        return conditions, True, inner_comments
+        for inner_statement in statement.statements:
+            inner_comments.append(run_all_comment_functions(inner_statement, java_function))
+            comments.append(inner_comments)
+            java_function.get_variable_names_where_params_are_used(inner_statement)
+        return conditions, True, comments
     if not first_statement:
-        return conditions, else_exists, inner_comments
+        return conditions, else_exists, comments
     or_else = " or else, " if else_exists else ", "
     comment = f"Checks if "
     for index, condition in enumerate(conditions):
         comment += f"{'' if index == 0 else 'or if '}{condition}: and {f'{B}, '.join(map(str, comments[index]))}{B}; "
     if else_exists:
-        comment += f"else, {f'{B}, '.join(map(str, comments[-1]))}"
+        comment += f"else: {f'{B}, '.join(map(str, comments[-1]))}"
     else:
         comment += f"{f'{B}, '.join(map(str, comment[:-2]))}"
     return comment
@@ -426,6 +433,8 @@ def apply_backspace(s):
 if __name__ == "__main__":
     main()
 
+
+# TODO: Noktaların top level blockları ayırdığından bahset sunumda.
 # TODO: Maybe add special comment to start if there is only one return. (Returns bruhMoment.)
 # TODO: Sentence structure in comments, also punctuation
 # TODO: When does the inner comments of a for loop end and the comment for the statement after for begin
