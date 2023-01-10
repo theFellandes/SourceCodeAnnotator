@@ -409,16 +409,20 @@ def comment_normal_line(statement):
                 return f"Increments the {statement.expression.member} "
             if statement.expression.postfix_operators[0] == "--" or statement.expression.prefix_operators[0] == "--":
                 return f"Decrements the {statement.expression.member} "
-    if type(statement).__name__ == "ReturnStatement":
+    elif type(statement).__name__ == "ReturnStatement":
         LAST_EXPR = "ReturnStatement"
         return f"Returns {stringify_statement(statement.expression)} "
-    if type(statement).__name__ == "LocalVariableDeclaration":
+    elif type(statement).__name__ == "LocalVariableDeclaration":
         if LAST_EXPR == "LocalVariableDeclaration":
             comment = f"\b\b, {statement.declarators[0].name} with {stringify_statement(statement.declarators[0].initializer)} "
         else:
             comment = f"Initializes {statement.declarators[0].name} with {stringify_statement(statement.declarators[0].initializer)} "
         LAST_EXPR = "LocalVariableDeclaration"
         return comment
+    elif type(statement).__name__ == "ContinueStatement":
+        return f"Continues "
+    elif type(statement).__name__ == "BreakStatement":
+        return f"Breaks "
     return ""
 
 
