@@ -86,6 +86,8 @@ def run_all_comment_functions(line, java_function):
     #     comment = comment[:-1] + ". "
     comment += comment_super(line)
     comment += comment_normal_line(line)
+    if not comment:
+        return "\b"
     return comment[0].lower() + comment[1:]
 
 
