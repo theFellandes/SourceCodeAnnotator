@@ -45,6 +45,9 @@ class PythonController(BaseController):
     def write_ast_to_file(self):
         self.python_ast.write_ast_to_file()
 
+    def write_ast(self):
+        self.python_ast.write_ast()
+
     def get_ast(self):
         return self.python_ast.get_ast()
 
