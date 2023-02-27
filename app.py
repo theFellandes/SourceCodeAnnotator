@@ -58,8 +58,11 @@ def read_file():
 @app.route('/lazydoc', methods=['GET', 'POST'])
 def read_text():
     source_code_text = request.form['sourceText']
+    source_language = request.form['language']
     # try:
-    annotator_controller = annotate_source_code('java', source_code_text)
+    annotator_controller = annotate_source_code(language, source_code_text)
+    if annotator_controller == 'Success':
+        return render_template('index.html', sourceText=source_code_text, sourceOutput='Success')
     source_output = demo.lazydoc_entry_point(annotator_controller)
     # except Exception as exception:
     #     source_output = "Java Syntax Error"
@@ -78,6 +81,8 @@ def download_file():
 
 
 def annotate_source_code(filename: str, source_code_string: str):
+    if filename == 'py':
+        return 'Success'
     controller = ControllerFactory(filename, source_code_string).get_controller()
     return controller
 
