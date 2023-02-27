@@ -28,6 +28,11 @@
         <div class="source-code-section">
             <h3 style="color: #88ff20;">Source Code</h3>
             <form id="inputForm" enctype="multipart/form-data" method="POST" action="/lazydoc" style="min-height: 0px;">
+                <label for="language">Language:</label>
+                <select name="language" id="language">
+                <option value="java">Java</option>
+                <option value="py">Python</option>
+                </select>
                 <textarea spellcheck="false" name="sourceText" id="sourceText" cols="80" rows="35"
                     style="height: 100%;">
 {% if sourceText %}{{sourceText}}{% else %}package com.company;
