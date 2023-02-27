@@ -2,8 +2,6 @@ from dataclasses import dataclass
 
 from Utils.reader import Reader
 from Utils.writer import Writer
-from Utils.NLP.Stanza import stanza_module
-from Utils.NLP.Stanza.stanza_module import NameAnalyzer
 from conf import settings
 
 
@@ -13,7 +11,6 @@ class BaseController:
 
     source_code_file_name: str = ''
     source_code_string: str = ''
-    name_analyzer: NameAnalyzer = stanza_module.NameAnalyzer()
     writer: Writer = Writer(settings.REPORT_PATH)
 
     def __post_init__(self):
