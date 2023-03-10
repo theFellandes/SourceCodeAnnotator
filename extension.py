@@ -30,6 +30,7 @@ from Controller.controller_factory import ControllerFactory
 
 def annotate_with_lazydoc(file_path: str):
     language = get_file_extension(file_path)
+    print(f'{file_path=}')
     with open(file_path) as source_code_file:
         source_code = source_code_file.read()
     annotator_controller = annotate_source_code(language, source_code)
