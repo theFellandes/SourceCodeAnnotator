@@ -35,3 +35,13 @@ class PythonAST(ASTBase):
 
         python_ast = ast.parse(self.source_code_string)
         return python_ast
+
+    @python_ast_prettier
+    @get_time
+    def write_ast(self) -> ast:
+        """Prints python_ast to the console"""
+        # Since Python uses tabs and newlines, only comments extracted
+        # requires the escape character deletion.
+
+        python_ast = ast.parse(self.source_code_string)
+        return python_ast
