@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, render_template, request, jsonify, Response
 import os
 import openai
@@ -85,8 +87,9 @@ def read_text():
 
 @app.route('/lazydoc_vscode', methods=['GET', 'POST'])
 def annotate_lazydoc_vscode():
-    source_code_text = request.form['sourceText']
-    source_language = request.form['language']
+    data = json.loads(request.data)
+    source_code_text = data.get('sourceText')
+    source_language = data.get('language')
 
     annotator_controller = annotate_source_code(source_language, source_code_text)
     if source_language == 'py':

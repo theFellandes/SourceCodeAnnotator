@@ -43,13 +43,14 @@ function activate(context) {
 		// Convert the URI to a file path
 		const filePath = fileUri.fsPath;
 
-		const pythonProcess = await spawn('python', ['-u', path.join(__dirname, '../extension.py'), 'lazydoc', filePath]);
+		vscode.window.showInformationMessage('LazyDoc is thinking...')
+		const pythonProcess = await spawn('python', ['-u', path.join(__dirname, 'vscode_main.py'), 'lazydoc', filePath]);
+		vscode.window.showInformationMessage('Commenting done!')
 
 		// This listener 
 		pythonProcess.stdout.on('data', (data) => {
 			const wholeDocumentRange = activeEditor.document.validateRange(new vscode.Range(0, 0, Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER));
 			activeEditor.edit((editBuilder) => {
-				vscode.window.showInformationMessage(`${data}`);
 				editBuilder.replace(wholeDocumentRange, `${data}`);
 			});
 		});
