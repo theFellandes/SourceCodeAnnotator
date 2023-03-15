@@ -5,7 +5,6 @@ import os
 import openai
 
 import demo
-from Controller.annotator_controller import AnnotatorController
 from Controller.controller_factory import ControllerFactory
 
 app = Flask(__name__)
@@ -39,33 +38,66 @@ def pricing():
 @app.route('/openai', methods=['POST'])
 def openai_request():
     source_code = request.form["sourceText"]
-    prompt = "can you create javadoc comments for the following java class\n" + source_code
+    source_language = request.form['language']
 
-    response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=prompt,
-        max_tokens=1000,
-        temperature=0.6
-    )
-    source_output = response.choices[0].text
+    if source_language == 'java':
+        prompt = "can you create javadoc comments for the following java class\n" + source_code
 
-    return render_template("index.html", sourceText=source_code, sourceOutput=source_output)
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt,
+            max_tokens=1000,
+            temperature=0.6
+        )
+        source_output = response.choices[0].text
+
+        return render_template("index.html", sourceText=source_code, sourceOutput=source_output)
+
+    else:
+        prompt = "can you create doc comments for the following python class\n" + source_code
+
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt,
+            max_tokens=1000,
+            temperature=0.6
+        )
+        source_output = response.choices[0].text
+
+        return render_template("index.html", sourceText=source_code, sourceOutput=source_output)
 
 
 @app.route('/openai_vscode', methods=['POST'])
 def annotate_chadgpt_vscode():
-    source_code = request.form["sourceText"]
-    prompt = "can you create javadoc comments for the following java class\n" + source_code
+    data = json.loads(request.data)
+    source_code_text = data.get('sourceText')
+    source_language = data.get('language')
 
-    response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=prompt,
-        max_tokens=1000,
-        temperature=0.6
-    )
-    source_output = response.choices[0].text
+    if source_language == 'java':
+        prompt = "can you create javadoc comments for the following java class\n" + source_code_text
 
-    return jsonify(sourceOutput=source_output)
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt,
+            max_tokens=1000,
+            temperature=0.6
+        )
+        source_output = response.choices[0].text
+
+        return jsonify(sourceOutput=source_output)
+
+    else:
+        prompt = "can you create doc comments for the following python class\n" + source_code_text
+
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt,
+            max_tokens=1000,
+            temperature=0.6
+        )
+        source_output = response.choices[0].text
+
+        return jsonify(sourceOutput=source_output)
 
 
 def read_file():
@@ -79,8 +111,9 @@ def read_text():
     source_language = request.form['language']
     # try:
     annotator_controller = annotate_source_code(source_language, source_code_text)
-    if annotator_controller == 'Success':
-        return render_template('index.html', sourceText=source_code_text, sourceOutput='Success')
+    if source_language == 'py':
+        source_output = annotator_controller.generate_comment()
+        return render_template('index.html', sourceText=source_code_text, sourceOutput=source_output)
     source_output = demo.lazydoc_entry_point(annotator_controller)
     return render_template('index.html', sourceText=source_code_text, sourceOutput=source_output)
 
@@ -112,15 +145,8 @@ def download_file():
 
 
 def annotate_source_code(filename: str, source_code_string: str):
-    if filename == 'py':
-        return 'Success'
     controller = ControllerFactory(filename, source_code_string).get_controller()
     return controller
-
-
-def get_file_extension():
-    # TODO NOT IMPLEMENTED!
-    return 'java'
 
 
 if __name__ == '__main__':
