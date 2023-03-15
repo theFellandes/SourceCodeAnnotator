@@ -10,24 +10,7 @@ const { spawn } = require('child_process');
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	// console.log('Congratulations, your extension "lazydoc" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('lazydoc.commentCurrentFileChatGPT', function () {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from ChatGPT!');
-	});
-
-	context.subscriptions.push(disposable);
-
-	disposable = vscode.commands.registerCommand('lazydoc.commentCurrentFile', async function () {
+	async function comment_file(engine) {
 		// Get the active text editor
 		const activeEditor = vscode.window.activeTextEditor;
 		if (!activeEditor) {
@@ -44,8 +27,7 @@ function activate(context) {
 		const filePath = fileUri.fsPath;
 
 		vscode.window.showInformationMessage('LazyDoc is thinking...')
-		const pythonProcess = await spawn('python', ['-u', path.join(__dirname, 'vscode_main.py'), 'lazydoc', filePath]);
-		vscode.window.showInformationMessage('Commenting done!')
+		const pythonProcess = await spawn('python', ['-u', path.join(__dirname, 'vscode_main.py'), engine, filePath]);
 
 		// This listener 
 		pythonProcess.stdout.on('data', (data) => {
@@ -58,6 +40,23 @@ function activate(context) {
 		pythonProcess.on('close', (code) => {
 			console.log(`child process exited with code ${code}`);
 		});
+	}
+
+	// Use the console to output diagnostic information (console.log) and errors (console.error)
+	// This line of code will only be executed once when your extension is activated
+	// console.log('Congratulations, your extension "lazydoc" is now active!');
+
+	// The command has been defined in the package.json file
+	// Now provide the implementation of the command with  registerCommand
+	// The commandId parameter must match the command field in package.json
+	let disposable = vscode.commands.registerCommand('lazydoc.commentCurrentFileChatGPT', function () {
+		comment_file('chatgpt')
+	});
+
+	context.subscriptions.push(disposable);
+
+	disposable = vscode.commands.registerCommand('lazydoc.commentCurrentFile', async function () {
+		comment_file('lazydoc')
 	});
 
 	context.subscriptions.push(disposable);
