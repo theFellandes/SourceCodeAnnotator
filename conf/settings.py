@@ -7,30 +7,9 @@ REPORT_PATH = os.path.join(OUTPUT_DIR, "report.txt")
 AST_REPORT_PATH = os.path.join(OUTPUT_DIR, "ast_report.txt")
 JAVA_PATH = os.path.join(SOURCE_CODE_DIR, "Java")
 PYTHON_PATH = os.path.join(SOURCE_CODE_DIR, "Python")
-GO_PATH = os.path.join(SOURCE_CODE_DIR, "Go")
-C_PATH = os.path.join(SOURCE_CODE_DIR, "C")
-STANZA_RESOURCES_PATH = os.path.join(BASE_DIR, "Stanza")
 PATH_DICTIONARY = {
     "py": PYTHON_PATH,
     "java": JAVA_PATH,
-    "go": GO_PATH,
-    "c": C_PATH,
-}
-# TODO: Edit this
-GOOD_CODE_STATISTICS = {
-    "java": {
-        "single_line": 300,
-        "multi_line": 250,
-        "java_doc": 150,
-        "total_line": 300,
-        "comment_per_line": 45,
-    },
-    "py": {
-        "single_line": 300,
-        "multi_line": 250,
-        "total_line": 150,
-        "comment_per_line": 40,
-    },
 }
 
 
