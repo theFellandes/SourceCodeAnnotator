@@ -1,8 +1,0 @@
-To auto generate requirements.txt:
-
-1) pip install pipreqs
-2) pipreqs <PATH_TO_PROJECT>
-
-Usage of black:
-1) pip install black
-2) python -m black <PATH_TO_PROJECT>

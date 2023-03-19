@@ -3,8 +3,6 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 SOURCE_CODE_DIR = os.path.join(BASE_DIR, "SourceCodes")
 OUTPUT_DIR = os.path.join(BASE_DIR, "Output")
-REPORT_PATH = os.path.join(OUTPUT_DIR, "report.txt")
-AST_REPORT_PATH = os.path.join(OUTPUT_DIR, "ast_report.txt")
 JAVA_PATH = os.path.join(SOURCE_CODE_DIR, "Java")
 PYTHON_PATH = os.path.join(SOURCE_CODE_DIR, "Python")
 PATH_DICTIONARY = {

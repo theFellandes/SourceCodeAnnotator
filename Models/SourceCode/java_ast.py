@@ -43,17 +43,8 @@ class JavaAST(ASTBase):
         return_statement = f'Returns {if_return}'
         print(f'{return_statement}')
 
-
-    # def get_super_method_invocation(self):
-    #
-    #     try:
-    #         super_method_check = self.__tree
-
-
-
     @ast_to_file
     @pretty_object
-    @get_time
     def write_ast_to_file(self):
         """Prints java_ast to the console"""
         self.__tree: CompilationUnit = javalang.parse.parse(self.source_code_string)
