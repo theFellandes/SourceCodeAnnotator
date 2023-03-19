@@ -47,7 +47,7 @@ def lazydoc_entry_point(controller: JavaController):
 
 
 def main():
-    controller = JavaController("complex/FibonacciUtils.java")
+    controller = JavaController("complex/reversed.java")
     cu = controller.get_ast()
     print(cu)
     lazydoc_entry_point(controller)
@@ -440,7 +440,8 @@ if __name__ == "__main__":
     main()
 
 
-# TODO: Noktaların top level blockları ayırdığından bahset sunumda.
+# TODO: Stringify parenthesis
+# TODO: Noktaların top level blockları ayırdığından bahset sunumda
 # TODO: Maybe add special comment to start if there is only one return. (Returns bruhMoment.)
 # TODO: Sentence structure in comments, also punctuation
 # TODO: When does the inner comments of a for loop end and the comment for the statement after for begin

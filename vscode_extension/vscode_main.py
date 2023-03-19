@@ -41,7 +41,7 @@ def send_request_to_lazydoc(json_string: str):
 
 
 def send_request_to_chatgpt(json_string: str):
-    return send_request_to_webserver("/chatgpt_vscode", json_string)
+    return send_request_to_webserver("/openai_vscode", json_string)
 
 
 if __name__ == '__main__':
