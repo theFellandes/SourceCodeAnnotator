@@ -40,6 +40,8 @@ class PythonController(BaseController):
 
     def comment_function(self, function_def):
         print(self.comment_getter_setter(function_def))
+        for statement in function_def.body:
+            print(self.stringify_statement(statement))
 
     @staticmethod
     def comment_getter_setter(function_def):
@@ -57,6 +59,76 @@ class PythonController(BaseController):
                     return f"Sets the {function_def.name} attribute"
 
         return ''
+
+    @staticmethod
+    def stringify_data_types(data_type, statement):
+        match data_type:
+            case 'Tuple':
+                return f"({statement})"
+            case 'List':
+                return f"[{statement}]"
+            case 'Set':
+                return f"{{{statement}}}"
+
+    def stringify_statement(self, statement) -> str:
+        left_side = ""
+        right_side = ""
+        operator = ""
+
+        match type(statement).__name__:
+            case 'Assign':
+                left_side = self.stringify_statement(statement.targets[0])
+                right_side = self.stringify_statement(statement.value)
+                operator = "="
+
+            case 'AugAssign':
+                left_side = self.stringify_statement(statement.targets)
+                right_side = self.stringify_statement(statement.value)
+                operator = self.python_ast.handle_operators(statement.op)
+
+            case 'Name':
+                return statement.id
+
+            case 'Attribute':
+                return f'{self.stringify_statement(statement.value)}.{statement.attr}'
+
+            case 'Tuple' | 'List' | 'Set':
+                for element in statement.elts:
+                    left_side += str(self.stringify_statement(element)) + ", "
+                return self.stringify_data_types(type(statement).__name__, left_side.rstrip(', '))
+
+            case 'Subscript':
+                return f'{self.stringify_statement(statement.value)}[{self.stringify_statement(statement.slice)}]'
+
+            case 'Slice':
+                if statement.step:
+                    return f'{self.stringify_statement(statement.lower)}:{self.stringify_statement(statement.upper)}:{self.stringify_statement(statement.step)}'
+                return f'{self.stringify_statement(statement.lower)}:{self.stringify_statement(statement.upper)}'
+
+            case 'Constant':
+                if type(statement.value).__name__ == 'str':
+                    return f"'{statement.value}'"
+                return statement.value
+
+            case 'Expr':
+                return 'NOT IMPLEMENTED'
+
+            case 'BinOp':
+                left_side = self.stringify_statement(statement.left)
+                right_side = self.stringify_statement(statement.right)
+                operator = self.python_ast.handle_operators(statement.op)
+
+            case 'Call':
+                for arg in statement.args:
+                    right_side += str(self.stringify_statement(arg)) + ", "
+                right_side = right_side.rstrip(', ')
+                return f'{self.stringify_statement(statement.func)}({right_side})'
+
+            case 'UnaryOp':
+                raise NotImplementedError
+
+        return f"{left_side} {operator} {right_side}"
+
 
     def recursive_test(self, ast_body):
         raise NotImplementedError

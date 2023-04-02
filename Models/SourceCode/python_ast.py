@@ -41,3 +41,60 @@ class PythonAST(ASTBase):
         # requires the escape character deletion.
         python_ast = ast.parse(self.source_code_string)
         return python_ast
+
+    @staticmethod
+    def handle_operators(operator):
+        if type(operator).__name__ == 'Add':
+            return '+'
+        if type(operator).__name__ == 'Sub':
+            return '-'
+        if type(operator).__name__ == 'Mult':
+            return '*'
+        if type(operator).__name__ == 'Div':
+            return '/'
+        if type(operator).__name__ == 'Mod':
+            return '%'
+        if type(operator).__name__ == 'Pow':
+            return '**'
+        if type(operator).__name__ == 'LShift':
+            return '<<'
+        if type(operator).__name__ == 'RShift':
+            return '>>'
+        if type(operator).__name__ == 'BitOr':
+            return '|'
+        if type(operator).__name__ == 'BitXor':
+            return '^'
+        if type(operator).__name__ == 'BitAnd':
+            return '&'
+        if type(operator).__name__ == 'FloorDiv':
+            return '//'
+        if type(operator).__name__ == 'MatMult':
+            return '@'
+        if type(operator).__name__ == 'Eq':
+            return '=='
+        if type(operator).__name__ == 'NotEq':
+            return '!='
+        if type(operator).__name__ == 'Lt':
+            return '<'
+        if type(operator).__name__ == 'LtE':
+            return '<='
+        if type(operator).__name__ == 'Gt':
+            return '>'
+        if type(operator).__name__ == 'GtE':
+            return '>='
+        if type(operator).__name__ == 'Is':
+            return 'is'
+        if type(operator).__name__ == 'IsNot':
+            return 'is not'
+        if type(operator).__name__ == 'In':
+            return 'in'
+        if type(operator).__name__ == 'NotIn':
+            return 'not in'
+        if type(operator).__name__ == 'And':
+            return 'and'
+        if type(operator).__name__ == 'Or':
+            return 'or'
+        if type(operator).__name__ == 'Not':
+            return 'not'
+        return ''
+
