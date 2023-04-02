@@ -10,6 +10,14 @@ class Foo:
     def bruh(self):
         return self._bruh
 
+    @property
+    def bruh2(self):
+        return self._bruh + 1
+
+    @property
+    def bruh3(self):
+        return 1
+
     @bruh.setter
     def bruh(self, value):
         self._bruh = value
