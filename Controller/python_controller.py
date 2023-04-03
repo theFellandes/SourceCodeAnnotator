@@ -42,6 +42,7 @@ class PythonController(BaseController):
         print(self.comment_getter_setter(function_def))
         for statement in function_def.body:
             print(self.stringify_statement(statement))
+            print(self.comment_match(statement))
 
     @staticmethod
     def comment_getter_setter(function_def):
@@ -82,7 +83,7 @@ class PythonController(BaseController):
                 operator = "="
 
             case 'AugAssign':
-                left_side = self.stringify_statement(statement.targets)
+                left_side = self.stringify_statement(statement.target)
                 right_side = self.stringify_statement(statement.value)
                 operator = self.python_ast.handle_operators(statement.op)
 
@@ -128,6 +129,50 @@ class PythonController(BaseController):
                 raise NotImplementedError
 
         return f"{left_side} {operator} {right_side}"
+
+    def stringify_match_case(self, statement) -> str:
+        match type(statement).__name__:
+            case 'MatchSequence':
+                comment = '['
+                for pattern in statement.patterns:
+                    comment += f'{self.stringify_match_case(pattern)}, '
+                comment = comment.rstrip(', ')
+                comment += ']'
+                return comment
+            case 'MatchValue':
+                return f'{self.stringify_statement(statement.value)}'
+            case 'MatchSingleton':
+                raise NotImplementedError
+            case 'MatchOr':
+                comment = ''
+                for pattern in statement.patterns:
+                    comment += f'{self.stringify_match_case(pattern)} | '
+                comment = comment.rstrip('| ')
+                return comment
+        return ''
+
+
+    def comment_loop(self, statement):
+        # TODO: implement finding inner comments
+        inner_comments = []
+        if type(statement).__name__ == 'For':
+            comment = f'Iterates over {self.stringify_statement(statement.iter)}'
+            return comment
+        if type(statement).__name__ == 'While':
+            comment = f'Loops while {self.stringify_statement(statement.test)}'
+            return comment
+        return ''
+
+    def comment_match(self, statement):
+        # TODO: add inner statement
+        if type(statement).__name__ == 'Match':
+            comment = f'If {self.stringify_statement(statement.subject)} '
+            for match_case in statement.cases:
+                comment += f'matches {self.stringify_match_case(match_case.pattern)} DO SOMETHING or '
+            comment = comment.rstrip('or ')
+            return comment
+        return ''
+
 
 
     def recursive_test(self, ast_body):
