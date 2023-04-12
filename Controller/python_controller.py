@@ -43,6 +43,7 @@ class PythonController(BaseController):
         for statement in function_def.body:
             print(self.stringify_statement(statement))
             print(self.comment_match(statement))
+            print(self.comment_if(statement))
 
     @staticmethod
     def comment_getter_setter(function_def):
@@ -119,6 +120,11 @@ class PythonController(BaseController):
                 right_side = self.stringify_statement(statement.right)
                 operator = self.python_ast.handle_operators(statement.op)
 
+            case 'Compare':
+                left_side = self.stringify_statement(statement.left)
+                right_side = self.stringify_statement(statement.comparators[0])
+                operator = self.python_ast.handle_operators(statement.ops[0])
+
             case 'Call':
                 for arg in statement.args:
                     right_side += str(self.stringify_statement(arg)) + ", "
@@ -162,6 +168,10 @@ class PythonController(BaseController):
             comment = f'Loops while {self.stringify_statement(statement.test)}'
             return comment
         return ''
+
+    def comment_if(self, statement):
+        pass
+
 
     def comment_match(self, statement):
         # TODO: add inner statement
