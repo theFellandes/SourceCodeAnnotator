@@ -16,7 +16,6 @@ class PythonController(BaseController):
     def write_ast(self):
         return self.python_ast.write_ast()
 
-
     def generate_comment_from_function_name(self):
         list_of_function_names = self.python_ast.get_list_of_function_names()
         list_of_generated_comments = [self.name_analyzer.get_generated_comment(function_name)
@@ -41,6 +40,8 @@ class PythonController(BaseController):
     def comment_function(self, function_def):
         print(self.comment_getter_setter(function_def))
         for statement in function_def.body:
+            if type(statement).__name__ == 'Expr':
+                continue
             print(self.stringify_statement(statement))
             print(self.comment_match(statement))
             print(self.comment_if(statement))
@@ -113,7 +114,7 @@ class PythonController(BaseController):
                 return statement.value
 
             case 'Expr':
-                return 'NOT IMPLEMENTED'
+                return self.stringify_statement(statement.value)
 
             case 'BinOp':
                 left_side = self.stringify_statement(statement.left)
@@ -121,9 +122,15 @@ class PythonController(BaseController):
                 operator = self.python_ast.handle_operators(statement.op)
 
             case 'Compare':
-                left_side = self.stringify_statement(statement.left)
-                right_side = self.stringify_statement(statement.comparators[0])
-                operator = self.python_ast.handle_operators(statement.ops[0])
+                comment = self.stringify_statement(statement.left)
+                for op, comparator in zip(statement.ops, statement.comparators):
+                    comment += f' {self.python_ast.handle_operators(op)} {self.stringify_statement(comparator)}'
+                return comment
+
+            case 'BoolOp':
+                left_side = self.stringify_statement(statement.values[0])
+                right_side = self.stringify_statement(statement.values[1])
+                operator = self.python_ast.handle_operators(statement.op)
 
             case 'Call':
                 for arg in statement.args:
@@ -132,7 +139,7 @@ class PythonController(BaseController):
                 return f'{self.stringify_statement(statement.func)}({right_side})'
 
             case 'UnaryOp':
-                raise NotImplementedError
+                return f'{self.python_ast.handle_operators(statement.op)} {self.stringify_statement(statement.operand)}'
 
         return f"{left_side} {operator} {right_side}"
 
@@ -157,7 +164,6 @@ class PythonController(BaseController):
                 return comment
         return ''
 
-
     def comment_loop(self, statement):
         # TODO: implement finding inner comments
         inner_comments = []
@@ -170,8 +176,18 @@ class PythonController(BaseController):
         return ''
 
     def comment_if(self, statement):
-        pass
+        comment = ''
+        if type(statement).__name__ == 'If':
+            comment = f'Checks if {self.stringify_statement(statement.test)}: INNER STATEMENT'
 
+            el = statement
+            while el.orelse:
+                el = el.orelse[0]
+                if not hasattr(el, 'orelse'):
+                    comment += f'; else INNER STATEMENT'
+                    break
+                comment += f'; or if {self.stringify_statement(el.test)}: INNER STATEMENT'
+        return comment
 
     def comment_match(self, statement):
         # TODO: add inner statement
@@ -182,8 +198,6 @@ class PythonController(BaseController):
             comment = comment.rstrip('or ')
             return comment
         return ''
-
-
 
     def recursive_test(self, ast_body):
         raise NotImplementedError
