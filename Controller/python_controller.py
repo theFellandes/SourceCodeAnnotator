@@ -38,13 +38,14 @@ class PythonController(BaseController):
         return self.source_code_string
 
     def comment_function(self, function_def):
-        print(self.comment_getter_setter(function_def))
+        # print(self.comment_getter_setter(function_def))
         for statement in function_def.body:
             if type(statement).__name__ == 'Expr':
                 continue
-            print(self.stringify_statement(statement))
-            print(self.comment_match(statement))
-            print(self.comment_if(statement))
+            # print(self.stringify_statement(statement))
+            # print(self.comment_match(statement))
+            # print(self.comment_if(statement))
+            print(self.comment_normal_line(statement))
 
     @staticmethod
     def comment_getter_setter(function_def):
@@ -200,8 +201,28 @@ class PythonController(BaseController):
         return ''
 
     def comment_normal_line(self, statement):
-        if type(statement).__name__ == "Return":
-            return f"Returns {self.stringify_statement(statement.value)} "
+        if type(statement).__name__ == 'Assign':
+            return f'Assigns {self.stringify_statement(statement.value)} to {self.stringify_statement(statement.targets[0])} '
+        elif type(statement).__name__ == 'Expr':
+            if type(statement.value).__name__ == 'Call':
+                return f'Calls the {self.stringify_statement(statement.value)} '
+        elif type(statement).__name__ == 'AugAssign':
+            match type(statement).__name__:
+                case 'Add':
+                    return f'Increments {self.stringify_statement(statement.value)} by {self.stringify_statement(statement.targets[0])} '
+                case 'Sub':
+                    return f'Subtracts {self.stringify_statement(statement.value)} from {self.stringify_statement(statement.targets[0])} '
+                case 'Mult':
+                    return f'Markiplies {self.stringify_statement(statement.value)} with {self.stringify_statement(statement.targets[0])} '
+                case 'Div' | 'FloorDiv':
+                    return f'Divides {self.stringify_statement(statement.value)} by {self.stringify_statement(statement.targets[0])} '
+                case 'Mod':
+                    return f'Updates the value of {self.stringify_statement(statement.value)} by taking its modulus with {self.stringify_statement(statement.targets[0])} '
+                case 'Pow':
+                    return f'Raises {self.stringify_statement(statement.value)} to the power of {self.stringify_statement(statement.targets[0])} '
+        elif type(statement).__name__ == "Return":
+            return f'Returns {self.stringify_statement(statement.value)} '
+        return ''
 
     def recursive_test(self, ast_body):
         raise NotImplementedError

@@ -396,7 +396,7 @@ def comment_normal_line(statement):
                 case "-=":
                     return f"Subtracts {stringify_statement(statement.expression.value)} from {stringify_statement(statement.expression.expressionl)} "
                 case "*=":
-                    return f"Multiplies {stringify_statement(statement.expression.expressionl)} by {stringify_statement(statement.expression.value)} "
+                    return f"Multiplies {stringify_statement(statement.expression.expressionl)} with {stringify_statement(statement.expression.value)} "
                 case "/=":
                     return f"Divides {stringify_statement(statement.expression.expressionl)} by {stringify_statement(statement.expression.value)} "
                 case "%=":
