@@ -199,5 +199,9 @@ class PythonController(BaseController):
             return comment
         return ''
 
+    def comment_normal_line(self, statement):
+        if type(statement).__name__ == "Return":
+            return f"Returns {self.stringify_statement(statement.value)} "
+
     def recursive_test(self, ast_body):
         raise NotImplementedError
