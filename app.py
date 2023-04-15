@@ -117,9 +117,7 @@ def read_text():
         source_output = TextWrapper().format_python_source_code(disarranged_source_output)
         return render_template('index.html', sourceText=source_code_text, sourceOutput=source_output)
     disarranged_source_output = demo.lazydoc_entry_point(annotator_controller)
-    print(f'{disarranged_source_output=}')
     source_output = TextWrapper().format_java_source_code(disarranged_source_output)
-    print(f'{source_output=}')
     return render_template('index.html', sourceText=source_code_text, sourceOutput=source_output)
 
 
