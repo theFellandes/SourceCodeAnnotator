@@ -6,6 +6,7 @@ import openai
 
 import demo
 from Controller.controller_factory import ControllerFactory
+from Utils.text_wrapper import TextWrapper
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -112,9 +113,13 @@ def read_text():
     # try:
     annotator_controller = annotate_source_code(source_language, source_code_text)
     if source_language == 'py':
-        source_output = annotator_controller.generate_comment()
+        disarranged_source_output = annotator_controller.generate_comment()
+        source_output = TextWrapper().format_python_source_code(disarranged_source_output)
         return render_template('index.html', sourceText=source_code_text, sourceOutput=source_output)
-    source_output = demo.lazydoc_entry_point(annotator_controller)
+    disarranged_source_output = demo.lazydoc_entry_point(annotator_controller)
+    print(f'{disarranged_source_output=}')
+    source_output = TextWrapper().format_java_source_code(disarranged_source_output)
+    print(f'{source_output=}')
     return render_template('index.html', sourceText=source_code_text, sourceOutput=source_output)
 
 
@@ -126,9 +131,13 @@ def annotate_lazydoc_vscode():
 
     annotator_controller = annotate_source_code(source_language, source_code_text)
     if source_language == 'py':
-        source_output = annotator_controller.generate_comment()
+        disarranged_source_output = annotator_controller.generate_comment()
+        source_output = TextWrapper().format_python_source_code(disarranged_source_output)
         return jsonify(sourceOutput=source_output)
-    source_output = demo.lazydoc_entry_point(annotator_controller)
+    disarranged_source_output = demo.lazydoc_entry_point(annotator_controller)
+    print(f'{disarranged_source_output=}')
+    source_output = TextWrapper().format_java_source_code(disarranged_source_output)
+    print(f'{source_output=}')
     return jsonify(sourceOutput=source_output)
 
 
