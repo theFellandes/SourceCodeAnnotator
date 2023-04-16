@@ -28,6 +28,19 @@ class PythonController(BaseController):
         self.source_code_string = self.comment_functions(self.python_ast.get_ast().body)
         return self.source_code_string
 
+    def run_all_comment_functions(self, line):
+        # Order of these function calls matter, for one above the if, we should put a dot after its comment.
+        comment = ""
+        comment += self.comment_loop(line)
+        comment += self.comment_match(line)
+        comment += self.comment_if(line)
+        # if comment:
+        #     comment = comment[:-1] + ". "
+        comment += self.comment_normal_line(line)
+        if not comment:
+            return "\b"
+        return comment[0].lower() + comment[1:]
+
     def comment_functions(self, ast_body):
         for child in ast_body:
             if type(child).__name__ == 'FunctionDef':
@@ -38,14 +51,20 @@ class PythonController(BaseController):
         return self.source_code_string
 
     def comment_function(self, function_def):
+        comments = []
+        comment = '"""\n'
         # print(self.comment_getter_setter(function_def))
         for statement in function_def.body:
             if type(statement).__name__ == 'Expr':
-                continue
-            # print(self.stringify_statement(statement))
-            # print(self.comment_match(statement))
-            # print(self.comment_if(statement))
-            print(self.comment_normal_line(statement))
+                if type(statement.value).__name__ == 'Constant':
+                    continue
+            comment += self.comment_match(statement)
+            comment += self.comment_if(statement)
+            comment += self.comment_loop(statement)
+            comment += self.comment_normal_line(statement)
+        comment += '\n"""'
+        print(comment)
+        return comment
 
     @staticmethod
     def comment_getter_setter(function_def):
@@ -112,7 +131,7 @@ class PythonController(BaseController):
             case 'Constant':
                 if type(statement.value).__name__ == 'str':
                     return f"'{statement.value}'"
-                return statement.value
+                return f'{statement.value}'
 
             case 'Expr':
                 return self.stringify_statement(statement.value)
@@ -169,25 +188,26 @@ class PythonController(BaseController):
         # TODO: implement finding inner comments
         inner_comments = []
         if type(statement).__name__ == 'For':
-            comment = f'Iterates over {self.stringify_statement(statement.iter)}'
+            comment = f'Iterates over {self.stringify_statement(statement.iter)}: {self.comment_inner_statements(statement.body)}'
             return comment
         if type(statement).__name__ == 'While':
-            comment = f'Loops while {self.stringify_statement(statement.test)}'
+            comment = f'Loops while {self.stringify_statement(statement.test)}: {self.comment_inner_statements(statement.body)}'
             return comment
         return ''
 
     def comment_if(self, statement):
         comment = ''
         if type(statement).__name__ == 'If':
-            comment = f'Checks if {self.stringify_statement(statement.test)}: INNER STATEMENT'
+            comment = f'Checks if {self.stringify_statement(statement.test)}: {self.comment_inner_statements(statement.body).rstrip()}'
 
             el = statement
             while el.orelse:
+                else_body = el.orelse
                 el = el.orelse[0]
                 if not hasattr(el, 'orelse'):
-                    comment += f'; else INNER STATEMENT'
+                    comment += f'; else {self.comment_inner_statements(else_body).rstrip()}'
                     break
-                comment += f'; or if {self.stringify_statement(el.test)}: INNER STATEMENT'
+                comment += f'; or if {self.stringify_statement(el.test)}: {self.comment_inner_statements(el.body).rstrip()}'
         return comment
 
     def comment_match(self, statement):
@@ -195,17 +215,18 @@ class PythonController(BaseController):
         if type(statement).__name__ == 'Match':
             comment = f'If {self.stringify_statement(statement.subject)} '
             for match_case in statement.cases:
-                comment += f'matches {self.stringify_match_case(match_case.pattern)} DO SOMETHING or '
+                comment += f'matches {self.stringify_match_case(match_case.pattern)}: {self.comment_inner_statements(match_case.body)}or '
             comment = comment.rstrip('or ')
             return comment
         return ''
 
     def comment_normal_line(self, statement):
+        # TODO: Remove parenthesis around assignment tuples.
         if type(statement).__name__ == 'Assign':
             return f'Assigns {self.stringify_statement(statement.value)} to {self.stringify_statement(statement.targets[0])} '
         elif type(statement).__name__ == 'Expr':
             if type(statement.value).__name__ == 'Call':
-                return f'Calls the {self.stringify_statement(statement.value)} '
+                return f'Calls {self.stringify_statement(statement.value)} '
         elif type(statement).__name__ == 'AugAssign':
             match type(statement).__name__:
                 case 'Add':
@@ -223,6 +244,15 @@ class PythonController(BaseController):
         elif type(statement).__name__ == "Return":
             return f'Returns {self.stringify_statement(statement.value)} '
         return ''
+
+    def comment_inner_statements(self, statement_body):
+        comment = ''
+        inner_comments = []
+        for inner_statement in statement_body:
+            inner_comments.append(self.run_all_comment_functions(inner_statement))
+        comment += '\b, '.join(map(str, inner_comments))
+        return comment
+
 
     def recursive_test(self, ast_body):
         raise NotImplementedError
