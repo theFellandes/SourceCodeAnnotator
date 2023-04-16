@@ -113,7 +113,7 @@ def read_text():
     # try:
     annotator_controller = annotate_source_code(source_language, source_code_text)
     if source_language == 'py':
-        disarranged_source_output = annotator_controller.generate_comment()
+        disarranged_source_output = annotator_controller.comment_source_code()
         source_output = TextWrapper().format_python_source_code(disarranged_source_output)
         return render_template('index.html', sourceText=source_code_text, sourceOutput=source_output)
     disarranged_source_output = demo.lazydoc_entry_point(annotator_controller)

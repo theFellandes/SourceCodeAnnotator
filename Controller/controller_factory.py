@@ -16,6 +16,6 @@ class ControllerFactory:
             case 'java':
                 return JavaController(self.source_code_file_name, self.source_code_string)
             case 'py':
-                return PythonController(self.source_code_file_name)
+                return PythonController(self.source_code_file_name, self.source_code_string)
             case _:
                 return NotImplementedError

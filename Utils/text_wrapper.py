@@ -36,4 +36,4 @@ class TextWrapper:
 
     @staticmethod
     def format_python_source_code(disarranged_source_output: str) -> str:
-        return black.format_str(disarranged_source_output, mode=black.Mode())
+        return black.format_str(disarranged_source_output, mode=black.Mode(line_length=80))
