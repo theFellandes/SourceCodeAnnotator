@@ -171,7 +171,7 @@ class PythonController(BaseController):
                 operator = self.python_ast.handle_operators(statement.op)
 
             case 'Call':
-                if statement.func.id == 'range':
+                if hasattr(statement.func, 'id') and statement.func.id == 'range':
                     if len(statement.args) == 1:
                         return f'0 to {int(self.stringify_statement(statement.args[0])) - 1}'
                     else:
@@ -279,6 +279,10 @@ class PythonController(BaseController):
             inner_comments.append(self.run_all_comment_functions(inner_statement))
         comment += '\b, '.join(map(str, inner_comments))
         return comment
+
+    # TODO: Parametreler ve return value'lar handled değil
+    # TODO: Unhandled cases: Walrus
+    # TODO: Abstract methodlar handled değil (Optional: Body'si boşsa case'i)
 
     def recursive_test(self, ast_body):
         raise NotImplementedError
