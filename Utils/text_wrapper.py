@@ -3,6 +3,8 @@ import textwrap
 from dataclasses import dataclass
 
 import black
+import os
+import tempfile
 
 
 @dataclass
@@ -36,4 +38,13 @@ class TextWrapper:
 
     @staticmethod
     def format_python_source_code(disarranged_source_output: str) -> str:
-        return black.format_str(disarranged_source_output, mode=black.Mode(line_length=80))
+        # cmd = ['python' '-m' 'docformatter',  '--docstring-length 1 80', '--in-place', '--make-summary-multi-line']
+        with open('temp.py', 'w') as temp:
+            temp.write(disarranged_source_output)
+        result = os.system('python -m docformatter --docstring-length 1 80 --in-place --make-summary-multi-line .\\temp.py')
+
+        with open('temp.py', 'r') as temp:
+            formatted_code = temp.read()
+        os.remove(temp.name)
+        return formatted_code
+        # result = subprocess.run(cmd, input=disarranged_source_output.encode(), stdout=subprocess.PIPE,

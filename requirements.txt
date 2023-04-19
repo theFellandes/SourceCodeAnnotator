@@ -11,4 +11,5 @@ python-dotenv==0.21.0
 
 
 black~=23.3.0
+docformatter~=1.6.0
 openai~=0.25.0
