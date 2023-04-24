@@ -38,7 +38,7 @@ class TextWrapper:
     def format_python_source_code(disarranged_source_output: str) -> str:
         with open('temp.py', 'w') as temp:
             temp.write(disarranged_source_output)
-        os.system('python -m docformatter --docstring-length 1 80 --in-place --make-summary-multi-line .\\temp.py')
+        os.system('python -m docformatter --force-wrap --non-strict --wrap-descriptions 80 --docstring-length 1 80 --in-place --make-summary-multi-line --pre-summary-newline .\\temp.py')
 
         with open('temp.py', 'r') as temp:
             formatted_code = temp.read()

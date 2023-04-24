@@ -62,10 +62,8 @@ class PythonController(BaseController):
             if type(statement).__name__ == 'Expr':
                 if type(statement.value).__name__ == 'Constant':
                     continue
-            comment += self.comment_match(statement)
-            comment += self.comment_if(statement)
-            comment += self.comment_loop(statement)
-            comment += self.comment_normal_line(statement)
+            line_comment = self.run_all_comment_functions(statement).rstrip() + '. '
+            comment += line_comment[0].upper() + line_comment[1:]
         comment += '\n"""'
         print(comment)
         return comment
@@ -255,19 +253,19 @@ class PythonController(BaseController):
             if type(statement.value).__name__ == 'Call':
                 return f'Calls {self.stringify_statement(statement.value)} '
         elif type(statement).__name__ == 'AugAssign':
-            match type(statement).__name__:
+            match type(statement.op).__name__:
                 case 'Add':
-                    return f'Increments {self.stringify_statement(statement.value)} by {self.stringify_statement(statement.targets[0])} '
+                    return f'Increments {self.stringify_statement(statement.target)} by {self.stringify_statement(statement.value)} '
                 case 'Sub':
-                    return f'Subtracts {self.stringify_statement(statement.value)} from {self.stringify_statement(statement.targets[0])} '
+                    return f'Subtracts {self.stringify_statement(statement.target)} from {self.stringify_statement(statement.value)} '
                 case 'Mult':
-                    return f'Markiplies {self.stringify_statement(statement.value)} with {self.stringify_statement(statement.targets[0])} '
+                    return f'Markiplies {self.stringify_statement(statement.target)} with {self.stringify_statement(statement.value)} '
                 case 'Div' | 'FloorDiv':
-                    return f'Divides {self.stringify_statement(statement.value)} by {self.stringify_statement(statement.targets[0])} '
+                    return f'Divides {self.stringify_statement(statement.target)} by {self.stringify_statement(statement.value)} '
                 case 'Mod':
-                    return f'Updates the value of {self.stringify_statement(statement.value)} by taking its modulus with {self.stringify_statement(statement.targets[0])} '
+                    return f'Updates the value of {self.stringify_statement(statement.target)} by taking its modulus with {self.stringify_statement(statement.value)} '
                 case 'Pow':
-                    return f'Raises {self.stringify_statement(statement.value)} to the power of {self.stringify_statement(statement.targets[0])} '
+                    return f'Raises {self.stringify_statement(statement.target)} to the power of {self.stringify_statement(statement.value)} '
         elif type(statement).__name__ == "Return":
             return f'Returns {self.stringify_statement(statement.value)} '
         return ''
