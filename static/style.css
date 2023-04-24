@@ -82,7 +82,7 @@ h3 {
 
 .links {
   display: flex;
-  gap: 20px;
+  gap: 50px;
   align-items: center;
   padding-right: 30px;
 }
