@@ -54,6 +54,9 @@ class PythonController(BaseController):
     def comment_function(self, function_def):
         comments = []
         comment = '"""\n'
+        # TODO: Fix this documentation line so that it wouldn't corrupt the documentation.
+        # TODO: Remove this.
+        comment += f'Documentation of {function_def.name} function.\n'
         get_set_comment = self.comment_getter_setter(function_def)
         if get_set_comment:
             print(get_set_comment)
