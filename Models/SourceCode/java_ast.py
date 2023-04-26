@@ -22,6 +22,11 @@ class JavaAST(ASTBase):
         self.__tree: CompilationUnit = javalang.parse.parse(self.source_code_string)
         return self.__tree
 
+    @pretty_object
+    def write_ast(self):
+        return self.generate_ast()
+
+
     def get_list_of_function_names(self) -> CompilationUnit:
         """
         Returns the list of function names found in java ast tree

@@ -39,8 +39,7 @@ class PythonAST(ASTBase):
         """Prints python_ast to the console"""
         # Since Python uses tabs and newlines, only comments extracted
         # requires the escape character deletion.
-        python_ast = ast.parse(self.source_code_string)
-        return python_ast
+        return self.get_ast()
 
     @staticmethod
     def handle_operators(operator):

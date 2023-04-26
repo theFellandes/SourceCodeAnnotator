@@ -14,6 +14,9 @@ class JavaController(BaseController):
     def get_return_value(self):
         return self.java_ast.get_return_value()
 
+    def write_ast(self):
+        return self.java_ast.write_ast()
+
     def write_ast_to_file(self):
         self.java_ast.write_ast_to_file()
 
