@@ -243,7 +243,10 @@ class PythonController(BaseController):
         if type(statement).__name__ == 'Match':
             comment = f'If {self.stringify_statement(statement.subject)} '
             for match_case in statement.cases:
-                comment += f'matches {self.stringify_match_case(match_case.pattern)}: {self.comment_inner_statements(match_case.body)}or '
+                if (matches_value := self.stringify_match_case(match_case.pattern)) != '':
+                    comment += f'matches {matches_value}: {self.comment_inner_statements(match_case.body)}or '
+                else:
+                    comment += f'by default: {self.comment_inner_statements(match_case.body)}or '
             comment = comment.rstrip('or ')
             return comment
         return ''
@@ -283,6 +286,7 @@ class PythonController(BaseController):
 
     # TODO: Parametreler ve return value'lar handled değil
     # TODO: Unhandled cases: Walrus
+    # TODO: Print özel case'i
     # TODO: Abstract methodlar handled değil (Optional: Body'si boşsa case'i)
 
     def recursive_test(self, ast_body):
