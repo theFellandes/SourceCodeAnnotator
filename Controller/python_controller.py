@@ -185,7 +185,7 @@ class PythonController(BaseController):
                 right_side = right_side.rstrip(', ')
                 return f'{self.stringify_statement(statement.func)}({right_side})'
 
-            case 'ListComp' | 'GeneratorExp' | 'DictComp':
+            case 'ListComp' | 'GeneratorExp' | 'DictComp' | 'SetComp':
                 return f'values {self.stringify_statement(statement.generators[0].iter)}'
 
             case 'UnaryOp':
@@ -217,7 +217,10 @@ class PythonController(BaseController):
     def comment_loop(self, statement):
         inner_comments = []
         if type(statement).__name__ == 'For':
-            comment = f'Iterates over {self.stringify_statement(statement.iter)}: {self.comment_inner_statements(statement.body)}'
+            inner_statement = self.comment_inner_statements(statement.body)
+            if "print" in inner_statement.lower() and len(statement.body) == 1:
+                return f'Iterates from {self.stringify_statement(statement.iter)} and prints them '
+            comment = f'Iterates {self.stringify_statement(statement.target)} from {self.stringify_statement(statement.iter)}: {inner_statement}'
             return comment
         if type(statement).__name__ == 'While':
             comment = f'Loops while {self.stringify_statement(statement.test)}: {self.comment_inner_statements(statement.body)}'
@@ -257,6 +260,8 @@ class PythonController(BaseController):
             return f'Assigns {self.stringify_statement(statement.value)} to {self.stringify_statement(statement.targets[0])} '
         elif type(statement).__name__ == 'Expr':
             if type(statement.value).__name__ == 'Call':
+                if hasattr(statement.value.func, 'id') and statement.value.func.id == 'print':
+                    return f'Prints {self.stringify_statement(statement.value.args[0])} '
                 return f'Calls {self.stringify_statement(statement.value)} '
         elif type(statement).__name__ == 'AugAssign':
             match type(statement.op).__name__:
@@ -284,10 +289,10 @@ class PythonController(BaseController):
         comment += '\b, '.join(map(str, inner_comments))
         return comment
 
+    # TODO: LLVM
+    # TODO: For-If bağlantısı (for'un içinde if varsa)
+    # TODO: Web scraping??? (BeautifulSoup) (Most common functions json oluşturup oradan arama yapılabilir son çare olarak)
+    # TODO: Commenting every source code file in a directory -> 3 Method: VSCode, Command Line, Web UI (Zip)
     # TODO: Parametreler ve return value'lar handled değil
-    # TODO: Unhandled cases: Walrus
-    # TODO: Print özel case'i
     # TODO: Abstract methodlar handled değil (Optional: Body'si boşsa case'i)
-
-    def recursive_test(self, ast_body):
-        raise NotImplementedError
+    # TODO: Unhandled cases: Walrus
