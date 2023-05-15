@@ -23,7 +23,7 @@ def lazydoc_entry_point(controller: JavaController):
     for member in members:
         if type(member).__name__ == "MethodDeclaration":
             java_function = JavaFunction(member)
-            if java_function.function_name == "main":
+            if java_function.function_name == "main_CHANGE_HERE_IF_YOU_WANT_TO_RESTORE_SKIPPING_MAIN":
                 comment = comment_function(java_function, "Main function.")
             elif (java_function.function_name.startswith("get") or java_function.function_name.startswith("set")) \
                     and len(java_function.function_tree.body) == 1:
