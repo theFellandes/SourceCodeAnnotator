@@ -1,9 +1,10 @@
 import ast
+
 from dataclasses import dataclass
 
+from Models.SourceCode.ast_base import ASTBase
 from Utils.ast_to_file import ast_to_file
 from Utils.pretty_object import python_ast_prettier
-from Models.SourceCode.ast_base import ASTBase
 
 
 @dataclass
@@ -70,15 +71,15 @@ class PythonAST(ASTBase):
         if type(operator).__name__ == 'MatMult':
             return '@'
         if type(operator).__name__ == 'Eq':
-            return '=='
+            return 'is equal to'
         if type(operator).__name__ == 'NotEq':
-            return '!='
+            return 'is not equal to'
         if type(operator).__name__ == 'Lt':
-            return '<'
+            return 'is less than'
         if type(operator).__name__ == 'LtE':
-            return '<='
+            return 'is less than or equal to'
         if type(operator).__name__ == 'Gt':
-            return '>'
+            return 'is greater than'
         if type(operator).__name__ == 'GtE':
             return '>='
         if type(operator).__name__ == 'Is':
