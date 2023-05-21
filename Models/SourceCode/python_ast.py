@@ -53,7 +53,7 @@ class PythonAST(ASTBase):
         if type(operator).__name__ == 'Div':
             return '/'
         if type(operator).__name__ == 'Mod':
-            return '%'
+            return 'mod'
         if type(operator).__name__ == 'Pow':
             return '**'
         if type(operator).__name__ == 'LShift':
@@ -81,7 +81,7 @@ class PythonAST(ASTBase):
         if type(operator).__name__ == 'Gt':
             return 'is greater than'
         if type(operator).__name__ == 'GtE':
-            return '>='
+            return 'is greater than or equal to'
         if type(operator).__name__ == 'Is':
             return 'is'
         if type(operator).__name__ == 'IsNot':

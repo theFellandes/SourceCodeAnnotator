@@ -280,7 +280,7 @@ class PythonController(BaseController):
                 case 'Add':
                     return f'Adds {self.stringify_statement(statement.value)} to {self.stringify_statement(statement.target)} '
                 case 'Sub':
-                    return f'Subtracts {self.stringify_statement(statement.target)} from {self.stringify_statement(statement.value)} '
+                    return f'Subtracts {self.stringify_statement(statement.value)} from {self.stringify_statement(statement.target)} '
                 case 'Mult':
                     return f'Markiplies {self.stringify_statement(statement.target)} with {self.stringify_statement(statement.value)} '
                 case 'Div' | 'FloorDiv':
