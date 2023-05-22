@@ -5,6 +5,7 @@ import re
 from dataclasses import dataclass
 
 from Controller.base_controller import BaseController
+from Controller import verbs
 from Models.SourceCode.python_ast import PythonAST
 
 
@@ -270,9 +271,7 @@ class PythonController(BaseController):
             return f'Assigns {self.stringify_statement(statement.value)} to {self.stringify_statement(statement.targets[0])} '
         elif type(statement).__name__ == 'Expr':
             if type(statement.value).__name__ == 'Call':
-                if hasattr(statement.value.func, 'id') and statement.value.func.id == 'print':
-                    if len(statement.value.args) >= 1:
-                        return f'Prints {self.stringify_statement(statement.value.args[0])} '
+                if hasattr(statement.value.func, 'id') and statement.value.func.id == 'print' and len(statement.value.args) < 1:
                     return f'Prints newline '
                 return self.comment_function_expression(statement.value)
         elif type(statement).__name__ == 'AugAssign':
@@ -303,18 +302,9 @@ class PythonController(BaseController):
 
     @staticmethod
     def function_name_parser(function_name: str) -> tuple[list[str], bool]:
-        common_verbs = [
-            'remove', 'add', 'get',
-            'set', 'update', 'delete',
-            'create', 'insert', 'append',
-            'pop', 'sort', 'draw', 'init',
-            'pause', 'resume', 'start',
-            'stop', 'clear', 'reset',
-        ]
-
         function_name = re.sub(r'(?<!^)(?=[A-Z])', '_', function_name).lower()
         function_verbs_list = function_name.split('_')
-        return function_verbs_list, function_verbs_list[0] in common_verbs
+        return function_verbs_list, function_verbs_list[0] in verbs.verbs
 
     def comment_function_expression(self, call_statement):
         """
@@ -328,16 +318,24 @@ class PythonController(BaseController):
             function_names, is_common_name = self.function_name_parser(call_statement.func.attr)
 
             if is_common_name:
-                # Create the comment here
-                raise NotImplementedError()
+                if len(function_names) == 1:
+                    return f'{function_names[0]}s the {call_statement.func.value.id}'
+                return f'{function_names[0]}s {" ".join(function_names[1:])}'
 
         elif type(call_statement.func).__name__ ==  'Name':
-            # print()
             function_names, is_common_name = self.function_name_parser(call_statement.func.id)
 
             if is_common_name:
-                # Same shit
-                raise NotImplementedError()
+                # print() || printLines() || print('1', '2', '3')
+                if len(function_names) == 1:
+                    if len(call_statement.args) >= 1:
+                        args_comment = ''
+                        for arg in call_statement.args:
+                            args_comment += self.stringify_statement(arg) + ', '
+                        if len(args_comment) <= 30:
+                            return f'{function_names[0]}s {args_comment.rstrip(", ")}'
+                    return f'{function_names[0]}s the argument(s)'
+                return f'{function_names[0]}s {" ".join(function_names[1:])}'
 
         return f'Calls {self.stringify_statement(call_statement)} '
 
