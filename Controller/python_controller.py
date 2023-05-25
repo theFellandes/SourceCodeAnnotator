@@ -81,6 +81,28 @@ class PythonController(BaseController):
         print(comment)
         return comment
 
+    @staticmethod
+    def line_break_comment(text: str):
+        words = text.split()  # Split the text into individual words
+        lines = []
+        current_line = ''
+
+        for word in words:
+            if word == '"""':
+                continue
+            if len(current_line) + len(word) <= 80:
+                current_line += word + " "  # Add the word to the current line
+            else:
+                lines.append(current_line.strip())  # Add the current line to the list of lines
+                current_line = word + " "  # Start a new line with the current word
+
+        lines.insert(0, '"""')
+        lines.append(current_line.strip())  # Add the last line to the list of lines
+        lines.append('"""')
+
+        return "\n".join(lines)  # Join the lines with line breaks
+
+
     def run_all_comment_functions(self, line):
         # Order of these function calls matter, for one above the if, we should put a dot after its comment.
         comment = ""
