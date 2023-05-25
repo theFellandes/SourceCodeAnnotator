@@ -62,11 +62,8 @@ class PythonController(BaseController):
         return (incremented_value + 1) % len(the_list)
 
     def comment_function(self, function_def):
-        comments = []
+        # comments = []
         comment = '"""\n'
-        # TODO: Fix this documentation line so that it wouldn't corrupt the documentation.
-        # TODO: Remove this.
-        comment += f'Documentation of {function_def.name} function.\n'
         get_set_comment = self.comment_getter_setter(function_def)
         if get_set_comment:
             print(get_set_comment)
@@ -78,6 +75,7 @@ class PythonController(BaseController):
             line_comment = self.run_all_comment_functions(statement).rstrip() + '. '
             comment += line_comment[0].upper() + line_comment[1:]
         comment += '\n"""'
+        comment = self.line_break_comment(comment)
         print(comment)
         return comment
 
