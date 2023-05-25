@@ -113,8 +113,7 @@ def read_text():
     # try:
     annotator_controller = annotate_source_code(source_language, source_code_text)
     if source_language == 'py':
-        disarranged_source_output = annotator_controller.comment_source_code()
-        source_output = TextWrapper().format_python_source_code(disarranged_source_output)
+        source_output = annotator_controller.comment_source_code()
         return render_template('index.html', sourceText=source_code_text, sourceOutput=source_output)
     disarranged_source_output = demo.lazydoc_entry_point(annotator_controller)
     source_output = TextWrapper().format_java_source_code(disarranged_source_output)
@@ -129,13 +128,10 @@ def annotate_lazydoc_vscode():
 
     annotator_controller = annotate_source_code(source_language, source_code_text)
     if source_language == 'py':
-        disarranged_source_output = annotator_controller.comment_source_code()
-        source_output = TextWrapper().format_python_source_code(disarranged_source_output)
+        source_output = annotator_controller.comment_source_code()
         return jsonify(sourceOutput=source_output)
     disarranged_source_output = demo.lazydoc_entry_point(annotator_controller)
-    print(f'{disarranged_source_output=}')
     source_output = TextWrapper().format_java_source_code(disarranged_source_output)
-    print(f'{source_output=}')
     return jsonify(sourceOutput=source_output)
 
 
