@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from Controller.base_controller import BaseController
 from Controller import verbs
 from Models.SourceCode.python_ast import PythonAST
+from Utils.web_scraper import WebScraper
 
 
 @dataclass
@@ -17,6 +18,7 @@ class PythonController(BaseController):
     def __post_init__(self):
         super().__post_init__()
         self.python_ast = PythonAST(self.source_code_string)
+        self.web_scraper = WebScraper('', 'site: pypi.org OR docs.python.org OR stackoverflow.com')
         # TODO: Do body commenti kötü oluşabilir, deneme-yanılma
         self._if_comments_list = [
             'Checks if {condition}: {body}',
@@ -92,6 +94,7 @@ class PythonController(BaseController):
             if word == '"""':
                 continue
             if word == 'Raises:':
+                # Bunu yaptığımız için bütün yazılım camiasından özür diliyoruz.
                 break
             if len(current_line) + len(word) <= 80:
                 current_line += word + " "  # Add the word to the current line
@@ -101,6 +104,7 @@ class PythonController(BaseController):
 
         lines.insert(0, '"""')
         lines.append(current_line.strip())  # Add the last line to the list of lines
+        # Bunu yaptığımız için bütün yazılım camiasından özür diliyoruz.
         lines.append(self._exceptions)  # Add the last line to the list of lines
         lines.append('"""')
 
@@ -230,6 +234,27 @@ class PythonController(BaseController):
                 return f'{self.python_ast.handle_operators(statement.op)} {self.stringify_statement(statement.operand)}'
 
         return f"{left_side} {operator} {right_side}"
+
+    def comment_import_statements(self, statement):
+        comment = ''
+        try:
+            if type(statement).__name__ == 'Import':
+                for name in statement.names:
+                    self.web_scraper.query = name.name
+                    comment += f'{name.name}: {self.web_scraper.search_google()[0].get("text").partition(".")}'
+                return comment
+            elif type(statement).__name__ == 'ImportFrom':
+                for name in statement.names:
+                    self.web_scraper.query = f'{statement.module}.{name.name}'
+                    comment += f'{name.name}: {self.web_scraper.search_google()[0].get("text").partition(".")}'
+                return comment
+            return ''
+
+        except Exception:
+            return comment
+
+
+
 
     def stringify_match_case(self, statement) -> str:
         match type(statement).__name__:
