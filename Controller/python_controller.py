@@ -12,6 +12,7 @@ from Models.SourceCode.python_ast import PythonAST
 @dataclass
 class PythonController(BaseController):
     _if_index: int = random.randint(0, 3)
+    _exceptions: str = ''
 
     def __post_init__(self):
         super().__post_init__()
@@ -23,6 +24,7 @@ class PythonController(BaseController):
             '{body} if {condition}',
             'Evaluates if {condition} and {body}',
         ]
+        self._exceptions = "\nRaises:"
 
     def get_ast(self):
         return self.python_ast.get_ast()
@@ -74,13 +76,14 @@ class PythonController(BaseController):
                     continue
             line_comment = self.run_all_comment_functions(statement).rstrip() + '. '
             comment += line_comment[0].upper() + line_comment[1:]
+        comment += self._exceptions
         comment += '\n"""'
         comment = self.line_break_comment(comment)
         print(comment)
+        self._exceptions = "\n\nRaises:"
         return comment
 
-    @staticmethod
-    def line_break_comment(text: str):
+    def line_break_comment(self, text: str):
         words = text.split()  # Split the text into individual words
         lines = []
         current_line = ''
@@ -88,6 +91,8 @@ class PythonController(BaseController):
         for word in words:
             if word == '"""':
                 continue
+            if word == 'Raises:':
+                break
             if len(current_line) + len(word) <= 80:
                 current_line += word + " "  # Add the word to the current line
             else:
@@ -96,6 +101,7 @@ class PythonController(BaseController):
 
         lines.insert(0, '"""')
         lines.append(current_line.strip())  # Add the last line to the list of lines
+        lines.append(self._exceptions)  # Add the last line to the list of lines
         lines.append('"""')
 
         return "\n".join(lines)  # Join the lines with line breaks
@@ -107,6 +113,8 @@ class PythonController(BaseController):
         comment += self.comment_loop(line)
         comment += self.comment_match(line)
         comment += self.comment_if(line)
+        comment += self.comment_with_statement(line)
+        comment += self.comment_try_except(line)
         # if comment:
         #     comment = comment[:-1] + ". "
         comment += self.comment_normal_line(line)
@@ -310,6 +318,10 @@ class PythonController(BaseController):
                     return f'Raises {self.stringify_statement(statement.target)} to the power of {self.stringify_statement(statement.value)} '
         elif type(statement).__name__ == "Return":
             return f'Returns {self.stringify_statement(statement.value)} '
+        elif type(statement).__name__ == 'Raise':
+            self._exceptions += f'\n    {self.stringify_statement(statement.exc)}'
+            # TODO: Her satırı commentlemeyi bıraktığımızda burası da kalkacak.
+            return f'Raises {self.stringify_statement(statement.exc)}'
         return ''
 
     def comment_inner_statements(self, statement_body):
