@@ -339,8 +339,12 @@ class PythonController(BaseController):
 
             if is_common_name:
                 if len(function_names) == 1:
-                    return f'{function_names[0]}s the {call_statement.func.value.id}'
-                return f'{function_names[0]}s {" ".join(function_names[1:])}'
+                    if len(call_statement.args):
+                        # İçerisinde parametre varsa on diyoruz
+                        return f'{function_names[0]}s {"the" if len(call_statement.args) > 1 else "a"} parameter{"s" if len(call_statement.args) > 1 else ""} on {call_statement.func.value.id} '
+                    # No parameter
+                    return f'{function_names[0]}s the {call_statement.func.value.id} '
+                return f'{function_names[0]}s {" ".join(function_names[1:])} '
 
         elif type(call_statement.func).__name__ ==  'Name':
             function_names, is_common_name = self.function_name_parser(call_statement.func.id)
@@ -353,13 +357,58 @@ class PythonController(BaseController):
                         for arg in call_statement.args:
                             args_comment += self.stringify_statement(arg) + ', '
                         if len(args_comment) <= 30:
-                            return f'{function_names[0]}s {args_comment.rstrip(", ")}'
-                    return f'{function_names[0]}s the argument(s)'
-                return f'{function_names[0]}s {" ".join(function_names[1:])}'
+                            return f'{function_names[0]}s {args_comment.rstrip(", ")} '
+                    return f'{function_names[0]}s the argument(s) '
+                return f'{function_names[0]}s {" ".join(function_names[1:])} '
 
         return f'Calls {self.stringify_statement(call_statement)} '
 
+    def comment_with_statement(self, statement):
+        comment = ''
+        if type(statement).__name__ == 'With':
+            for index, item in enumerate(statement.items):
+                comment = comment.replace(' and ', ', ')
+                if type(item.context_expr).__name__ == 'Call':
+                    if item.context_expr.func.id == 'open':
+                        call_statement = item.context_expr
+                        comment += f'opens {call_statement.args[0].value} as {item.optional_vars.id} and '
+                    else:
+                        # func geldiyse: Creating an instance of {HelloContextManager}
+                        comment += f'creates an instance of {item.context_expr.func.id} and '
+                else:
+                    #  Use the {SQL connector} as a context manager.
+                    comment += f'uses the {item.context_expr.id} as a context manager and '
+                if index == 0:
+                    comment = comment[0].upper() + comment[1:]
 
+            comment += self.comment_inner_statements(statement.body)
+        return comment
+
+    def comment_try_except(self, statement):
+        comment = ''
+        if type(statement).__name__ == 'Try':
+            comment += self.comment_body(statement.body)
+            if len(statement.handlers):
+                errors_list = [', while checking for ', ', while looking for ', ', while catching ', ', while handling ',
+                               ', checking for ', ', looking for ', ', catching ', ', handling ']
+                rng = random.randint(0, len(errors_list) - 1)
+                comment = f'{comment.rstrip(". ")}{errors_list[rng]}'
+                for handler in statement.handlers:
+                    comment += f'{handler.type.id}, '
+                    self.comment_body(handler.body)
+            comment = f'{comment.rstrip(", ")} error{"s" if len(statement.handlers) > 1 else ""}. '
+            if len(statement.orelse):
+                comment += f'If no errors were found; {self.comment_body(statement.orelse)}'
+            if len(statement.finalbody):
+                comment += f'Finally {self.comment_body(statement.finalbody)[0].lower()}{self.comment_body(statement.finalbody)[1:]}'
+        return comment.rstrip('. ')
+
+    def comment_body(self, body):
+        comment = ''
+        for statement in body:
+            line_comment = self.run_all_comment_functions(statement).rstrip() + '. '
+            comment += line_comment[0].upper() + line_comment[1:]
+        return comment
 
     # TODO: For-If bağlantısı (for'un içinde if varsa)
     # TODO: Web scraping??? (BeautifulSoup) (Most common functions json oluşturup oradan arama yapılabilir son çare olarak)
