@@ -2,7 +2,7 @@ import demo
 import random
 import re
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from Controller.base_controller import BaseController
 from Controller import verbs
@@ -12,8 +12,9 @@ from Utils.web_scraper import WebScraper
 
 @dataclass
 class PythonController(BaseController):
-    _if_index: int = random.randint(0, 3)
+    _if_index: int = 2
     _exceptions: str = ''
+    _assignments: list = field(default_factory=list)
 
     def __post_init__(self):
         super().__post_init__()
@@ -23,7 +24,6 @@ class PythonController(BaseController):
         self._if_comments_list = [
             'Checks if {condition}: {body}',
             'If {condition} then {body}',
-            '{body} if {condition}',
             'Evaluates if {condition} and {body}',
         ]
         self._exceptions = "\nRaises:"
@@ -76,9 +76,18 @@ class PythonController(BaseController):
             if type(statement).__name__ == 'Expr':
                 if type(statement.value).__name__ == 'Constant':
                     continue
+            if type(statement).__name__ == 'Assign':
+                if type(statement.value).__name__ in ['Constant', 'Name']:
+                    continue
             line_comment = self.run_all_comment_functions(statement).rstrip() + '. '
+            # TODO: Sıçayım böyle işin içine
+            # if line_comment == '. ':
+            #     continue
             comment += line_comment[0].upper() + line_comment[1:]
-        comment += self._exceptions
+
+        if self._exceptions != "\nRaises:":
+            comment += self._exceptions
+
         comment += '\n"""'
         comment = self.line_break_comment(comment)
         print(comment)
@@ -105,9 +114,9 @@ class PythonController(BaseController):
         lines.insert(0, '"""')
         lines.append(current_line.strip())  # Add the last line to the list of lines
         # Bunu yaptığımız için bütün yazılım camiasından özür diliyoruz.
-        lines.append(self._exceptions)  # Add the last line to the list of lines
+        if self._exceptions != "\nRaises:":
+            lines.append(self._exceptions) # Add the last line to the list of lines
         lines.append('"""')
-
         return "\n".join(lines)  # Join the lines with line breaks
 
 
@@ -238,6 +247,7 @@ class PythonController(BaseController):
     def comment_import_statements(self, statement):
         comment = ''
         try:
+            comment = '"""\n'
             if type(statement).__name__ == 'Import':
                 for name in statement.names:
                     self.web_scraper.query = name.name
@@ -251,10 +261,7 @@ class PythonController(BaseController):
             return ''
 
         except Exception:
-            return comment
-
-
-
+            return ''
 
     def stringify_match_case(self, statement) -> str:
         match type(statement).__name__:
@@ -311,9 +318,9 @@ class PythonController(BaseController):
             comment = f'If {self.stringify_statement(statement.subject)} '
             for match_case in statement.cases:
                 if (matches_value := self.stringify_match_case(match_case.pattern)) != '':
-                    comment += f'matches {matches_value}: {self.comment_inner_statements(match_case.body)}or '
+                    comment += f'matches {matches_value}: {self.comment_inner_statements(match_case.body)} or '
                 else:
-                    comment += f'by default: {self.comment_inner_statements(match_case.body)}or '
+                    comment += f'by default: {self.comment_inner_statements(match_case.body)} or '
             comment = comment.rstrip('or ')
             return comment
         return ''
@@ -369,9 +376,12 @@ class PythonController(BaseController):
             return comment.rstrip('\b, ')
 
         for inner_statement in statement_body:
-            inner_comments.append(self.run_all_comment_functions(inner_statement))
-        comment += '\b, '.join(map(str, inner_comments))
-        return comment
+            current_statement = self.run_all_comment_functions(inner_statement)
+            if not current_statement:
+                continue
+            inner_comments.append(current_statement)
+        comment = '\b, '.join(map(str, inner_comments))
+        return comment.rstrip('\b, ')
 
     @staticmethod
     def function_name_parser(function_name: str) -> tuple[list[str], bool]:
@@ -468,4 +478,3 @@ class PythonController(BaseController):
     # TODO: Commenting every source code file in a directory -> 3 Method: VSCode, Command Line, Web UI (Zip)
     # TODO: Parametreler ve return value'lar handled değil
     # TODO: Abstract methodlar handled değil (Optional: Body'si boşsa case'i)
-    # TODO: Unhandled cases: Walrus
