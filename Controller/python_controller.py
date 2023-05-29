@@ -82,7 +82,7 @@ class PythonController(BaseController):
         comment += '\n"""'
         comment = self.line_break_comment(comment)
         print(comment)
-        self._exceptions = "\n\nRaises:"
+        self._exceptions = "\nRaises:"
         return comment
 
     def line_break_comment(self, text: str):
@@ -321,8 +321,10 @@ class PythonController(BaseController):
     def comment_normal_line(self, statement):
         # TODO: Remove parenthesis around assignment tuples.
         if type(statement).__name__ == 'Assign':
+            if type(statement.value).__name__ in ['Constant', 'Name']:
+                return ''
             return f'Assigns {self.stringify_statement(statement.value)} to {self.stringify_statement(statement.targets[0])} '
-        elif type(statement).__name__ == 'Expr':
+        if type(statement).__name__ == 'Expr':
             if type(statement.value).__name__ == 'Call':
                 if hasattr(statement.value.func, 'id') and statement.value.func.id == 'print' and len(statement.value.args) < 1:
                     return f'Prints newline '
@@ -352,6 +354,20 @@ class PythonController(BaseController):
     def comment_inner_statements(self, statement_body):
         comment = ''
         inner_comments = []
+        only_constant_assignment = True
+
+        for inner_statement in statement_body:
+            if type(inner_statement).__name__ != 'Assign' or type(inner_statement.value).__name__ not in ['Constant', 'Name']:
+                only_constant_assignment = False
+                break
+
+        if only_constant_assignment:
+            for inner_statement in statement_body:
+                current_comment = f'Assigns {self.stringify_statement(inner_statement.value)} to {self.stringify_statement(inner_statement.targets[0])} '
+                inner_comments.append(current_comment)
+            comment = '\b, '.join(map(str, inner_comments))
+            return comment.rstrip('\b, ')
+
         for inner_statement in statement_body:
             inner_comments.append(self.run_all_comment_functions(inner_statement))
         comment += '\b, '.join(map(str, inner_comments))
