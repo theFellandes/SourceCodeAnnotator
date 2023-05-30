@@ -44,6 +44,9 @@ class PythonController(BaseController):
             leading_whitespace = re.match(r'^\s+', source_code_list[lineno])
             indented_comment = ''
             for comment_line in comment.splitlines():
+                if lineno == 0:
+                    indented_comment += f'{comment_line}\n'
+                    break
                 indented_comment += f'{leading_whitespace.group(0)}{comment_line}\n'
             source_code_list.insert(lineno, indented_comment.rstrip())
 
@@ -51,7 +54,7 @@ class PythonController(BaseController):
         self.source_code_string = demo.apply_backspace(self.source_code_string)
         return self.source_code_string
 
-    def comment_functions(self, ast_body):
+    def comment_functions(self, ast_body, do_import_statements=False):
         comments_and_line_numbers = {}
 
         if do_import_statements:
@@ -61,7 +64,7 @@ class PythonController(BaseController):
                 comments_and_line_numbers.update({child.lineno: self.comment_function(child)})
 
             if type(child).__name__ == 'ClassDef':
-                comments_and_line_numbers.update(self.comment_functions(child.body))
+                comments_and_line_numbers.update(self.comment_functions(child.body, False))
 
         return comments_and_line_numbers
 
@@ -234,7 +237,12 @@ class PythonController(BaseController):
                     if len(statement.args) == 1:
                         return f'0 to {int(self.stringify_statement(statement.args[0])) - 1}'
                     else:
-                        comment = f'{self.stringify_statement(statement.args[0])} to {int(self.stringify_statement(statement.args[1])) - 1}'
+                        end_range = self.stringify_statement(statement.args[1])
+                        if end_range.isnumeric():
+                            end_range = int(end_range) - 1
+                            comment = f'{self.stringify_statement(statement.args[0])} to {end_range}'
+                        else:
+                            comment = f'{self.stringify_statement(statement.args[0])} until {end_range}'
                         if len(statement.args) == 3:
                             comment = f'{comment} with steps of {self.stringify_statement(statement.args[2])}'
                         return comment
@@ -251,23 +259,33 @@ class PythonController(BaseController):
 
         return f"{left_side} {operator} {right_side}"
 
-    def comment_import_statements(self, statement):
-        comment = ''
+    def comment_import_statements(self, statements):
         try:
             comment = '"""\n'
-            if type(statement).__name__ == 'Import':
-                for name in statement.names:
-                    self.web_scraper.query = name.name
-                    comment += f'{name.name}: {self.web_scraper.search_google()[0].get("text").partition(".")}'
-                return comment
-            elif type(statement).__name__ == 'ImportFrom':
-                for name in statement.names:
-                    self.web_scraper.query = f'{statement.module}.{name.name}'
-                    comment += f'{name.name}: {self.web_scraper.search_google()[0].get("text").partition(".")}'
-                return comment
-            return ''
+            for statement in statements:
+                if type(statement).__name__ not in ['Import', 'ImportFrom']:
+                    break
+                if type(statement).__name__ == 'Import':
+                    for name in statement.names:
+                        self.web_scraper.query = name.name
+                        comment += f'{name.name}: {self.web_scraper.search_google()[0].get("link")}\n'
+                elif type(statement).__name__ == 'ImportFrom':
+                    for name in statement.names:
+                        self.web_scraper.query = f'{statement.module}.{name.name}'
+                        print(self.web_scraper.query)
+                        try:
+                            comment += f'{name.name}: {self.web_scraper.search_google()[0].get("link")}\n'
+                        except Exception as exc:
+                            comment += f'{name.name}: []\n'
+            comment = comment.rstrip('\n')
+            comment += '\n"""'
+            print(comment)
+            if comment == '"""\n\n"""':
+                return ''
+            return comment
 
-        except Exception:
+        except Exception as exc:
+            print(f'Web scraping failed {exc=}')
             return ''
 
     def stringify_match_case(self, statement) -> str:
@@ -371,6 +389,7 @@ class PythonController(BaseController):
         comment = ''
         inner_comments = []
         only_constant_assignment = True
+        self._assignment_flag = False
 
         for inner_statement in statement_body:
             if type(inner_statement).__name__ != 'Assign' or type(inner_statement.value).__name__ not in ['Constant', 'Name']:
@@ -386,6 +405,7 @@ class PythonController(BaseController):
 
         for inner_statement in statement_body:
             current_statement = self.run_all_comment_functions(inner_statement)
+            self.check_for_assignment_flag(inner_statement)
             if not current_statement:
                 continue
             inner_comments.append(current_statement)
