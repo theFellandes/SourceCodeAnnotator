@@ -15,6 +15,7 @@ class PythonController(BaseController):
     _if_index: int = 2
     _exceptions: str = ''
     _assignments: list = field(default_factory=list)
+    _assignment_flag: bool = False
 
     def __post_init__(self):
         super().__post_init__()
@@ -52,6 +53,9 @@ class PythonController(BaseController):
 
     def comment_functions(self, ast_body):
         comments_and_line_numbers = {}
+
+        if do_import_statements:
+            comments_and_line_numbers.update({0: self.comment_import_statements(ast_body)})
         for child in ast_body:
             if type(child).__name__ == 'FunctionDef':
                 comments_and_line_numbers.update({child.lineno: self.comment_function(child)})
@@ -75,11 +79,14 @@ class PythonController(BaseController):
         for statement in function_def.body:
             if type(statement).__name__ == 'Expr':
                 if type(statement.value).__name__ == 'Constant':
+                    self.check_for_assignment_flag(statement)
                     continue
             if type(statement).__name__ == 'Assign':
                 if type(statement.value).__name__ in ['Constant', 'Name']:
+                    self.check_for_assignment_flag(statement)
                     continue
             line_comment = self.run_all_comment_functions(statement).rstrip() + '. '
+            self.check_for_assignment_flag(statement)
             # TODO: Sıçayım böyle işin içine
             # if line_comment == '. ':
             #     continue
@@ -330,7 +337,9 @@ class PythonController(BaseController):
         if type(statement).__name__ == 'Assign':
             if type(statement.value).__name__ in ['Constant', 'Name']:
                 return ''
-            return f'Assigns {self.stringify_statement(statement.value)} to {self.stringify_statement(statement.targets[0])} '
+            if self._assignment_flag:
+                return f'\b\b, {self.stringify_statement(statement.targets[0])} '
+            return f'Sets {self.stringify_statement(statement.targets[0])} '
         if type(statement).__name__ == 'Expr':
             if type(statement.value).__name__ == 'Call':
                 if hasattr(statement.value.func, 'id') and statement.value.func.id == 'print' and len(statement.value.args) < 1:
@@ -471,7 +480,15 @@ class PythonController(BaseController):
         for statement in body:
             line_comment = self.run_all_comment_functions(statement).rstrip() + '. '
             comment += line_comment[0].upper() + line_comment[1:]
+            self.check_for_assignment_flag(statement)
         return comment
+
+
+    def check_for_assignment_flag(self, statement):
+        if type(statement).__name__ == 'Assign' and not type(statement.value).__name__ in ['Constant', 'Name']:
+            self._assignment_flag = True
+        else:
+            self._assignment_flag = False
 
     # TODO: For-If bağlantısı (for'un içinde if varsa)
     # TODO: Web scraping??? (BeautifulSoup) (Most common functions json oluşturup oradan arama yapılabilir son çare olarak)
