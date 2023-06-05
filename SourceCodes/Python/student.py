@@ -41,9 +41,13 @@ class StudentDemo:
         yValues[index1],
         0.015)
     StdDraw.filledCircle(
-        xValues[index2],
-        yValues[index2],
-        0.015)
+      xValues[index1],
+      yValues[index1],
+      0.015)
+    StdDraw.filledCircle(
+      xValues[index1],
+      yValues[index1],
+      0.015)
 
   @staticmethod
   def distance(xValues: float, yValues: float, index1: float, index2: float):
