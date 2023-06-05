@@ -193,7 +193,7 @@ class PythonController(BaseController):
                 return statement.id
 
             case 'Attribute':
-                return f'{self.stringify_statement(statement.value)}.{statement.attr}'
+                return f'{statement.attr}'
 
             case 'Tuple' | 'List' | 'Set':
                 for element in statement.elts:
@@ -453,7 +453,16 @@ class PythonController(BaseController):
                     return f'{function_names[0]}s the argument(s) '
                 return f'{function_names[0]}s {" ".join(function_names[1:])} '
 
-        return f'Calls {self.stringify_statement(call_statement)} '
+        if self._assignment_flag == "Call":
+            # TODO: Calls filledCircle, filledCircle, filledCircle => Calls filledCircle 3 times
+            #  self._call_number += 1
+            if type(call_statement.func).__name__ == 'Attribute':
+                return f'\b\b, {call_statement.func.attr} '
+            return f'\b\b, {call_statement.func.id} '
+
+        if type(call_statement.func).__name__ ==  'Attribute':
+            return f'Calls {call_statement.func.attr} '
+        return f'Calls {call_statement.func.id} '
 
     def comment_with_statement(self, statement):
         comment = ''
@@ -506,7 +515,18 @@ class PythonController(BaseController):
 
     def check_for_assignment_flag(self, statement):
         if type(statement).__name__ == 'Assign' and not type(statement.value).__name__ in ['Constant', 'Name']:
-            self._assignment_flag = True
+            self._assignment_flag = 'Assign'
+        elif type(statement).__name__ == 'Expr':
+            if type(statement.value).__name__ == 'Call':
+                is_common_name = False
+                if type(statement.value.func).__name__ == 'Attribute':
+                    _, is_common_name = self.function_name_parser(statement.value.func.attr)
+                elif type(statement.value.func).__name__ == 'Name':
+                    _, is_common_name = self.function_name_parser(statement.value.func.id)
+                if is_common_name:
+                    self._assignment_flag = 'None'
+                else:
+                    self._assignment_flag = 'Call'
         else:
             self._assignment_flag = False
 
