@@ -6,3 +6,6 @@
  Lazy Doc v1.0
  ![Image of the user interface](static/website.png)
  
+ 
+ \b
+ ![What did it cost? \b](/What%20did%20it%20cost.png)
