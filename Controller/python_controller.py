@@ -15,7 +15,7 @@ class PythonController(BaseController):
     _if_index: int = 2
     _exceptions: str = ''
     _assignments: list = field(default_factory=list)
-    _assignment_flag: bool = False
+    _assignment_flag: str = 'None'
 
     def __post_init__(self):
         super().__post_init__()
@@ -25,7 +25,8 @@ class PythonController(BaseController):
         self._if_comments_list = [
             'Checks if {condition}: {body}',
             'If {condition} then {body}',
-            'Evaluates if {condition} and {body}',
+            'Evaluates whether {condition} and {body} if so',
+            'Evaluates if {condition} and then {body}',
         ]
         self._exceptions = "\nRaises:"
 
@@ -90,9 +91,6 @@ class PythonController(BaseController):
                     continue
             line_comment = self.run_all_comment_functions(statement).rstrip() + '. '
             self.check_for_assignment_flag(statement)
-            # TODO: Sıçayım böyle işin içine
-            # if line_comment == '. ':
-            #     continue
             comment += line_comment[0].upper() + line_comment[1:]
 
         if self._exceptions != "\nRaises:":
@@ -246,10 +244,11 @@ class PythonController(BaseController):
                         if len(statement.args) == 3:
                             comment = f'{comment} with steps of {self.stringify_statement(statement.args[2])}'
                         return comment
-                for arg in statement.args:
-                    right_side += str(self.stringify_statement(arg)) + ", "
-                right_side = right_side.rstrip(', ')
-                return f'{self.stringify_statement(statement.func)}({right_side})'
+                # for arg in statement.args:
+                #     right_side += str(self.stringify_statement(arg)) + ", "
+                # right_side = right_side.rstrip(', ')
+                # return f'{self.stringify_statement(statement.func)}({right_side})'
+                return f'{self.stringify_statement(statement.func)}'
 
             case 'ListComp' | 'GeneratorExp' | 'DictComp' | 'SetComp':
                 return f'values {self.stringify_statement(statement.generators[0].iter)}'
@@ -314,7 +313,9 @@ class PythonController(BaseController):
         if type(statement).__name__ == 'For':
             inner_statement = self.comment_inner_statements(statement.body)
             if "print" in inner_statement.lower() and len(statement.body) == 1:
-                return f'Iterates from {self.stringify_statement(statement.iter)} and prints them '
+                # TODO: iterator ile içerideki ifade aynı mı değil mi bakmak lazım.
+                # Iterates for each element in list and prints them
+                return f'Iterates from {self.stringify_statement(statement.iter)} and prints each value '
             comment = f'Iterates {self.stringify_statement(statement.target)} from {self.stringify_statement(statement.iter)}: {inner_statement}'
             return comment
         if type(statement).__name__ == 'While':
@@ -355,7 +356,7 @@ class PythonController(BaseController):
         if type(statement).__name__ == 'Assign':
             if type(statement.value).__name__ in ['Constant', 'Name']:
                 return ''
-            if self._assignment_flag:
+            if self._assignment_flag == 'Assign':
                 return f'\b\b, {self.stringify_statement(statement.targets[0])} '
             return f'Sets {self.stringify_statement(statement.targets[0])} '
         if type(statement).__name__ == 'Expr':
@@ -389,7 +390,7 @@ class PythonController(BaseController):
         comment = ''
         inner_comments = []
         only_constant_assignment = True
-        self._assignment_flag = False
+        self._assignment_flag = 'None'
 
         for inner_statement in statement_body:
             if type(inner_statement).__name__ != 'Assign' or type(inner_statement.value).__name__ not in ['Constant', 'Name']:
@@ -528,7 +529,7 @@ class PythonController(BaseController):
                 else:
                     self._assignment_flag = 'Call'
         else:
-            self._assignment_flag = False
+            self._assignment_flag = 'None'
 
     # TODO: For-If bağlantısı (for'un içinde if varsa)
     # TODO: Web scraping??? (BeautifulSoup) (Most common functions json oluşturup oradan arama yapılabilir son çare olarak)
