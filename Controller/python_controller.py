@@ -12,7 +12,9 @@ from Utils.web_scraper import WebScraper
 
 @dataclass
 class PythonController(BaseController):
+    # _if_index: int = random.randint(0, 3)
     _if_index: int = 2
+    _conjunction_accumulator: int = 4
     _exceptions: str = ''
     _assignments: list = field(default_factory=list)
     _assignment_flag: str = 'None'
@@ -29,6 +31,13 @@ class PythonController(BaseController):
             'Evaluates if {condition} and then {body}',
         ]
         self._exceptions = "\nRaises:"
+        self._conjunctions = [
+            'and',
+            'after that',
+            'and then',
+            'then',
+            'afterwards',
+        ]
 
     def get_ast(self):
         return self.python_ast.get_ast()
@@ -532,6 +541,7 @@ class PythonController(BaseController):
             self._assignment_flag = 'None'
 
     # TODO: For-If bağlantısı (for'un içinde if varsa)
+    # TODO: Pauses the parameters on StdDraw
     # TODO: Web scraping??? (BeautifulSoup) (Most common functions json oluşturup oradan arama yapılabilir son çare olarak)
     # TODO: Commenting every source code file in a directory -> 3 Method: VSCode, Command Line, Web UI (Zip)
     # TODO: Parametreler ve return value'lar handled değil
