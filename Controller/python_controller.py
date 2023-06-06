@@ -25,10 +25,10 @@ class PythonController(BaseController):
         self.web_scraper = WebScraper('', 'site: pypi.org OR docs.python.org OR stackoverflow.com')
         # TODO: Do body commenti kötü oluşabilir, deneme-yanılma
         self._if_comments_list = [
-            'Checks if {condition}: {body}',
+            'Checks if {condition}; {body}',
             'If {condition} then {body}',
-            'Evaluates whether {condition} and {body} if so',
-            'Evaluates if {condition} and then {body}',
+            'Evaluates whether {condition} {conjunction} {body} if so',
+            'Evaluates if {condition} {conjunction} {body}',
         ]
         self._exceptions = "\nRaises:"
         self._conjunctions = [
@@ -106,10 +106,59 @@ class PythonController(BaseController):
             comment += self._exceptions
 
         comment += '\n"""'
-        comment = self.line_break_comment(comment)
+        comment = self.change_end_of_sentence(self.line_break_comment(comment))
         print(comment)
         self._exceptions = "\nRaises:"
         return comment
+
+    def random_sentence_end(self):
+        random_value = 0
+        if random_value == 0:
+            rv = self._conjunctions[self._conjunction_accumulator]
+            self.update_circular_index(self._conjunction_accumulator, self._conjunctions)
+            return ' ' + rv + ' '
+        return '. '
+
+    def change_end_of_sentence(self, comment: str):
+        sentences = comment.split('. ')
+        fixed_sentences = []
+        should_lower = False
+        for index, sentence in enumerate(sentences):
+            if '"""' in sentence:
+                if index == 0:
+                    if len(sentences) == 1:
+                        fixed_sentences.append(sentence)
+                        continue
+                    randoms = ["Firstly", "First of all", "At the start", "Initially"]
+                    random_value = random.randint(0, len(randoms) - 1)
+                    sentence = f'{sentence[0:4]}{randoms[random_value]} {sentence[4].lower()}{sentence[5:]}. '
+                else:
+                    randoms = ["Finally", "Lastly", "In conclusion", "To conclude", "At the end", "At last",
+                               "Conclusively"]
+                    random_value = random.randint(0, len(randoms) - 1)
+                    sentence = f'{randoms[random_value]} {sentence[0].lower()}{sentence[1:]} '
+                fixed_sentences.append(sentence)
+                continue
+            sentence_end = self.random_sentence_end()
+            if index == len(sentences) - 2:
+                sentence_end = '. '
+            sentence += sentence_end
+            if should_lower:
+                sentence = sentence[0].lower() + sentence[1:]
+            fixed_sentences.append(sentence)
+            should_lower = (sentence_end != '. ')
+
+        return ''.join(fixed_sentences)
+
+    @staticmethod
+    def apply_backspace(s):
+        while True:
+            # if you find a character followed by a backspace, remove both
+            t = re.sub('.\b', '', s, count=1)
+            if len(s) == len(t):
+                # now remove any backspaces from beginning of string
+                return re.sub('\b+', '', t)
+            s = t
 
     def line_break_comment(self, text: str):
         words = text.split()  # Split the text into individual words
@@ -134,7 +183,8 @@ class PythonController(BaseController):
         if self._exceptions != "\nRaises:":
             lines.append(self._exceptions) # Add the last line to the list of lines
         lines.append('"""')
-        return "\n".join(lines)  # Join the lines with line breaks
+        comment = "\n".join(lines)  # Join the lines with line breaks
+        return self.apply_backspace(comment)
 
 
     def run_all_comment_functions(self, line):
@@ -335,8 +385,9 @@ class PythonController(BaseController):
     def comment_if(self, statement):
         comment = ''
         if type(statement).__name__ == 'If':
-            comment = self._if_comments_list[self._if_index].format(condition=self.stringify_statement(statement.test), body=self.comment_inner_statements(statement.body).rstrip())
+            comment = self._if_comments_list[self._if_index].format(condition=self.stringify_statement(statement.test), body=self.comment_inner_statements(statement.body).rstrip(), conjunction=self._conjunctions[self._conjunction_accumulator])
             self._if_index = self.update_circular_index(self._if_index, self._if_comments_list)
+            self._conjunction_accumulator = self.update_circular_index(self._conjunction_accumulator, self._conjunctions)
 
             el = statement
             while el.orelse:
@@ -396,7 +447,6 @@ class PythonController(BaseController):
         return ''
 
     def comment_inner_statements(self, statement_body):
-        comment = ''
         inner_comments = []
         only_constant_assignment = True
         self._assignment_flag = 'None'
@@ -443,7 +493,7 @@ class PythonController(BaseController):
                 if len(function_names) == 1:
                     if len(call_statement.args):
                         # İçerisinde parametre varsa on diyoruz
-                        return f'{function_names[0]}s {"the" if len(call_statement.args) > 1 else "a"} parameter{"s" if len(call_statement.args) > 1 else ""} on {call_statement.func.value.id} '
+                        return f'{function_names[0]}s {"the" if len(call_statement.args) > 1 else ""} {"parameters" if len(call_statement.args) > 1 else ""} on {call_statement.func.value.id} '
                     # No parameter
                     return f'{function_names[0]}s the {call_statement.func.value.id} '
                 return f'{function_names[0]}s {" ".join(function_names[1:])} '
