@@ -12,9 +12,10 @@ from Utils.web_scraper import WebScraper
 
 @dataclass
 class PythonController(BaseController):
-    # _if_index: int = random.randint(0, 3)
-    _if_index: int = 2
-    _conjunction_accumulator: int = 4
+    _if_index: int = random.randint(0, 3)
+    # _if_index: int = 2
+    _conjunction_accumulator: int = random.randint(0, 3)
+    # _conjunction_accumulator: int = 4
     _exceptions: str = ''
     _assignments: list = field(default_factory=list)
     _assignment_flag: str = 'None'
@@ -32,11 +33,11 @@ class PythonController(BaseController):
         ]
         self._exceptions = "\nRaises:"
         self._conjunctions = [
-            'and',
-            'after that',
-            'and then',
-            'then',
-            'afterwards',
+            '\b; and',
+            '\b; after that',
+            '\b; and then',
+            '\b; then',
+            '\b; afterwards',
         ]
 
     def get_ast(self):
@@ -113,10 +114,10 @@ class PythonController(BaseController):
 
     def random_sentence_end(self):
         # random_value = 0
-        random_value = random.randint(0, 2)
+        random_value = random.randint(0, 3)
         if random_value == 0:
             rv = self._conjunctions[self._conjunction_accumulator]
-            self.update_circular_index(self._conjunction_accumulator, self._conjunctions)
+            self._conjunction_accumulator = self.update_circular_index(self._conjunction_accumulator, self._conjunctions)
             return ' ' + rv + ' '
         return '. '
 
@@ -378,10 +379,12 @@ class PythonController(BaseController):
                 # TODO: iterator ile içerideki ifade aynı mı değil mi bakmak lazım.
                 # Iterates for each element in list and prints them
                 return f'Iterates from {self.stringify_statement(statement.iter)} and prints each value '
-            comment = f'Iterates {self.stringify_statement(statement.target)} from {self.stringify_statement(statement.iter)}: {inner_statement}'
+            # comment = f'Iterates {self.stringify_statement(statement.target)} from {self.stringify_statement(statement.iter)}: {inner_statement}'
+            comment = f'In a for loop: {inner_statement}'
             return comment
         if type(statement).__name__ == 'While':
-            comment = f'Loops while {self.stringify_statement(statement.test)}: {self.comment_inner_statements(statement.body)}'
+            # comment = f'Loops while {self.stringify_statement(statement.test)}: {self.comment_inner_statements(statement.body)}'
+            comment = f'In a while loop: {self.comment_inner_statements(statement.body)}'
             return comment
         return ''
 
@@ -421,7 +424,9 @@ class PythonController(BaseController):
                 return ''
             if self._assignment_flag == 'Assign':
                 return f'\b\b, {self.stringify_statement(statement.targets[0])} '
-            return f'Sets {self.stringify_statement(statement.targets[0])} '
+            random_assignment_prefixes = ['Sets', 'Assigns', 'Initializes', 'Declares', 'Defines']
+            random_assignment_prefix = random.choice(random_assignment_prefixes)
+            return f'{random_assignment_prefix} {self.stringify_statement(statement.targets[0])} '
         if type(statement).__name__ == 'Expr':
             if type(statement.value).__name__ == 'Call':
                 if hasattr(statement.value.func, 'id') and statement.value.func.id == 'print' and len(statement.value.args) < 1:
@@ -500,7 +505,7 @@ class PythonController(BaseController):
                 if len(function_names) == 1:
                     if len(call_statement.args):
                         # İçerisinde parametre varsa on diyoruz
-                        return f'{function_names[0]}s {"the" if len(call_statement.args) > 1 else ""} {"parameters" if len(call_statement.args) > 1 else ""} on {call_statement.func.value.id} '
+                        return f'{function_names[0]}s on {call_statement.func.value.id} '
                     # No parameter
                     return f'{function_names[0]}s the {call_statement.func.value.id} '
                 prefix = '\b\b, ' if function_names[0] == self._assignment_flag else f'{function_names[0]}s '
@@ -590,11 +595,11 @@ class PythonController(BaseController):
             if type(statement.value).__name__ == 'Call':
                 is_common_name = False
                 if type(statement.value.func).__name__ == 'Attribute':
-                    _, is_common_name = self.function_name_parser(statement.value.func.attr)
+                    function_name, is_common_name = self.function_name_parser(statement.value.func.attr)
                 elif type(statement.value.func).__name__ == 'Name':
-                    _, is_common_name = self.function_name_parser(statement.value.func.id)
+                    function_name, is_common_name = self.function_name_parser(statement.value.func.id)
                 if is_common_name:
-                    self._assignment_flag = 'None'
+                    self._assignment_flag = f'{function_name[0]}'
                 else:
                     self._assignment_flag = 'Call'
         else:
