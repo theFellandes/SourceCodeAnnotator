@@ -106,7 +106,7 @@ class PythonController(BaseController):
             comment += self._exceptions
 
         comment += '\n"""'
-        comment = self.change_end_of_sentence(self.line_break_comment(comment))
+        comment = self.line_break_comment(self.change_end_of_sentence(comment))
         print(comment)
         self._exceptions = "\nRaises:"
         return comment
