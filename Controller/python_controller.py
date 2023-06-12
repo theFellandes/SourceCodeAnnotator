@@ -201,6 +201,7 @@ class PythonController(BaseController):
         comment += self.comment_normal_line(line)
         if not comment:
             return "\b"
+        self.check_for_assignment_flag(line)
         return comment[0].lower() + comment[1:]
 
     @staticmethod
