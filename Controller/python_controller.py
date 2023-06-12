@@ -161,6 +161,7 @@ class PythonController(BaseController):
             s = t
 
     def line_break_comment(self, text: str):
+        text = self.apply_backspace(text)
         words = text.split()  # Split the text into individual words
         lines = []
         current_line = ''
@@ -458,8 +459,12 @@ class PythonController(BaseController):
 
         if only_constant_assignment:
             for inner_statement in statement_body:
-                current_comment = f'Assigns {self.stringify_statement(inner_statement.value)} to {self.stringify_statement(inner_statement.targets[0])} '
+                if self._assignment_flag == 'BasicAssign':
+                    current_comment = f'{self.stringify_statement(inner_statement.value)} to {self.stringify_statement(inner_statement.targets[0])} '
+                else:
+                    current_comment = f'Assigns {self.stringify_statement(inner_statement.value)} to {self.stringify_statement(inner_statement.targets[0])} '
                 inner_comments.append(current_comment)
+                self.check_for_assignment_flag(inner_statement)
             comment = '\b, '.join(map(str, inner_comments))
             return comment.rstrip('\b, ')
 
@@ -576,6 +581,8 @@ class PythonController(BaseController):
     def check_for_assignment_flag(self, statement):
         if type(statement).__name__ == 'Assign' and not type(statement.value).__name__ in ['Constant', 'Name']:
             self._assignment_flag = 'Assign'
+        elif type(statement).__name__ == 'Assign' and type(statement.value).__name__ in ['Constant', 'Name']:
+            self._assignment_flag = 'BasicAssign'
         elif type(statement).__name__ == 'Expr':
             if type(statement.value).__name__ == 'Call':
                 is_common_name = False
