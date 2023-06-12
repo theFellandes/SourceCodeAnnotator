@@ -106,13 +106,14 @@ class PythonController(BaseController):
             comment += self._exceptions
 
         comment += '\n"""'
-        comment = self.line_break_comment(self.change_end_of_sentence(comment))
+        comment = self.line_break_comment(self.change_end_of_sentence(self.line_break_comment(comment)))
         print(comment)
         self._exceptions = "\nRaises:"
         return comment
 
     def random_sentence_end(self):
-        random_value = 0
+        # random_value = 0
+        random_value = random.randint(0, 2)
         if random_value == 0:
             rv = self._conjunctions[self._conjunction_accumulator]
             self.update_circular_index(self._conjunction_accumulator, self._conjunctions)
