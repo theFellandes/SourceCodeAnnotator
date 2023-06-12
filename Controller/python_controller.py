@@ -173,7 +173,7 @@ class PythonController(BaseController):
             if word == 'Raises:':
                 # Bunu yaptığımız için bütün yazılım camiasından özür diliyoruz.
                 break
-            if len(current_line) + len(word) <= 80:
+            if len(current_line) + len(word) <= 120:
                 current_line += word + " "  # Add the word to the current line
             else:
                 lines.append(current_line.strip())  # Add the current line to the list of lines
@@ -503,7 +503,8 @@ class PythonController(BaseController):
                         return f'{function_names[0]}s {"the" if len(call_statement.args) > 1 else ""} {"parameters" if len(call_statement.args) > 1 else ""} on {call_statement.func.value.id} '
                     # No parameter
                     return f'{function_names[0]}s the {call_statement.func.value.id} '
-                return f'{function_names[0]}s {" ".join(function_names[1:])} '
+                prefix = '\b\b, ' if function_names[0] == self._assignment_flag else f'{function_names[0]}s '
+                return f'{prefix}{" ".join(function_names[1:])} '
 
         elif type(call_statement.func).__name__ ==  'Name':
             function_names, is_common_name = self.function_name_parser(call_statement.func.id)
