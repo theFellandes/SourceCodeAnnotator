@@ -19,6 +19,7 @@ class PythonController(BaseController):
     _exceptions: str = ''
     _assignments: list = field(default_factory=list)
     _assignment_flag: str = 'None'
+    _previous_variable: str = ''
 
     def __post_init__(self):
         super().__post_init__()
@@ -108,6 +109,7 @@ class PythonController(BaseController):
 
         comment += '\n"""'
         comment = self.line_break_comment(self.change_end_of_sentence(self.line_break_comment(comment)))
+        comment = self.line_break_comment(comment.replace('n a for loop: in a for loop:', 'n a nested for loop:'))
         print(comment)
         self._exceptions = "\nRaises:"
         return comment
@@ -174,7 +176,7 @@ class PythonController(BaseController):
             if word == 'Raises:':
                 # Bunu yaptığımız için bütün yazılım camiasından özür diliyoruz.
                 break
-            if len(current_line) + len(word) <= 120:
+            if len(current_line) + len(word) <= 85:
                 current_line += word + " "  # Add the word to the current line
             else:
                 lines.append(current_line.strip())  # Add the current line to the list of lines
@@ -239,7 +241,6 @@ class PythonController(BaseController):
         operator = ""
 
         match type(statement).__name__:
-            # TODO: Dictionary stringify
             case 'Assign':
                 left_side = self.stringify_statement(statement.targets[0])
                 right_side = self.stringify_statement(statement.value)
@@ -307,6 +308,14 @@ class PythonController(BaseController):
                         if len(statement.args) == 3:
                             comment = f'{comment} with steps of {self.stringify_statement(statement.args[2])}'
                         return comment
+                if hasattr(statement.func, 'id'):
+                    split, _ = self.function_name_parser(statement.func.id)
+                    if split[0] in ['is', 'has'] and len(split) == 3:
+                        return f'the {split[1]} {split[0]} {split[2]}'
+                elif hasattr(statement.func, 'attr'):
+                    split, _ = self.function_name_parser(statement.func.attr)
+                    if split[0] in ['is', 'has'] and len(split) == 3:
+                        return f'the {split[1]} {split[0]} {split[2]}'
                 # for arg in statement.args:
                 #     right_side += str(self.stringify_statement(arg)) + ", "
                 # right_side = right_side.rstrip(', ')
@@ -391,7 +400,9 @@ class PythonController(BaseController):
     def comment_if(self, statement):
         comment = ''
         if type(statement).__name__ == 'If':
-            comment = self._if_comments_list[self._if_index].format(condition=self.stringify_statement(statement.test), body=self.comment_inner_statements(statement.body).rstrip(), conjunction=self._conjunctions[self._conjunction_accumulator])
+            if_body = self.comment_inner_statements(statement.body).rstrip()
+            if_body = if_body[0].lower() + if_body[1:]
+            comment = self._if_comments_list[self._if_index].format(condition=self.stringify_statement(statement.test), body=if_body, conjunction=self._conjunctions[self._conjunction_accumulator])
             self._if_index = self.update_circular_index(self._if_index, self._if_comments_list)
             self._conjunction_accumulator = self.update_circular_index(self._conjunction_accumulator, self._conjunctions)
 
@@ -606,8 +617,6 @@ class PythonController(BaseController):
             self._assignment_flag = 'None'
 
     # TODO: For-If bağlantısı (for'un içinde if varsa)
-    # TODO: Pauses the parameters on StdDraw
     # TODO: Web scraping??? (BeautifulSoup) (Most common functions json oluşturup oradan arama yapılabilir son çare olarak)
-    # TODO: Commenting every source code file in a directory -> 3 Method: VSCode, Command Line, Web UI (Zip)
     # TODO: Parametreler ve return value'lar handled değil
     # TODO: Abstract methodlar handled değil (Optional: Body'si boşsa case'i)
