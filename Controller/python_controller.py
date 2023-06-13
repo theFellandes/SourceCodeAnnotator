@@ -108,8 +108,8 @@ class PythonController(BaseController):
             comment += self._exceptions
 
         comment += '\n"""'
+        comment = self.line_break_comment(comment.replace('for loop: in a for loop:', 'nested for loop:'))
         comment = self.line_break_comment(self.change_end_of_sentence(self.line_break_comment(comment)))
-        comment = self.line_break_comment(comment.replace('n a for loop: in a for loop:', 'n a nested for loop:'))
         print(comment)
         self._exceptions = "\nRaises:"
         return comment
