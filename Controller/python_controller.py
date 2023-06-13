@@ -616,7 +616,3 @@ class PythonController(BaseController):
         else:
             self._assignment_flag = 'None'
 
-    # TODO: For-If bağlantısı (for'un içinde if varsa)
-    # TODO: Web scraping??? (BeautifulSoup) (Most common functions json oluşturup oradan arama yapılabilir son çare olarak)
-    # TODO: Parametreler ve return value'lar handled değil
-    # TODO: Abstract methodlar handled değil (Optional: Body'si boşsa case'i)
