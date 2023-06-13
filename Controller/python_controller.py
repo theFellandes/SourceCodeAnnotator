@@ -469,7 +469,7 @@ class PythonController(BaseController):
                 if self._assignment_flag == 'BasicAssign':
                     current_comment = f'{self.stringify_statement(inner_statement.value)} to {self.stringify_statement(inner_statement.targets[0])} '
                 else:
-                    current_comment = f'Assigns {self.stringify_statement(inner_statement.value)} to {self.stringify_statement(inner_statement.targets[0])} '
+                    current_comment = f'assigns {self.stringify_statement(inner_statement.value)} to {self.stringify_statement(inner_statement.targets[0])} '
                 inner_comments.append(current_comment)
                 self.check_for_assignment_flag(inner_statement)
             comment = '\b, '.join(map(str, inner_comments))
