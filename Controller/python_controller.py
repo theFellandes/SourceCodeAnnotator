@@ -28,7 +28,7 @@ class PythonController(BaseController):
         # TODO: Do body commenti kötü oluşabilir, deneme-yanılma
         self._if_comments_list = [
             'Checks if {condition}; {body}',
-            'If {condition} then {body}',
+            'If {condition}; {body}',
             'Evaluates whether {condition} {conjunction} {body} if so',
             'Evaluates if {condition} {conjunction} {body}',
         ]
