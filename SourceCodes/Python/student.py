@@ -9,11 +9,11 @@ class StudentDemo:
     yValues = []
     dot = 0
     while dot < POINTS:
-      if StdDraw.isMousePressed():
+      if isMousePressed():
         x = StdDraw.mouseX()
         y = StdDraw.mouseY()
 
-        StdDraw.filledCircle(x, y, 0.01)
+        StdDraw.drawSquare(x, y, 0.01)
 
         xValues[dot] = x
         yValues[dot] = y
@@ -36,15 +36,15 @@ class StudentDemo:
     midY = (yValues[index1] + yValues[index2]) / 2
     StdDraw.circle(midX, midY, longestDist / 2)
     StdDraw.setPenColor(Color.BLUE)
-    StdDraw.filledCircle(
+    StdDraw.drawCircle(
         xValues[index1],
         yValues[index1],
         0.015)
-    StdDraw.filledCircle(
+    StdDraw.drawSquare(
       xValues[index1],
       yValues[index1],
       0.015)
-    StdDraw.filledCircle(
+    StdDraw.drawTriangle(
       xValues[index1],
       yValues[index1],
       0.015)
