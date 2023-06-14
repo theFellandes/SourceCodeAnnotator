@@ -12,10 +12,7 @@ from Utils.web_scraper import WebScraper
 
 @dataclass
 class PythonController(BaseController):
-    _if_index: int = random.randint(0, 3)
-    # _if_index: int = 2
     _conjunction_accumulator: int = random.randint(0, 3)
-    # _conjunction_accumulator: int = 4
     _exceptions: str = ''
     _assignments: list = field(default_factory=list)
     _assignment_flag: str = 'None'
@@ -117,6 +114,7 @@ class PythonController(BaseController):
     def random_sentence_end(self):
         # random_value = 0
         random_value = random.randint(0, 3)
+        self._conjunction_accumulator: int = random.randint(0, 3)
         if random_value == 0:
             rv = self._conjunctions[self._conjunction_accumulator]
             self._conjunction_accumulator = self.update_circular_index(self._conjunction_accumulator, self._conjunctions)
@@ -402,8 +400,10 @@ class PythonController(BaseController):
         if type(statement).__name__ == 'If':
             if_body = self.comment_inner_statements(statement.body).rstrip()
             if_body = if_body[0].lower() + if_body[1:]
-            comment = self._if_comments_list[self._if_index].format(condition=self.stringify_statement(statement.test), body=if_body, conjunction=self._conjunctions[self._conjunction_accumulator])
-            self._if_index = self.update_circular_index(self._if_index, self._if_comments_list)
+            _if_index: int = random.randint(0, 3)
+            self._conjunction_accumulator: int = random.randint(0, 3)
+            comment = self._if_comments_list[_if_index].format(condition=self.stringify_statement(statement.test), body=if_body, conjunction=self._conjunctions[self._conjunction_accumulator])
+            _if_index = self.update_circular_index(_if_index, self._if_comments_list)
             self._conjunction_accumulator = self.update_circular_index(self._conjunction_accumulator, self._conjunctions)
 
             el = statement
