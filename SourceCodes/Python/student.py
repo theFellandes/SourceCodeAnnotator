@@ -33,7 +33,7 @@ class StudentDemo:
           index2 = j
 
     midX = (xValues[index1] + xValues[index2]) / 2
-    midY =(yValues[index1] + yValues[index2]) / 2
+    midY = (yValues[index1] + yValues[index2]) / 2
     StdDraw.circle(midX, midY, longestDist / 2)
     StdDraw.setPenColor(Color.BLUE)
     StdDraw.filledCircle(
