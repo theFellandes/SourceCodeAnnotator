@@ -525,7 +525,7 @@ class PythonController(BaseController):
                 if len(function_names) == 1:
                     if len(call_statement.args):
                         # İçerisinde parametre varsa on diyoruz
-                        return f'{function_names[0]}s on {call_statement.func.value.id} '
+                        return f'{function_names[0]}s the {call_statement.func.value.id} '
                     # No parameter
                     return f'{function_names[0]}s the {call_statement.func.value.id} '
                 prefix = '\b\b, ' if function_names[0] == self._assignment_flag else f'{function_names[0]}s '
