@@ -556,7 +556,12 @@ class PythonController(BaseController):
                 if type(item.context_expr).__name__ == 'Call':
                     if item.context_expr.func.id == 'open':
                         call_statement = item.context_expr
-                        comment += f'opens {call_statement.args[0].value} as {item.optional_vars.id} and '
+                        if type(call_statement.args[0]).__name__ == 'Constant':
+                            # open('file.txt') as file
+                            comment += f'opens {call_statement.args[0].value} as {item.optional_vars.id} and '
+                        elif type(call_statement.args[0]).__name__ == 'Name':
+                            # open(file) as file
+                            comment += f'opens {call_statement.args[0].id} as {item.optional_vars.id} and '
                     else:
                         # func geldiyse: Creating an instance of {HelloContextManager}
                         comment += f'creates an instance of {item.context_expr.func.id} and '
