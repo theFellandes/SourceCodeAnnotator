@@ -26,6 +26,7 @@ verbs = [
     "extract",
     "fetch",
     "filter",
+    "fill",
     "find",
     "format",
     "generate",

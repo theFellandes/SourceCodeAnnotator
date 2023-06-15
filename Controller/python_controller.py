@@ -131,12 +131,18 @@ class PythonController(BaseController):
                     if len(sentences) == 1:
                         fixed_sentences.append(sentence)
                         continue
+                    if len(sentences) <= 3:
+                        sentence += '. '
+                        fixed_sentences.append(sentence)
+                        continue
                     randoms = ["Firstly", "First of all", "At the start", "Initially"]
                     random_value = random.randint(0, len(randoms) - 1)
                     sentence = f'{sentence[0:4]}{randoms[random_value]} {sentence[4].lower()}{sentence[5:]}. '
                 else:
-                    randoms = ["Finally", "Lastly", "In conclusion", "To conclude", "At the end", "At last",
-                               "Conclusively"]
+                    if len(sentences) <= 2:
+                        fixed_sentences.append(sentence)
+                        continue
+                    randoms = ["Finally", "Lastly", "At the end", "At last"]
                     random_value = random.randint(0, len(randoms) - 1)
                     sentence = f'{randoms[random_value]} {sentence[0].lower()}{sentence[1:]} '
                 fixed_sentences.append(sentence)
@@ -306,6 +312,8 @@ class PythonController(BaseController):
                         if len(statement.args) == 3:
                             comment = f'{comment} with steps of {self.stringify_statement(statement.args[2])}'
                         return comment
+                if hasattr(statement.func, 'id') and statement.func.id == 'len':
+                    return f'the length of {self.stringify_statement(statement.args[0])}'
                 if hasattr(statement.func, 'id'):
                     split, _ = self.function_name_parser(statement.func.id)
                     if split[0] in ['is', 'has'] and len(split) == 3:
@@ -317,7 +325,8 @@ class PythonController(BaseController):
                 # for arg in statement.args:
                 #     right_side += str(self.stringify_statement(arg)) + ", "
                 # right_side = right_side.rstrip(', ')
-                # return f'{self.stringify_statement(statement.func)}({right_side})'
+                # right_side = f'({right_side})' if len(right_side) <= 15 else ''
+                # return f'{self.stringify_statement(statement.func)}{right_side}'
                 return f'{self.stringify_statement(statement.func)}'
 
             case 'ListComp' | 'GeneratorExp' | 'DictComp' | 'SetComp':
