@@ -5,6 +5,7 @@ def encrypt_message(message, key):
         encrypted_message += encrypted_char
     return encrypted_message
 
+
 def find_max(numbers):
     if len(numbers) == 0:
         return None
@@ -13,6 +14,8 @@ def find_max(numbers):
         if num > max_num:
             max_num = num
     return max_num
+
+
 def check_prime(number):
     if number < 2:
         return False
@@ -20,6 +23,8 @@ def check_prime(number):
         if number % i == 0:
             return False
     return True
+
+
 def calculate_area(radius):
     area = 3.14159 * radius**2
     return area
